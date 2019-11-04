@@ -63,7 +63,6 @@ def format_string_for_page(s, est):
         s = s[:est - count]
     elif count < est:
         s += '\n' * (est - count)
-    s+='a'
     return s
 
 
