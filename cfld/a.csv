@@ -1,211 +1,638 @@
-University,Letters,Chapter,mailing address,chapter address,,contact name,email,phone,status
-USC,Chi Phi,Chi Phi,"Name	Zeta Beta Of Alpha Tau Omega And Building Corporation
+university,fraternity,location,mailing_address,chapter_address,letter index,skip,mailed,suspended recentlyish,contact name,email,phone,status
+USC,Chi Phi,downtown Los Angeles,"Name	Zeta Beta Of Alpha Tau Omega And Building Corporation
 C/O Gregory Castle
 Address	10960 Wilshire Blvd #1510
-Los Angeles, CA 90024","707 W 28th St, Los Angeles, CA 90007",,andrew newsom,acnewsom@usc.edu,,mtsn
-USC,Phi Kappa Tau,Phi Kappa Tau,"Name	Fraternity Housing Corporation
+Los Angeles, CA 90024","707 W 28th St, Los Angeles, CA 90007",0,1,0,,andrew newsom,acnewsom@usc.edu,,mtsn
+USC,Phi Kappa Tau,downtown Los Angeles,"Name	Fraternity Housing Corporation
 C/O Larry S Wiese
 Address	PO Box 1865
-Lexington, VA 24450","2715 Portland St, Los Angeles, CA 90007",,NA,uscpkt@gmail.com,,mtsn
-SJSU,Alpha Epsilon Pi,Alpha Epsilon Pi,NA,NA,,,,,
-SJSU,Alpha Sigma Phi,Alpha Sigma Phi,NA,"46741091, San Jose, CA 95112",,,,,
-SJSU,Alpha Tau Omega,Alpha Tau Omega,"Name	Sjsu Ato Real Estate
+Lexington, VA 24450","2715 Portland St, Los Angeles, CA 90007",0,0,1,,NA,uscpkt@gmail.com,,mtsn
+SJSU,Alpha Epsilon Pi,downtown San Jose,"Name        Chris & aglaia Constantin Trustee
+Address        1833 Blossom Hill Rd
+San Jose, CA 95124","182 S 10th St, San Jose, CA 95112",2,0,0,,,,,
+SJSU,Alpha Sigma Phi,downtown San Jose,,no chapter house fall 2019,0,0,0,,,,,
+SJSU,Alpha Tau Omega,downtown San Jose,"Name        SJSU ATO Real Estate
 C/O Kevin Wilkinson
-Address	569 Dartmouth Ave
-San Carlos, CA 94070","202 S 11th St, San Jose, CA 95112",,,,,
-SJSU,Beta Theta Pi,Beta Theta Pi,"Name	Mclean Beresford W
-Address	147 Race St
-San Jose, CA 95126","365 E San Fernando St, San Jose, CA 95112",,,,,
-SJSU,Delta Sigma Phi,Delta Sigma Phi,"Name	Current Capital LP
-Address	160 W Santa Clara St #900
-San Jose, CA 9511","189 S 11th St, San Jose, CA 95112",,,,,
-SJSU,Delta Upsilon,Delta Upsilon,"Name	San Jose Delta Upsilon Corp
+Address        569 Dartmouth Ave
+San Carlos, CA 94070","202 S 11th St, San Jose, CA 95112",0,0,1,,,,,
+SJSU,Beta Theta Pi,downtown San Jose,"Beresford W McLean
+147 Race St
+San Jose, CA 95126","365 E San Fernando St, San Jose, CA 95112",2,0,1,,,,,
+SJSU,Delta Sigma Phi,downtown San Jose,"Name        Current Capital LP
+Address        160 W Santa Clara St #900
+San Jose, CA 9511","189 S 11th St, San Jose, CA 95112",1,0,1,,,,,
+SJSU,Delta Upsilon,downtown San Jose,"Name	San Jose Delta Upsilon Corp
 C/O Jeff Pesta - Treasurer
 Address	6920 Santa Teresa Blvd #103
-San Jose, CA 95119","201 S 11th St, San Jose, CA 95112",,,,,
-SJSU,Kappa Sigma,Kappa Sigma,"Name	Theta Iota Chapter Of Kappa Sigma Inc
-Address	P O Box 12
-Los Gatos, CA 95031","168 S 11th St, San Jose, CA 95112",,,,,
-SJSU,Pi Kappa Alpha,Pi Kappa Alpha,NA,NA,,,,,
-SJSU,Pi Kappa Phi,Pi Kappa Phi,NA,NA,,,,,
-SJSU,Sigma Alpha Epsilon,Sigma Alpha Epsilon,"Name	Robinson Lois K Trustee
-Address	18707 Graystone Ln
-San Jose, CA 95120","282 S 10th St, San Jose, CA 95112",,,,,
-SJSU,Sigma Chi,Sigma Chi,"Name	Cowan Bell Scholastic Foundation Thomas
-Address	PO Box 5476
-San Jose, CA 95150","284 S 10th St, San Jose, CA 95112",,,,,
-SJSU,Sigma Nu,Sigma Nu,"Name	Zeta Iota Chapter Of Sigma Nu Fraternity
+San Jose, CA 95119","201 S 11th St, San Jose, CA 95112",0,0,1,,,,,
+SJSU,Kappa Sigma,downtown San Jose,"Name        Theta Iota Chapter Of Kappa Sigma Inc
+Address        PO Box 12
+Los Gatos, CA 95031","168 S 11th St, San Jose, CA 95112",0,0,1,,,,,
+SJSU,Pi Kappa Alpha,downtown San Jose,"Name        Current Capital LP
+Address        160 W Santa Clara St #900
+San Jose, CA 9511","225 S 11th St, San Jose, CA 95112",0,1,0,1,jared@currentmangement.associates,https://www.currentmanagement.associates/contact,,
+SJSU,Pi Kappa Phi,downtown San Jose,,no chapter house fall 2019,0,,0,,,,,
+SJSU,Sigma Alpha Epsilon,Sigma Alpha Epsilon,"Name        Lois K Robinson Trustee
+Address        18707 Graystone Ln
+San Jose, CA 95120","282 S 10th St, San Jose, CA 95112",2,0,1,,,,,
+SJSU,Sigma Chi,downtown San Jose,"Name       Thomas Cowan Bell Scholastic Foundation 
+Address        PO Box 5476
+San Jose, CA 95150","284 S 10th St, San Jose, CA 95112",0,0,1,,,,,
+SJSU,Sigma Nu,downtown San Jose,"Name        Zeta Iota Chapter Of Sigma Nu Fraternity
 C/O Stephen V Gaffaney
-Address	2155 Dry Creek Rd
-San Jose, CA 95124","155 s 11th st, san jose ca 95112",,,,,
-SJSU,Theta Chi,Theta Chi,NA,NA,,"Micah Harrel, Tim",,"480-640-0774, 925-9279668",visiting October 8th 2019
-CAL,Alpha Delta Phi,Alpha Delta Phi,"Name	Alpha Delta Phi Building Co
+Address        2155 Dry Creek Rd
+San Jose, CA 95124","155 s 11th st, san jose ca 95112",0,0,1,,,,,
+SJSU,Theta Chi,downtown San Jose,,,0,1,0,,"Micah Harrel, Tim",,"480-640-0774, 925-9279668",visiting October 8th 2019
+UC Berkeley,Alpha Delta Phi,Berkeley,"Name	Alpha Delta Phi Building Co
 C/O Piedmont Systems
 Address	3871 Piedmont Ave
-Oakland, CA 94611","2422 Prospect St, Berkeley, CA 94704",,,,,
-CAL,Alpha Epsilon Pi,Alpha Epsilon Pi,"Name	Chiber Housing Corporation
+Oakland, CA 94611","2422 Prospect St, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Alpha Epsilon Pi,Berkeley,"Name	Chiber Housing Corporation
 C/O Andrew S Borans
 Address	8815 Wesleyan Rd
-Indianapolis, IN 46268","2430 Piedmont Ave, Berkeley, CA 94704",,,,,
-CAL,Alpha Gamma Omega,Alpha Gamma Omega,"Name	Alpha Gamma Omega Assn
+Indianapolis, IN 46268","2430 Piedmont Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Alpha Gamma Omega,Berkeley,"Name	Alpha Gamma Omega Assn
 C/O David Nielsen
 Address	301 Shady Valley Ct
-San Ramon, CA 94582","2713 Haste St, Berkeley, CA 94704",,,,,
-CAL,Alpha Kappa Lambda,Alpha Kappa Lambda,"Name	Momtchev Stanislav P & Kaloyanova Elena K Trs
-Address	2630 Cedar St
-Berkeley, CA 94708","2710 Durant Ave, Berkeley, CA 94704",,,,,
-CAL,Alpha Sigma Phi,Alpha Sigma Phi,"Name	California Alpha Sigma Phi Inc
+San Ramon, CA 94582","2713 Haste St, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Alpha Kappa Lambda,Berkeley,"Name        Stanislav P Momtchev &  Elena K Kaloyanov
+Address        2630 Cedar St
+Berkeley, CA 94708","2710 Durant Ave, Berkeley, CA 94704",2,0,1,,,,,
+UC Berkeley,Alpha Sigma Phi,Berkeley,"Name	California Alpha Sigma Phi Inc
 C/O Robert Riegg
 Address	2498 Piedmont Ave
-Berkeley, CA 94704","2498 Piedmont Ave, Berkeley, CA 94704",,,,,
-CAL,Alpha Tau Omega,Alpha Tau Omega,"Name	Alpha Tau Omega Hse Asn
+Berkeley, CA 94704","2498 Piedmont Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Alpha Tau Omega,Berkeley,"Name        Alpha Tau Omega House Association
 C/O Edward Hulsy
-Address	268 Bush St 3143
-San Francisco, CA 9410","2327 Warring St, Berkeley, CA 94704",,,,,
-CAL,Chi Phi,Chi Phi,"Name	Lambda Chapter Chi Phi
+Address        268 Bush St 3143
+San Francisco, CA 9410","2327 Warring St, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Chi Phi,Berkeley,"Name        Lambda Chapter Chi Phi
 C/O B Finley
-Address	662 Calmar Ave
-Oakland, CA 94610","2722 Durant Ave, Berkeley, CA 94704",,,,,
-CAL,Chi Psi,Chi Psi,"Name	Housing Corp For Ca Gamma Chap Of Phi Kappa Psi
-C/O S & T Fraternity Mgt
-Address	PO Box 6688
-Moraga, CA 94570","2424 Warring St, Berkeley, CA 94704",,,,,
-CAL,Delta Chi,Delta Chi,"Name	Abracadabra House Association
+Address        662 Calmar Ave
+Oakland, CA 94610","2722 Durant Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Chi Psi,Berkeley,"Name        Berkeley Holdings LLC
+Address        45 Rutledge St
+Nashville, TN 37210","2311 Piedmont Ave, Berkeley, CA 94704",1,0,1,,,,,
+UC Berkeley,Delta Chi,Berkeley,"Name	Abracadabra House Association
 C/O Stephen D Copper
 Address	PO Box 620531
-Littleton, CO 80162","2721 Channing Way, Berkeley, CA 94704",,,,,
-CAL,Delta Kappa Epsilon,Delta Kappa Epsilon,NA,"Piedmont Ave, Berkeley, CA 94704",,,,,
-CAL,Delta Sigma Phi,Delta Sigma Phi,"Name	Pi Alpha Phi Alum Assn
+Littleton, CO 80162","2721 Channing Way, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Delta Kappa Epsilon,Berkeley,NA,"Piedmont Ave, Berkeley, CA 94704",0,0,0,,,,,
+UC Berkeley,Delta Sigma Phi,Berkeley,"Name	Pi Alpha Phi Alum Assn
 C/O Cliff Lin
 Address	256 Calle La Mesa
-Moraga, CA 94556","2534 Warring St, Berkeley, CA 94704",,,,,
-CAL,Delta Upsilon,Delta Upsilon,"Name	Delta Upsilon House Asn
+Moraga, CA 94556","2534 Warring St, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Delta Upsilon,Berkeley,"Name	Delta Upsilon House Asn
 C/O Charles L Kavanagh
 Address	708 Carolan Ave
-Burlingame, CA 94010","2425 Warring St, Berkeley, CA 94704",,,,,
-CAL,lambda chi alpha,lambda chi alpha,"Name	Mu Zeta Of Lambda Chi Alpha
+Burlingame, CA 94010","2425 Warring St, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Lambda Chi Alpha,Berkeley,"Name	Mu Zeta Of Lambda Chi Alpha
 C/O Smith & Taylor Frat
 Address	256 Calle La Mesa 100
-Moraga, CA 94556","2421 Prospect St, Berkeley, CA 94704",,,,,
-CAL,lamba phi epsilon,lamba phi epsilon,NA,NA,,,,,
-CAL,Kappa Alpha Order,Kappa Alpha Order,"Name	Alpha Xi Building Assn
+Moraga, CA 94556","2421 Prospect St, Berkeley, CA 94704",0,1,1,,,,,
+UC Berkeley,Lambda Phi Epsilon,Berkeley,,,0,0,0,,,,,
+UC Berkeley,Kappa Alpha Order,Berkeley,"Name	Alpha Xi Building Assn
 C/O Ryan Ledwith
 Address	96 Holmes Ave
-Darien, CT 06820","2425 Piedmont Ave, Berkeley, CA 94704",,,,,
-CAL,Kappa Delta Rho,Kappa Delta Rho,"Name	Lambda Of Kappa Delta Rho Inc
+Darien, CT 06820","2425 Piedmont Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Kappa Delta Rho,Berkeley,"Name	Lambda Of Kappa Delta Rho Inc
 C/O Murray Stok & C. Cpa
 Address	235 Montgomery St 460
-San Francisco, CA 94104","2739 Channing Way, Berkeley, CA 94704",,,,,
-CAL,Phi Delta Theta,Phi Delta Theta,"Name	California Alpha Association
+San Francisco, CA 94104","2739 Channing Way, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Phi Delta Theta,Berkeley,"Name	California Alpha Association
 Address	PO Box 4338
-Berkeley, CA 94704","2726 Channing Way, Berkeley, CA 94704",,,,,
-CAL,Phi Gamma Delta,Phi Gamma Delta,NA,"Channing Way, Berkeley, CA 94704",,,,,
-CAL,Phi Kappa Psi,Phi Kappa Psi,"Name	Housing Corp For Ca Gamma Chap Of Phi Kappa Psi
+Berkeley, CA 94704","2726 Channing Way, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Phi Gamma Delta,Berkeley,NA,"Channing Way, Berkeley, CA 94704",0,0,0,,,,,
+UC Berkeley,Phi Kappa Psi,Berkeley,"Name	Housing Corp For Ca Gamma Chap Of Phi Kappa Psi
 C/O S & T Fraternity Mgt
 Address	PO Box 6688
-Moraga, CA 94570","2424 Warring St, Berkeley, CA 94704",,,,,
-CAL,Phi Kappa Tau,Phi Kappa Tau,"Name	Phi Kappa Tau Of Berk
+Moraga, CA 94570","2424 Warring St, Berkeley, CA 94704",0,1,1,,,,,
+UC Berkeley,Phi Kappa Tau,Berkeley,"Name        Phi Kappa Tau Of Berkeley
 C/O Mr. Todd Morgan
-Address	PO Box 12688 Lks-16
-Oakland, CA 94604","2335 Piedmont Ave, Berkeley, CA 94704",,,,,
-CAL,Pi Kappa Alpha,Pi Kappa Alpha,"Name	Alpha Sigma Building Association
-C/O S & T Fraternity Mgm
-Address	256 Calle La Mesa
-Moraga, CA 94556","2324 Piedmont Ave, Berkeley, CA 94704",,,,,
-CAL,Pi Kappa Phi,Pi Kappa Phi,"Name	Pi Kappa Phi Alumni Association
+Address        PO Box 12688 Lks-16
+Oakland, CA 94604","2335 Piedmont Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Pi Kappa Alpha,Berkeley,"Name        Alpha Sigma Building Association
+C/O S & T Fraternity Mgmt
+Address        256 Calle La Mesa
+Moraga, CA 94556","2324 Piedmont Ave, Berkeley, CA 94704",0,1,1,,,,,
+UC Berkeley,Pi Kappa Phi,Berkeley,"Name	Pi Kappa Phi Alumni Association
 C/O Smith & Taylor
 Address	256 Calle La Mesa 100
-Moraga, CA 94556","2908 Channing Way, Berkeley, CA 94704",,,,,
-CAL,Pi Lambda Phi,Pi Lambda Phi,"Name	Pi Lambda Phi Alumni
+Moraga, CA 94556","2908 Channing Way, Berkeley, CA 94704",0,1,1,,,,,
+UC Berkeley,Pi Lambda Phi,Berkeley,"Name	Pi Lambda Phi Alumni
 C/O Jeff Baker
 Address	1246 Mason St
-San Francisco, CA 94108","University of California, 2727 Channing Way, Berkeley, CA 94704",,,,,
-CAL,Sigma Alpha Epsilon,Sigma Alpha Epsilon,NA,"2722 Bancroft Way, Berkeley, CA 94704",https://www.bostonprivate.com/,,,,
-CAL,Sigma Alpha Mu,Sigma Alpha Mu,"Name	Sigma Sigma Chapter Sigma Alpha Mu Housing Corp
+San Francisco, CA 94108","University of California, 2727 Channing Way, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Sigma Alpha Epsilon,Berkeley,,"2722 Bancroft Way, Berkeley, CA 94704",https://www.bostonprivate.com/,1,0,,,,,
+UC Berkeley,Sigma Alpha Mu,Berkeley,"Name	Sigma Sigma Chapter Sigma Alpha Mu Housing Corp
 C/O Sam Property Mgt
 Address	8701 Founders Rd
-Indianapolis, IN 46268","2714 Durant Ave, Berkeley, CA 94704",,,,,
-CAL,Sigma Chi,Sigma Chi,"Name	Alpha Beta Hall
+Indianapolis, IN 46268","2714 Durant Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Sigma Chi,Berkeley,"Name	Alpha Beta Hall
 C/O Jeff Bordalampe
 Address	357 Cliffside Dr
-Danville, CA 94526","2345 College Ave, Berkeley, CA 94704",,,,,
-CAL,Sigma Nu,Sigma Nu,"Name	Sigma Nu Bldg Assn
+Danville, CA 94526","2345 College Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Sigma Nu,Berkeley,"Name	Sigma Nu Bldg Assn
 C/O Mason S Brutschy
 Address	PO Box 755
-Menlo Park, CA 94026","2710 Bancroft Way, Berkeley, CA 94704",,,,,
-CAL,Sigma Phi Epsilon,Sigma Phi Epsilon,"Name	Beta Theta Pi Omega House Corporation
+Menlo Park, CA 94026","2710 Bancroft Way, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Sigma Phi Epsilon,Berkeley,"Name	Beta Theta Pi Omega House Corporation
 Address	183 St Germain Ave
-San Francisco, CA 94114","2728 Channing Way, Berkeley, CA 94704",,,,,
-CAL,Sigma Pi,Sigma Pi,"Name	Iota Building Company Of The Sigma Pi Fraternity
+San Francisco, CA 94114","2728 Channing Way, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Sigma Pi,Berkeley,"Name	Iota Building Company Of The Sigma Pi Fraternity
 C/O S&T Fraternity Mgmt
 Address	P.o. Box 6688
-Moraga, CA 94570","2434 Warring St, Berkeley, CA 94704",,,,,
-CAL,Tau Kappa Epsilon,Tau Kappa Epsilon,"Name	Nu Of Tau Kappa Epsilon Inc
+Moraga, CA 94570","2434 Warring St, Berkeley, CA 94704",0,1,1,,,,,
+UC Berkeley,Tau Kappa Epsilon,Berkeley,"Name	Nu Of Tau Kappa Epsilon Inc
 C/O S&T Fraternity Manag
 Address	PO Box 6688
-Moraga, CA 94570","2725 Channing Way, Berkeley, CA 94704",,,,,
-CAL,Theta Chi,Theta Chi,"Name	Mu Chapter Association
+Moraga, CA 94570","2725 Channing Way, Berkeley, CA 94704",0,1,1,,,,,
+UC Berkeley,Theta Chi,Berkeley,"Name	Mu Chapter Association
 Address	3000 San Jose Ave
-Alameda, CA 94501","2499 Piedmont Ave, Berkeley, CA 94704",,,,,
-CAL,Theta Delta Chi,Theta Delta Chi,"Name	Delta Deuteron Bldg Asn
+Alameda, CA 94501","2499 Piedmont Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Theta Delta Chi,Berkeley,"Name        Delta Deuteron Bldg Asn
 C/O Martin Smith
-Address	256 Calle La Mesamoraga 100
-Moraga, CA 94556","2647 Durant Ave, Berkeley, CA 94704",,,,,
-CAL,Zeta Psi,Zeta Psi,"Name	Zeta Psi Alumni Association
+Address        256 Calle La Mesa 100
+Moraga, CA 94556","2647 Durant Ave, Berkeley, CA 94704",0,0,1,,,,,
+UC Berkeley,Zeta Psi,Berkeley,"Name	Zeta Psi Alumni Association
 C/O Philip S Boone Jr
 Address	2728 Bancroft Way
-Berkeley, CA 94704","2728 Bancroft Way, Berkeley, CA 94704",,,,,
-UW,,Acacia,,,,,,,
-UW,,Alpha Sigma Phi,,,,,,,
-UW,,Alpha Delta Phi,,,,,,,
-UW,,Alpha Tau Omega,,,,,,,
-UW,,,,,,,,,
-UW,,Beta Theta Pi,,,,,,,
-UW,,Chi Psi,,,,,,,
-UW,,Delta Tau Delta,,,,,,,
-UW,,Kappa Alpha Order,,,,,,,
-UW,,Kappa Sigma,,,,,,,
-UW,,Lambda Chi Alpha,,,,,,,
-UW,,Phi Delta Theta,,,,,,,
-UW,,Phi Gamma Delta,,,,,,,
-UW,,Phi Kappa Psi,,,,,,,
-UW,,Phi Kappa Sigma,,,,,,,
-UW,,Phi Kappa Tau,,,,,,,
-UW,,Pi Kappa Alpha,,,,,,,
-UW,,Pi Kappa Phi,,,,,,,
-UW,,Psi Upsilon,,,,,,,
-UW,,Sigma Alpha Epsilon,,,,,,,
-UW,,Sigma Chi,,,,,,,
-UW,,Sigma Nu,,,,,,,
-UW,,Sigma Phi Epsilon,,,,,,,
-UW,,Tau Kappa Epsilon,,,,,,,
-UW,,Theta Chi,,,,,,,
-UW,,Theta Delta Chi,,,,,,,
-UW,,Theta Xi,,,,,,,
-UW,,Zeta Beta Tau,,,,,,,
-UW,,Zeta Psi,,,,,,,
-UT,,Alpha Epsilon Pi,,,,,,,
-UT,,Beta Theta Pi,,,,,,,
-UT,,Delta Kappa Epsilon,,,,,,,
-UT,,Delta Sigma Phi,,,,,,,
-UT,,Delta Tau Delta,,,,,,,
-UT,,Delta Upsilon,,,,,,,
-UT,,Kappa Alpha Order,,,,,,,
-UT,,Kappa Sigma,,,,,,,
-UT,,Lambda Chi Alpha,,,,,,,
-UT,,Phi Delta Theta,,,,,,,
-UT,,Phi Gamma Delta,,,,,,,
-UT,,Phi Kappa Psi,,,,,,,
-UT,,Phi Kappa Sigma,,,,,,,
-UT,,Phi Kappa Tau,,,,,,,
-UT,,Phi Kappa Theta,,,,,,,
-UT,,Pi Kappa Alpha,,,,,,,
-UT,,Pi Kappa Phi,,,,,,,
-UT,,Sigma Alpha Mu,,,,,,,
-UT,,Sigma Chi,,,,,,,
-UT,,Sigma Phi Epsilon,,,,,,,
-UT,,Sigma Pi,,,,,,,
-UT,,Tau Kappa Epsilon,,,,,,,
-UT,,Theta Chi,,,,,,,
-UT,,Zeta Psi,,,,,,,
-UT,,Zeta Beta Tau,,,,,,,
+Berkeley, CA 94704","2728 Bancroft Way, Berkeley, CA 94704",0,0,1,,,,,
+UW,Acacia,Seattle,,"5220 19th Ave NE, Seattle, WA 98105",0,0,0,,,,,
+UW,Alpha Sigma Phi,Seattle,"ALPHA SIGMA PHI	
+5048 Roosevelt Way Ne
+Seattle, WA, 98105","4554 19th Ave NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Alpha Delta Phi,Seattle,"NW ALUMNI OF PACIFIC  Corporate Owner        
+3326 43Rd Ave Ne
+Seattle, WA, 98105","2106 NE 47th St, Seattle, WA 98105",2,0,1,,,,,
+UW,Alpha Delta Phi,Seattle,"NW ALUMNI OF PACIFIC        
+3007 12Th Ave W
+Seattle, WA, 98119","2106 NE 47th St, Seattle, WA 98105",2,0,1,,,,,
+UW,Alpha Tau Omega,Seattle,"MICHAEL WILLIAMS	
+5027 19Th Ave Ne
+Seattle, WA, 98105","4706 17th Ave. NE, Seattle, WA 98105",2,0,1,,,,,
+UW,Beta Theta Pi,Seattle,"Beta Theta Pi	
+5048 Roosevelt Way Ne
+Seattle, WA, 98105","1617 NE 47th St, Seattle, WA 98105",3,1,0,1,,,,
+UW,Chi Psi,Seattle,"ALPHA THETA DELTA ALUMNI         
+1001 4Th Ave Ste 4200
+Seattle, WA, 98154
+","4600 22nd Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Delta Tau Delta,Seattle,"RAINBOW SOCIETY INC Corporate Owner	
+4616 25Th Ave Ne
+Seattle, WA, 98105
+","4524 19th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Delta Upsilon,Seattle,"TYLER OPP	
+2606 116Th Ave Ne Ste 200
+Bellevue, WA, 98004","4508 19th Ave NE, Seattle, WA 98105",0,1,1,1,,tyler@bentonbray.com,"sent him an email, he'll be back in the office 11/11",
+UW,Delta Upsilon,Seattle,"DELTA UPSILON FRATERNITY	
+4616 25Th Ave Ne
+Seattle, WA, 98105","4508 19th Ave NE, Seattle, WA 98105",,1,1,1,,,,
+UW,Kappa Alpha Order,Seattle,"PONTIUS PARTNERS LLC Corporate Owner	
+2613 Sw Nevada St
+Seattle, WA, 98105
+","4708 18th Ave. NE, Seattle, WA 98105",1,0,1,,,,,
+UW,Kappa Sigma,Seattle,"BETA-PSI BUILDING BOARD Corporate Owner	
+14011 241St Pl Se
+Issaquah, WA, 98027","4543 18th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Lambda Chi Alpha,Seattle,"LAMBDA CHI ALPHA HOUSE CORP Corporate Owner        
+Po Box 45144
+Seattle, WA, 98145
+","4509 19th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Phi Delta Theta,Seattle,"WASH PHIKEIA INC Corporate Owner	
+11808 Northup Way
+Bellevue, WA, 98005
+","2111 NE 47th St., Seattle, WA 98105",2,0,1,,,,,
+UW,Phi Gamma Delta,Seattle,"SIGMA TAU ASSN Corporate Owner        
+19561 27Th Ave Nw
+Shoreline, WA, 98177
+","4503 17th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Phi Kappa Psi,Seattle,"PHI KAPPA PSI
+Po Box 1804
+Seattle, WA, 98111","2120 NE 47th St., Seattle, WA 98105",0,0,1,,,,,
+UW,Phi Kappa Sigma,Seattle,"ALPHA UPSILON HOUSE CORP Corporate Owner	
+12330 Ne 8Th St Ste 101
+Bellevue, WA, 98103","4711 17th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Phi Kappa Tau,Seattle,"PUGET SOUND ASSOC OF DELTA Corporate Owner	
+2613 Sw Nevada St
+Seattle, WA, 98126","1800 NE 47th St., Seattle, WA 98105",0,0,1,,,,,
+UW,Pi Kappa Alpha,Seattle,,"4515 21st St. NE, Seattle, WA 98105",0,0,0,,,,,
+UW,Pi Kappa Phi,Seattle,"ALPHA DELTA OF PI KAPPA PHI Corporate Owner	
+1525 Taylor Ave N Apt 404
+Lynnwood, WA, 98036
+","4530 17th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Psi Upsilon,Seattle,"PSI UPSILON ALUMNI ASSN INC Corporate Owner	
+Po Box 14056
+Seattle, WA, 98114
+","1818 NE 47th St, Seattle, WA 98105",0,0,1,,,,,
+UW,Sigma Alpha Epsilon,Seattle,"SAE ALUMNI ASSOCIATION Corporate Owner	
+4616 25Th Ave Ne
+Seattle, WA, 98105
+","4506 17th Ave. NE, Seattle, WA 98105, Seattle, WA 98105",0,0,1,,,,,
+UW,Sigma Chi,Seattle,"SIGMA CHI BLDG ASSOC Corporate Owner	
+5048 Roosevelt Way Ne
+Seattle, WA, 98105","4505 18th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Sigma Nu,Seattle,"GAMMA CHI CLUBHOUSE 
+5048 Roosevelt Way Ne
+Seattle, WA, 98105
+","1616 NE 47th St., Seattle, WA 98105",0,0,1,,,,,
+UW,Sigma Phi Epsilon,Seattle,"SIGMA PHI EPSILON BUILDING	
+Po Box 19367
+Seattle, WA, 98109
+","4637 21st Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Sigma Phi Epsilon,Seattle,"SIGMA PHI EPSILON
+310 S Arthur Ashe Blvd
+Richmond, VA, 23220
+","4637 21st Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Tau Kappa Epsilon,Seattle,"CHI OF TAU KAPPA EPSILON BLDG Corporate Owner
+C/O David D Powell
+5815 Ann Arbor Ave NE 
+Seattle, WA, 98105","4520 21st Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Theta Chi,Seattle,"THETA CHI        
+5048 Roosevelt Way Ne
+Seattle, CA, 94570","4535 17th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Theta Delta Chi,Seattle,"XI DEUTERON CORP Corporate Owner	
+4616 25Th Ave Ne
+Seattle, WA, 98105
+","4532 19th Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Theta Xi,Seattle,"CAMPUS CORP OF THETA XI Corporate Owner	
+3901 Stone Way N Ste 202
+Seattle, WA, 98103","4522 18th Ave. NE, Seattle, WA 98105",0,1,0,,,,,
+UW,Zeta Beta Tau,Seattle,"ZBT WASHINGTON BLDG ASSOC Corporate Owner	
+5048 Roosevelt Way Ne
+Seattle, WA, 98105","4626 21st. Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UW,Zeta Psi,Seattle,"PHI LAMBDA ELDER CHAPTER  
+4616 25Th Ave Ne
+Seattle, WA, 98105","4703 21st Ave. NE, Seattle, WA 98105",0,0,1,,,,,
+UT,Alpha Epsilon Pi,Austin,"Name	Gamma Deuteron Housing Corporation & Alpha Episilon Pi Fraternity
+Address	8815 Wesleyan Rd
+Indianapolis, IN 46268","2807 Rio Grande St, Austin, TX 78705",0,0,1,,,,,
+UT,Beta Theta Pi,Austin,,,0,0,0,,,,,
+UT,Delta Kappa Epsilon,Austin,"Name	2515 Pearl LLC
+Address	2813 Rio Grande
+Austin, TX 78705
+","2515 Pearl Street, Austin, TX 78705",2,0,1,,,,,
+UT,Delta Sigma Phi,Austin,"Name        Alumni Corp Of Eta Chapter Of Delta Sigma Phi Fraternity
+Address        PO Box 50052
+Austin, TX 78763","706 W 26th St, Austin, TX 78705",0,0,1,,,,,
+UT,Delta Tau Delta,Austin,"Name	Delta Tau Delta Building Assn & Russell Douglass
+Address	PO Box 162731
+Austin, TX 78716","2801 San Jacinto, Austin, Tx 78705",0,0,1,,,,,
+UT,Delta Upsilon,Austin,"Name	Texas Delta Upsilon Foundation & Bill Bryant
+Address	303 Colorado St #2300
+Austin, TX 78701","2305 Leon St. Austin, TX 78705",0,0,1,,,,,
+UT,Kappa Alpha Order,Austin,"Name        UT Omicron Educational Corporation
+Address        3600 N Capital Of Texas Highway Bldg B #250
+Austin, TX 78746","2515 Leon St, Austin, TX 78705",0,0,1,,,,,
+UT,Kappa Sigma,Austin,"Name        Texas Kappa Sigma Educational Foundation Inc
+Address        P O Box 470061
+Fort Worth, TX 76147","1002 W 26th St, Austin, TX 78705",0,0,1,,,,,
+UT,Lambda Chi Alpha,Austin,"Name        East Family 1994 Trust For Lica Elena East Pinkston
+Address        PO Box 1277
+Alice, TX 78333","2808 San Pedro St, Austin, TX 78705",2,0,1,,,,,
+UT,Phi Delta Theta,Austin,"Name        Michael Little
+Address        3401 Guadalupe St
+Austin, TX 78705","715 Graham Pl, Austin, TX 78705",2,0,1,,,,,
+UT,Phi Gamma Delta,Austin,"Name	Tau Deuteron Of Phi Gamma Delta House Corp
+Address	PO Box 4769
+Austin, TX 78765","300 W. 27th St.Austin, TX 78705",0,0,1,,,,,
+UT,Phi Kappa Psi,Austin,"Name	Texas Alpha House Board Inc
+Address	PO Box 28061
+Austin, TX 78755","2500 San Antonio St., Austin, TX 78705",0,0,1,,,,,
+UT,Phi Kappa Sigma,Austin,"Name	Sigma Alumni Corporation
+Address	900 Congress Ave #300
+Austin, TX 78701","2402 Rio Grande Street, Austin TX 78705",0,0,1,,,,,
+UT,Phi Kappa Tau,Austin,,,0,0,0,,,,,
+UT,Phi Kappa Theta,Austin,,,0,0,0,,,,,
+UT,Pi Kappa Alpha,Austin,"Name	Beta Mu Building Co Inc & Donald R Flournoy
+Address	3502 Windsor Rd
+Austin, TX 78703","2400 Leon St, Austin, TX 78705",0,0,1,,,,,
+UT,Pi Kappa Phi,Austin,"Name        Pi Kappa Phi Properties Inc
+Address        PO Box 240526
+Charlotte, NC 28224","2411 Longview Street, Austin, TX 78705",3,0,0,1,https://www.kvue.com/article/news/education/university-of-texas/ut-austin-pi-kappa-phi-banned/269-75cbe0d0-a110-4c62-bb4f-cd737a90390e,,,
+UT,Pi Kappa Phi,Austin,"Pi Kappa Phi Properties Inc.
+2015 Ayrsley Town Boulevard, Suite 200
+Charlotte, NC 28273","2411 Longview Street, Austin, TX 78705",3,0,0,1,,,,
+UT,Sigma Alpha Mu,Austin,"Name	Sigma Alpha Mu Inc
+Address	3345 Bee Cave Rd #208
+Austin, TX 78746","2501 Leon St, Austin, TX 78705",0,0,1,,,,,
+UT,Sigma Chi,Austin,"Name	Alpha Nu Chapter Of Sigma Chi & Linden Welsch
+Address	PO Box 201225
+Austin, TX 78720","2701 Nueces Street, Austin, TX 78705",0,0,1,,,,,
+UT,Sigma Phi Epsilon,Austin,,"2500 Pearl St, Austin, TX 78705",0,0,0,,,,,
+UT,Sigma Pi,Austin,,,0,0,0,,,,,
+UT,Tau Kappa Epsilon,Austin,,,0,0,0,,,,,
+UT,Texas Rho,Austin,"Name        Texas Rho House Corporation
+Address        6850 Austin Center Blvd #100
+Austin, TX 78731","2414 Pearl St, Austin, TX 78705",3,0,0,1,,,,
+UT,Texas Rho,Austin,"CAPITOL CORPORATE SERVICES, INC.
+206 E. 9TH ST., STE. 1300 
+AUSTIN, TX 78701","2414 Pearl St, Austin, TX 78705",3,0,0,1,,,,
+UT,Texas Rho,Austin,"TRAVIS A BOLCIK
+2856 S. ALAMEDA 
+CORPUS CHRISTI, TX 78404","2414 Pearl St, Austin, TX 78705",3,0,0,1,,,,
+UT,Theta Chi,Austin,"Name        Aaron S Reisfield 
+Address        1178 San Bernard St
+Austin, TX 78702","1908 San Gabriel St, Austin, TX 78705",2,0,1,,,,,
+UT,Zeta Psi,Austin,"Name        Zeta Psi Of Texas Inc
+Address        3515 Highland View Dr
+Austin, TX 78731","2806 Nueces St., Austin, Tx 78705",0,0,1,,,,,
+UT,Zeta Beta Tau,Austin,"Name	Zeta Beta Tau & Lambda Chapter House
+Address	10040 Circleview Dr
+Austin, TX 78733","710 W 28th St, Austin, TX 78705",0,0,1,,,,,
+USD,Beta Theta Pi,San Diego,,NA,0,0,0,,,,,
+USD,Delta Tau Delta,San Diego,,NA,0,0,0,,,,,
+USD,"Nu Alpha Kappa Fraternity, Inc.",San Diego,,NA,0,0,0,,,,,
+USD,Phi Gamma Delta,San Diego,,NA,0,0,0,,,,,
+USD,Phi Kappa Theta,San Diego,,NA,0,0,0,,,,,
+USD,Pi Kappa Phi,San Diego,,NA,0,0,0,,,,,
+USD,Sigma Phi Epsilon,San Diego,,NA,0,0,0,,,,,
+USD,Sigma Pi,San Diego,,NA,0,0,0,,,,,
+SDSU,Alpha Epsilon Pi,San Diego,"Name	San Diego Teke Corp
+C/O Ted Considine
+Address	8989 Rio San Diego Dr #250
+San Diego, CA 92108","5064 College Pl, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Delta Sigma Phi,San Diego,"Name        Gamma Alpha Chapter- Alumni Corpboard
+Address        9984 Scripps Ranch Blvd #133
+San Diego, CA 92131","5560 Hardy Ave, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Delta Upsilon,San Diego,"Name        Delta Upsilon Fraternity Alumni Assn Inc
+Address        P O Box 99120 San Diego Ca","5545 Hardy Ave, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Kappa Sigma,San Diego,"Name	Kappa Sigma Bldg Assn Epsilon Iota Chapter
+Address	3437 Browning St
+San Diego, CA 92106","5565 Aztec Walk, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Kappa Alpha Order,San Diego,"Name        San Diego College Properties LLC
+C/O Susan Berlin
+Address        3860 Riviera Dr #301
+San Diego, CA 92109","5071 College Ave, San Diego, CA 92115",3,0,0,1,,,,
+SDSU,Phi Delta Theta,San Diego,"Name        San Diego State University Foundation
+C/O Steven A Bloom 
+Address        5250 Campanile Dr
+San Diego, CA 92182","5734 Montezuma Rd, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Phi Gamma Delta,San Diego,"AZTEC SHOPS LTD Corporate Owner	
+5500 Campanile Dr
+San Diego, CA, 92182","5804 Montezuma Rd, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Phi Kappa Psi,San Diego,"Name        California Lambda Phi Kappa Psi Housing Corp
+Address        P O Box 310033
+Guatay, CA 91931","5525 Aztec Walk, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Pi Kappa Alpha,San Diego,"AZTEC SHOPS LTD Corporate Owner	
+5500 Campanile Dr
+San Diego, CA, 92182","5545 Aztec Walk, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Sigma Alpha Epsilon,San Diego,"CALIFORNIA THETA CHAPTER HOUSE ASSN Corporate Owner	
+P O Box 236131
+Encinitas, CA, 92023","5076 College Pl, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Sigma Chi,San Diego,,NA,0,0,0,,,,,
+SDSU,Sigma Nu,San Diego,"Name        Montezuma Mesa Properties Inc
+C/O James E Stark
+Address        P O Box 502442
+San Diego, CA 92150","5505 Aztec Walk, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Sigma Phi Epsilon,San Diego,"Name	Bayport Bunsen Associates LP
+Address	3090 Pullman St
+Costa Mesa, CA 92626","5712 Hardy Ave, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Theta Chi,San Diego,"Name        Gamma Theta Alumni Assn Of Theta Chi Fraternity Inc
+Address        8880 Rio San Diego Dr #750
+San Diego, CA 92108","5505 Lindo Paseo, San Diego, CA 92115",0,0,1,,,,,
+SDSU,Zeta Beta Tau,San Diego,,NA,0,0,0,,,,,
+University of Illinois at Chicago,Alpha Epsilon Pi,,,NA,0,0,0,,,,,
+University of Illinois at Chicago,Omega Delta,,,NA,0,0,0,,,,,
+University of Illinois at Chicago,Phi Kappa Psi,,,NA,0,0,0,,,,,
+University of Illinois at Chicago,Sigma Alpha Mu,,,NA,0,0,0,,,,,
+University of Illinois at Chicago,Tau Kappa Epsilon,,,NA,0,0,0,,,,,
+University of Illinois at Chicago,Theta Xi,,,NA,0,1,0,,,,,
+Northwestern,Alpha Epsilon Pi,,,"584 Lincoln St, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Delta Chi,,,"2309 Sheridan Rd, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Delta Tau Delta,,,"2317 Sheridan Rd, Evanston, IL 60201",0,0,1,,,,,
+Northwestern,Delta Upsilon,,,,0,0,0,,,,,
+Northwestern,Evans Scholars,,,"721 University Pl, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Lambda Chi Alpha,,,"2339 Sheridan Rd, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Phi Delta Theta,,,"2347 Sheridan Rd, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Phi Gamma Delta,,,"2331 Sheridan Rd, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Phi Kappa Psi,,,"2247 Sheridan Rd, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Phi Mu Alpha Sinfonia,,,,0,0,0,,,,,
+Northwestern,Pi Kappa Alpha,,,,0,0,0,,,,,
+Northwestern,Sigma Alpha Epsilon,,,,0,0,0,,,,,
+Northwestern,Sigma Chi,,,"2249 Sheridan Rd, Evanston, IL 60201",0,0,0,,,,,
+Northwestern,Sigma Nu,,,"2335 Sheridan Rd, Evanston, IL 60208",0,0,0,,,,,
+Northwestern,Sigma Phi Epsilon,,,,0,0,0,,,,,
+Northwestern,Zeta Beta Tau,,,"2251 Sheridan Rd, Evanston, IL 60201",0,0,0,,,,,
+Occidental,Alpha Phi Alpha,NA,,,0,0,0,,,,,
+Occidental,Kappa Alpha Psi,NA,,,0,0,0,,,,,
+Occidental,Phi Kappa Psi,NA,,,0,0,0,,,,,
+Occidental,Sigma Alpha Epsilon,Los Angeles,"Name	Occidental College
+Address	1600 Campus Rd
+Los Angeles, CA 90041","4909 Range View Ave, Los Angeles, CA 90042",0,1,1,,,,,
+Georgetown,Alpha Epsilon Pi,Washington D.C.,,NA,0,0,0,,,,,
+Georgetown,Alpha Phi Alpha,Washington D.C.,,NA,0,0,0,,,,,
+Georgetown,Delta Phi Epsilon,Washington D.C.,"Name	Delta Phi Epsilon
+Address	PO Box 25401
+Washington, DC 20007-8401","3401 Prospect St, Washington, DC 20007",0,0,1,,,,,
+Georgetown,Phi Iota Alpha,Washington D.C.,,NA,0,0,0,,,,,
+Georgetown,Sigma Alpha Epsilon,Washington D.C.,,NA,0,0,0,,,,,
+Georgetown,Zeta Psi,Washington D.C.,,NA,0,0,0,,,,,
+MIT,Alpha Delta Phi,Boston,,"351 Massachusetts Ave, Cambridge, MA 02139",0,0,0,,,,,
+MIT,Alpha Epsilon Phi,Boston,"Name	Mutaw Corp
+Address	330 Beacon St
+Boston, MA 02116","155 Bay State Rd, Boston, MA 02215",2,0,1,,,,,
+MIT,Beta Theta Pi,Boston,"BETA UPSILON ASSOC MA Corporate Owner	
+43609 Winthrop Ct
+Ashburn, VA, 20147","119 Bay State Rd, Boston, MA 02215",0,0,1,,,,,
+MIT,Chi Phi,Boston,"BETA FOUNDATION Corporate Owner	
+32 Hereford St
+Boston, MA","32 Hereford St, Boston, MA 02115",0,0,1,,,,,
+MIT,Delta Kappa Epsilon,Boston,"Name	Association Of Sigma Tau
+Address	6034 Rose St
+Houston, TX 77007","403 Memorial Dr, Cambridge, MA 02139",0,0,1,,,,,
+MIT,Delta Psi - No. 6,Boston,"Name	Tau Chapter Assoc Inc
+Address	10 Dana St
+Cambridge, MA 02138","428 Memorial Dr, Cambridge, MA 02139",0,0,1,,,,,
+MIT,Delta Upsilon,Boston,,"526 Beacon St, Boston, MA 02215",,1,0,1,note that this is now the home of the Theta Tau chapter,,,
+MIT,Delta Tau Delta,Boston,"BETA NU HOUSE CORP Corporate Owner	
+3 Sunset Ln
+Hingham, MA","416 Beacon St, Boston, MA 02115",0,0,1,,,,,
+MIT,Kappa Sigma,Boston,"Name	Mass Institute Of Tchnlgy
+Address	238 Main St 200
+Cambridge, MA 02142","407 Memorial Dr, Cambridge, MA 02139",1,0,1,,1,,,
+MIT,Lambda Chi Alpha,Boston,"BRUCE TWICKLER, 
+SECRETARY 45 COMMONWEALTH #2
+BOSTON, 02116 MA","99 Bay State Road Boston, MA",0,0,0,1,"twickler@alum.mit.edu
+bruce twickler",https://opencorporates.com/companies/us_ma/000012793,"dorsch@mit.edu
+dan dorsch",https://sigmanu.mit.edu/alumni
+MIT,Nu Delta,Boston,"ALUMNI ASSOC OF NU DELTA Corporate Owner 
+503 8Th Ave Apt 3
+Brooklyn, NY, 11215","460 Beacon St, Boston, MA 02115",0,0,1,,,,,
+MIT,Phi Beta Epsilon,Boston,"Name	Phi Beta Epsilon Corp
+Address	1 Po Box 1133 1915
+New London, NH 03257","400 Memorial Dr, Cambridge, MA 02139",0,0,1,,,,,
+MIT,Phi Delta Theta,Boston,"Name	Alumni Incorporate
+Address	902 Salem End Rd
+Framingham, MA 01702","97 Bay State Rd, Boston, MA 02215",0,0,1,,,,,
+MIT,Phi Kappa Sigma,Boston,"WILLIAM G DENHARD        
+8 Avon Rd
+Wellesley, MA 02482","530 Beacon St, Boston, MA 02215",2,0,1,,,,,
+MIT,Phi Kappa Theta,Boston,"ETA CHAPTER PHI KAPPA ALM        
+4 Kerrigan Way
+Woburn, MA 01801","229 Commonwealth Avenue, Boston, MA 02116",0,0,1,,,,,
+MIT,Phi Gamma Delta,Boston,,,,,,,,,,
+MIT,Phi Sigma Kappa,Boston,"Name	Alumni Assoc Of Omicron
+Address	1545 Ridgemoor Dr 301
+Silver Spring, MD 20901","487 Commonwealth Avenue, Boston, MA 02215",0,0,1,,,,,
+MIT,Pi Lambda Phi,Boston,"450 BEACON ST INC Corporate Owner        
+7 Chessman Dr
+Sharon, MA 02067","450 Beacon St, Boston, MA 02115",2,0,1,,,,,
+MIT,Sigma Alpha Epsilon,Boston,"Name	Mutaw Corp
+Address	330 Beacon St
+Boston, MA 02116","165 Bay State Rd, Boston, MA 02215",2,0,1,,,,,
+MIT,Sigma Chi,Boston,"ALPHA THETA CHAPTER SIGMA        
+44 Boulder Brook Rd
+Wellesley, MA 02481","532 Beacon St, Boston, MA 02215",0,0,1,,,,,
+MIT,Sigma Phi Epsilon,Boston,"Name	Mass Delta Alumni Corp
+Address	331 Summer St 2
+Somerville, MA 02144","518 Beacon St, Boston, MA 02215",0,0,1,,,,,
+MIT,Tau Epsilon Phi,Boston,"MASSACHUSETTS INSTITUTE        
+Po Box 397068
+Cambridge, MA","253 Commonwealth Avenue, Boston, MA 02116",1,1,1,,,,,
+MIT,Theta Chi,Boston,"BETA CHAPTER OF THETA CHI Corporate Owner        
+641 Exeter Rd
+Hampton, NH 03842","528 Beacon St, Boston, MA 02215",0,0,1,,,,,
+MIT,Theta Delta Chi,Boston,"Name        Theta Deuteron House Corp
+Address        40 E 9 St 11g
+New York, NY 10003","372 Memorial Dr, Cambridge, MA 02139",0,0,1,,,,,
+MIT,Theta Tau,Boston,"TECH DELTA UPSILON ASSOC Corporate Owner        
+140 Old Littleton Rd
+Harvard, MA 01451
+","526 Beacon St, Boston, MA 02215",0,0,1,,,,,
+MIT,Theta Xi,Boston,"THETA XI HOUSING CORP Corporate Owner        
+64 Bay State Rd
+Boston, MA 02215","64 Bay State Rd, Boston, MA 02215",0,1,1,,,,,
+MIT,Zeta Beta Tau,Boston,"Name	Dover Club Of Mit Inc
+Address	58 Manchester Rd 2
+Brookline, MA 02446","58 Manchester Rd, Brookline, MA 02446",0,0,1,,,,,
+MIT,Zeta Psi,Boston,"Name        Mit 233 Mass Ave
+Address        238 Main St 200
+Cambridge, MA 02142","233 Massachusetts Ave, Cambridge, MA 02139",2,0,1,,,,,
+Georgia Tech,Alpha Epsilon Pi,Atlanta,"Name	Zeta House Corp
+Address	8815 Wesleyan Rd
+Indianapolis, IN 46268","714 Techwood Dr NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Alpha Sigma Phi,Atlanta,"Name	Clven Zeta Eta LLC
+Address	710 Adams St
+Carmel, IN 46032","171 5th St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Alpha Tau Omega,Atlanta,"Name	Richmond Property Group LTD
+Address	1 N Pennsylvania St 1200
+Indianapolis, IN 46204","205 4th St NW, Atlanta, GA 30313",1,0,1,,,,,
+Georgia Tech,Beta Theta Pi,Atlanta,"Name	Gamma Eta Assn Beta Theta
+Address	2160 Niles Pl Ne
+Atlanta, GA 30324","764 Fowler St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Chi Phi,Atlanta,"Name        Omega Trust Assn
+Address        245 N Highland Ave NE 230-159
+Atlanta, GA 30307","720 Fowler St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Chi Psi,Atlanta,,"150 4th St NW, Atlanta, GA 30313",0,0,0,,,,,
+Georgia Tech,Delta Chi,Atlanta,"Name        Regents Univ System Of Ga
+Address        270 Washington St Sw
+Atlanta, GA 30334","176 5th St NW, Atlanta, GA 30313",1,0,1,,,,,
+Georgia Tech,Delta Sigma Phi,Atlanta,,"165 4th St NW, Atlanta, GA 30313",0,0,0,,,,,
+Georgia Tech,Delta Tau Delta,Atlanta,,"4th St NW, Atlanta, GA 30313",0,0,0,,,,,
+Georgia Tech,Delta Upsilon,Atlanta,"Name	Delta Upsilon Alumni Club Of Georgia
+Address	P O Box 250482
+Atlanta, GA 30325","154 5th St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Kappa Alpha Order,Atlanta,"Name	Alpha Sigma Properites Inc
+Address	400 Galleria Pkwy SE 1900
+Atlanta, GA 30339","801 Techwood Dr NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Kappa Sigma,Atlanta,"Name	Kappa Sigma House Corp
+Address	3253 Bakewell St
+Douglasville, GA 30135","182 6th St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Lambda Chi Alpha,Atlanta,"Name        Beta Kappa House Corp
+Address        2870 Pharr Ct S #1501
+Atlanta, GA 30305","792 Techwood Dr NW, Atlanta, GA 30313",0,0,1,1,Chris Morris,lcabk.housecorptreasurer@gmail.com,"https://websites.omegafi.com/omegaws/lambdachialphageorgiatech/files/2018/06/The-Rambler-Fall-2017.pdf
+https://osi.gatech.edu/student-organization-conduct-history",
+Georgia Tech,Phi Delta Theta,Atlanta,"Name        Phi Delta Theta Georgia Delta Alumni Assn
+Address        3639 Chelsea Cres Ne
+Atlanta, GA 30319","734 Fowler St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Phi Gamma Delta,Atlanta,"Name	Gamma Tau Inc
+Address	1730 Mt Vernon Rd G
+Atlanta, GA 30338","841 Fowler St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Phi Kappa Psi,Atlanta,,NA,0,0,0,,,,,
+Georgia Tech,Phi Kappa Sigma,Atlanta,"Name	Alpha Nu Home Owning Group
+Address	3895 Foxford Dr
+Atlanta, GA 30340","783 Techwood Dr NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Phi Kappa Tau,Atlanta,"Name	Alpha Rho House Corp Of Phi Kappa Tau
+Address	2020 Howell Mill RD NW C-351
+Atlanta, GA 30318","175 4th St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Phi Kappa Theta,Atlanta,"Name	Phi Kappa Theta
+Address	800 Fowler St Nw
+Atlanta, GA 30313","800 Fowler St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Phi Sigma Kappa,Atlanta,"Name	K D Inc
+Address	860 Johnson Ferry RD NE 140-124
+Atlanta, GA 30342","825 Techwood Dr NW, Atlanta, GA 30332",2,0,1,,,,,
+Georgia Tech,Pi Kappa Alpha,Atlanta,"Name	Alpha Delta Corp
+Address	5545 Glen Erroll Rd
+Atlanta, GA 30327","260 Ferst Dr NW, Atlanta, GA 30318",0,0,1,,,,,
+Georgia Tech,Pi Kappa Phi,Atlanta,"Name	Pi Kappa Phi
+Address	220 Ferst Dr Nw
+Atlanta, GA 30318","220 Ferst Dr NW, Atlanta, GA 30318",0,0,1,,,,,
+Georgia Tech,Psi Upsilon,Atlanta,"Name        Psi Upsilon Society Of Ga Inc
+Address        133 Peachtree St NE 4925
+Atlanta, GA 30303","831 Techwood Dr NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Sigma Alpha Epsilon,Atlanta,,"4th St NW, Atlanta, GA 30313",0,0,0,,,,,
+Georgia Tech,Sigma Chi,Atlanta,"Name	Beta Psi House Corp
+Address	2321 4 St 203
+Tucker, GA 30084","770 Techwood Dr NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Sigma Nu,Atlanta,,"750 Fowler St, Atlanta, GA 30313",0,0,0,,,,,
+Georgia Tech,Sigma Phi Epsilon,Atlanta,"Name	Georgia Alpha Builders Inc
+Address	P O Box 79171
+Atlanta, GA 30357","190 5th St NW, Atlanta, GA 30332",2,0,1,,,,,
+Georgia Tech,Tau Kappa Epsilon,Atlanta,"Name	Tau Kappa Epsilon Of Ga Inc
+Address	11140 West Rd
+Roswell, GA 30075","159 5th St NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Theta Chi,Atlanta,"Name	Alpha Nu Bldg Of Theta Chi Inc
+Address	P.o. Box 386
+Kennesaw, GA 30156","840 Techwood Dr NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Theta Xi,Atlanta,"Name	Beta Alpha Assn Of Theta Xi Fraternity
+Address	541 Tenth St 109
+Atlanta, GA 30318","777 Techwood Dr NW, Atlanta, GA 30313",0,0,1,,,,,
+Georgia Tech,Triangle,Atlanta,,NA,0,0,0,,,,,
+Georgia Tech,Zeta Beta Tau,Atlanta,"Name	Zach Inc
+Address	P O Box 94112
+Atlanta, GA 30377","160 6th St NW, Atlanta, GA 30313",0,0,1,,,,,
+University of Denver,Alpha Gamma Omega,Denver,,NA,0,0,0,,,,,
+University of Denver,Beta Theta Pi,Denver,"Name	Aspen Gate Properties LLC
+Address	1942 Broadway #314
+Boulder, CO 80302-5233","2424 S York St, Denver, CO 80210",1,0,1,,,,,
+University of Denver,Delta Chi,Denver,,NA,0,0,0,,,,,
+University of Denver,Lambda Chi Alpha,Denver,,"2217 E Evans Ave, Denver, CO 80210",0,0,0,,,,,
+University of Denver,Pi Kappa Phi,Denver,,NA,0,0,0,,,,,
+University of Denver,Sigma Chi,Denver,"Name        AGD Fraternity Housing Corp -Epsilon Gamma
+Address        8710 N Meridian ST #
+Indianapolis, IN 46260","2203 S Josephine St, Denver, CO 80210",0,0,1,,,,,
+University of Denver,Sigma Alpha Epsilon,Denver,,"2050 S Gaylord St, Denver, CO 80210",,,,1,,,,
+Univeristy of Denver,Theta Chi,Denver,,NA,0,0,0,,,,,
+University of Denver,Zeta Beta Tau,Denver,,"1959 S Columbine St, Denver, CO 80210",0,0,0,,,,,
+UPenn,Alpha Epsilon Pi,Philadelphia,"Name	Simon Associates Limited
+Address	4043 Walnut St
+Philadelphia, PA 19104","122 S 41st St, Philadelphia, PA 19104",1,0,0,,,,,
+UPenn,Sigma Nu,Philadelphia,,"3819 Walnut St, Philadelphia, PA 19104",0,0,0,,,,,
+UPenn,Alpha Chi Rho,Philadelphia,"Name        Phi Phi Club Of Alpha
+Address        32 Brookview Dr
+Lititz, PA 17543","219 S 36th St, Philadelphia, PA 19104",0,0,0,,,,,
+UPenn,Delta Psi,Philadelphia,"Name        Delta Alumni Association
+Address        PO Box 2278
+Columbus, GA 31902","3637 Locust Walk, Philadelphia, PA 19104",0,0,0,,,,,
+UPenn,Alpha Sigma Phi,Philadelphia,"Name        PKB17 LLC
+Address        8006 Arlington Ave
+Upper Darby, PA 19082","4030 Spruce St, Philadelphia, PA 19104",0,0,0,,,,,
+UPenn,Alpha Delta Phi,Philadelphia,,,0,0,0,,,,,
+UPenn,Delta Tau Delta,Philadelphia,,,0,0,0,,,,,
+,Alpha Delta Phi,,,,0,0,0,,,,,
+,Alpha Tau Omega,,,,0,0,0,,,,,
+,Beta Theta Pi,,,,0,0,0,,,,,
+,Chi Phi,,,,0,0,0,,,,,
+,Delta Sigma Phi,,,,0,0,0,,,,,
+,Delta Tau Delta,,,,0,0,0,,,,,
+,Delta Upsilon,,,,0,0,0,,,,,
+,Lambda Chi Alpha,,,,0,0,0,,,,,
+,Phi Gamma Delta,,,,0,0,0,,,,,
+,Phi Kappa Psi,,,,0,0,0,,,,,
+,Phi Kappa Tau,,,,0,0,0,,,,,
+,Psi Upsilon,,,,0,0,0,,,,,
+,Sigma Chi,,,,0,0,0,,,,,
+,Sigma Nu,,,,0,0,0,,,,,
+,Theta Delta Chi,,,,0,0,0,,,,,
+,Theta Xi,,,,0,0,0,,,,,
