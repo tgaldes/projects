@@ -11,7 +11,7 @@ import collections
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1sQZiAi--Gj3V0O9oYfMsz78EJUHeDjjve2A5AsWDB-Y'
+
 SAMPLE_RANGE_NAME = 'houses!A1:F'
 def sheet():
     creds = None

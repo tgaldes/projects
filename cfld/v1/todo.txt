@@ -1,0 +1,10 @@
+update column names in real sheet
+start reading from real sheet while we aren't writing out data?
+
+
+Epics
+1) send mail as tyler@cfld.com
+2) sendgrid api
+3) data persistence schema and to docs
+4) letter writing
+5) UI integration

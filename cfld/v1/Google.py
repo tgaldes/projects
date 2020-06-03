@@ -1,16 +1,77 @@
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from __future__ import print_function
+import pickle
+import os.path
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+import os
+import collections
+import pdb
+import pickle
+import data_cleanup_helpers as dch
+
+class Google:
+    def __init__(self, spreadsheet_id='1sQZiAi--Gj3V0O9oYfMsz78EJUHeDjjve2A5AsWDB-Y'):
+        self.creds = self.__get_token()
+        self.service = build('sheets', 'v4', credentials=self.creds)
+        self.spreadsheet_id = spreadsheet_id
+        self.spreadsheet = self.__get_spreadsheet()
+
+        # map name of sheet to data
+        self.sheets = self.__get_sheets()
+
+    def get_clean_data(self, sheet_name, ffill_columns):
+        return dch.clean(self.sheets[sheet_name], ffill_columns)
+
+    def get_header(self, sheet_name):
+        return self.sheets[sheet_name][0]
 
 
-# use creds to create a client to interact with the Google Drive API
-scope = ['https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1-70ee9387bf5a.json', scope)
-client = gspread.authorize(creds)
+    def __get_token(self):
+        creds = None
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('pickles/cfldv1_secret.pickle'):
+            with open('pickles/cfldv1_secret.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            try:
+                os.mkdir('pickles')
+            except:
+                pass
+            with open('pickles/cfldv1_secret.pickle', 'wb') as token:
+                pickle.dump(creds, token)
+        return creds
+    
+    def __get_spreadsheet(self):
+        # Call the Sheets API
+        return self.service.spreadsheets().get(spreadsheetId=self.spreadsheet_id).execute()
 
-# Find a workbook by name and open the first sheet
-# Make sure you use the right name here.
-sheet = client.open('pnc sandbox edition').sheet1
+    def __get_sheets(self):
+        m = {}
+        for sheet in self.spreadsheet.get('sheets'):
+            title = sheet.get('properties').get('title')
+# Get the data from this sheet
+            range_name='{}!A1:Z1000'.format(title) # TODO
+            m[title] = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=range_name).execute().get('values', [])
+        return m
 
-# Extract and print all of the values
-list_of_hashes = sheet.get_all_records()
-print(list_of_hashes)
+
+if __name__=='__main__':
+    '''g = Google()
+    with open('pickles/google.pickle', 'wb') as f:
+        pickle.dump(g, f)'''
+    with open('pickles/google.pickle', 'rb') as f:
+        g2 = pickle.load(f)
+    pdb.set_trace()
+    b = dch.pad_short_rows(g2.sheets['addresses_clean'])
+    a = dch.ffill(b, ['university', 'fraternity'])

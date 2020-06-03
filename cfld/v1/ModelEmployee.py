@@ -1,11 +1,24 @@
 from House import House
+from Contact import Contact
+import collections
+from Google import Google
+import spreadsheet_constants
+import pdb
 
 class ModelEmployee:
-    def __init__(self, houses):
+    def __init__(self, g):
         #self.apiToken = apiToken
+        self.google = g
+        HouseData = collections.namedtuple('HouseData', g.get_header(spreadsheet_constants.sheet_names['houses']))
+        ContactData = collections.namedtuple('ContactData', g.get_header(spreadsheet_constants.sheet_names['contacts']))
+# maybe we should hold Iaddressees and Iemailaddresses in two lists
         self.houses = []
-        for house in houses:
-            self.houses.append(House(house))
+        self.contacts = []
+        for data in g.get_clean_data(spreadsheet_constants.sheet_names['houses'], spreadsheet_constants.ffill_column_names['houses'])[1:]:
+            self.houses.append(House(HouseData(*data)))
+        for data in g.get_clean_data(spreadsheet_constants.sheet_names['contacts'], spreadsheet_constants.ffill_column_names['contacts'])[1:]:
+            self.contacts.append(Contact(ContactData(*data)))
+        pdb.set_trace()
 
     def send_intro_emails(self, min_duplicate_days,
                           house_filter=[],
@@ -38,7 +51,8 @@ class ModelEmployee:
 
 
 if __name__=='__main__':
-    emp = ModelEmployee(['Theta Xi', 'SAE'])
-    emp.send_snail_mail(365)
+    g = Google()
+    emp = ModelEmployee(g)
+    #emp.send_snail_mail(365)
 
 
