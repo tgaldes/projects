@@ -1,11 +1,11 @@
 from interface import Interface
 
-class IAddressee:
-    def write_letter() -> str:
+class IAddressee(Interface):
+    def send_mail(self, letter_sender):
         pass
 
-class IEmailAddressee:
-    def send_mail() -> str:
+class IEmailAddressee(Interface):
+    def send_email(self, email_sender):
         pass
 
 class IEmailSender(Interface):
