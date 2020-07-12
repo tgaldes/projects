@@ -3,9 +3,14 @@ from Interfaces import ILetterSender
 
 class MockLetterSender(implements(ILetterSender)):
     def __init__(self):
+    # TODO: give our letter sender access to Google and
+    # expose calls to:
+        # 1- append our message to the google sheet containing one page letters
+        # 2- make a note in the contacts sheet in pnc doc saying the date that we mailed the letter
         pass
     def send_mail(self, address, msg):
-        print('Sent mock letter to address:\n{}'.format(address))
+        print('Sending: "{}"\nAddress:\n{}'.format(msg, address))
+# TODO: use calls 1 and 2 above
 
 
 

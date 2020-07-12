@@ -2,14 +2,16 @@ sheet_names = { \
 'houses' : 'houses',
 'contacts' : 'addresses_clean'}
 
+columns_that_define_unique_house = 2
 # can these be dynamically populated?
 column_names = { \
 'houses' : ['short_name', 'fraternity'], \
-'contacts' : ['short_names', 'fraternity']} # TODO: fill the rest of this out
+'contacts' : ['short_name', 'fraternity']} # TODO: fill the rest of this out
 
 ffill_column_names = { \
 'houses' : ['short_name', 'fraternity'], \
 'contacts' : ['short_name', 'fraternity']}
+
 
 
 # validation
@@ -18,3 +20,15 @@ if sheet_names.keys() != column_names.keys():
 
 if sheet_names.keys() != ffill_column_names.keys():
     raise Exception('sheet names and ffill_column_names keys do not match')
+
+
+
+# for testing, names of columns subject to change
+contact_data_header = ['short_name', 'fraternity', 'name', 'address', 'contact', 'phone', 'linkedin', 'email', 'links', 'code', 'old', 'notes', 'helper_label', 'is_confirmed_email', 'is_confirmed_board_address', 'have_confirmed_email_for_alumni', 'have_board_address_for_house', 'have_client_at_school', 'house_tuple']
+contact_data_info = [ \
+['USC', 'Alpha Tau Omega', 'Tyler Galdes', '11500 Tennessee Ave\nUnit 324\nLos Angeles, CA 90064', '', '', '', '', '', 'board', '0', '', '', '', '', '', '', ''], \
+['UCLA', 'Theta Xi', 'Tyler Galdes', '629 Gayley Ave\nLos Angeles, CA 90024', '', '', '', '', '', 'undergrad', '0', '', '', '', '', '', '', '']]
+house_data_header = ['short_name', 'fraternity', 'chapter_address', 'chapter_designation', 'mailing_address', 'corporate_filing', 'code', 'chapter_website', 'alumni_website', 'notes', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'helper_label', 'number_of_confirmed_emails']
+house_data_info = [['USC', 'Alpha Tau Omega', 'TODO', 'Gamma Xi', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO'], \
+['UCLA', 'Theta Xi', 'TODO', 'Alpha Zeta', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO']]
+

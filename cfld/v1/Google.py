@@ -10,6 +10,10 @@ import pdb
 import pickle
 import data_cleanup_helpers as dch
 
+
+from enums import MailType
+from datetime import date
+
 class Google:
     def __init__(self, spreadsheet_id='1sQZiAi--Gj3V0O9oYfMsz78EJUHeDjjve2A5AsWDB-Y'):
         self.creds = self.__get_token()
@@ -64,6 +68,16 @@ class Google:
             range_name='{}!A1:Z1000'.format(title) # TODO
             m[title] = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=range_name).execute().get('values', [])
         return m
+
+
+# TODO: letter sending interface
+# This will allow classes to append a string to a Google Sheet
+    def append_to_letter_doc(self, msg):
+        print('Implement appending to letter doc so that we can append the message:\n {}'.format(msg))
+# TODO: track contacts interface
+# This will allow classes to make a note of the dates on which Contacts were messaged via email or snail mail
+    def log_contact(self, contact, mail_type_enum):
+        print('Implement log_contact so that we can make a note of contacting {} via {} on {}:\n {}'.format(contact.name(), mail_type, date.today()))
 
 
 if __name__=='__main__':
