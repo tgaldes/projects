@@ -1,6 +1,7 @@
 from interface import implements
 from Interfaces import ILetterSender
 
+# TODO: can we just make the Google class an ILetterSender?
 class MockLetterSender(implements(ILetterSender)):
     def __init__(self):
     # TODO: give our letter sender access to Google and

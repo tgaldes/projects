@@ -6,6 +6,8 @@ import letters
 from LetterSender import MockLetterSender
 import spreadsheet_constants
 import collections
+from Google import Google
+import pickle
 
 class Contact(implements(IAddressee), implements(IEmailAddressee)):
     def __init__(self, named_tuple):
@@ -52,15 +54,21 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
 
 
 if __name__=='__main__':
-    mls = MockLetterSender()
+    g = Google()
+    '''with open('pickles/google.pickle', 'wb') as f:
+        pickle.dump(g, f)'''
+    with open('pickles/google.pickle', 'rb') as f:
+        g2 = pickle.load(f)
+    #b = dch.pad_short_rows(g2.sheets['addresses_clean'])
+    #a = dch.ffill(b, ['university', 'fraternity'])
     HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
     ContactData = collections.namedtuple('ContactData', spreadsheet_constants.contact_data_header)
     houses = [HouseData(*x) for x in spreadsheet_constants.house_data_info]
     contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(spreadsheet_constants.contact_data_info)]
-    print(contacts)
+    #print(contacts)
     for c in contacts:
-        c.send_mail(mls)
-        print(getattr(c.data, 'name'))
+        c.send_mail(g2)
+        #print(getattr(c.data, 'name'))
 
 
 
