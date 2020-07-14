@@ -13,7 +13,7 @@ class IEmailSender(Interface):
         pass
 
 class ILetterSender(Interface):
-    def send_mail(self, address, msg):
+    def send_mail(self, address, msg, contact_info):
         pass
 
 

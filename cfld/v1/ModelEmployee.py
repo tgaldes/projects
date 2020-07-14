@@ -10,6 +10,7 @@ class ModelEmployee:
     def __init__(self, g):
         #self.apiToken = apiToken
         self.google = g
+# TODO: verify on creation that (self.data.short_name, self.data.fraternity, self.data.name) in list of contacts creates a unique person, if it doesn't we need to rethink the keys
         '''HouseData = collections.namedtuple('HouseData', g.get_header(spreadsheet_constants.sheet_names['houses']))
         ContactData = collections.namedtuple('ContactData', g.get_header(spreadsheet_constants.sheet_names['contacts']))
 # maybe we should hold Iaddressees and Iemailaddresses in two lists

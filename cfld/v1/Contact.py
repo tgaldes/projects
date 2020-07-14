@@ -3,7 +3,8 @@ from Interfaces import IAddressee, IEmailAddressee
 import letters
 
 # Imported for testing, used in main:
-from LetterSender import MockLetterSender
+#from LetterSender import MockLetterSender
+# TODO: fix MockLetterSender interface
 import spreadsheet_constants
 import collections
 from Google import Google
@@ -27,7 +28,7 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
         if self.data.code not in letters.letters:
             raise Exception('Code: {} is not in letters.py.letters map'.format(self.data.code))
         letter = self.__format_letter(letters.letters[self.data.code])
-        letter_sender.send_mail(self.data.address, letter)
+        letter_sender.send_mail(self.data.address, letter, self.data) # TODO: what do we pass with a house instantiation?
 
     def send_email(self, email_sender):
         email_sender.send_mail('A subject', 'This is a letter for {}'.format(self.name), 'tgaldes@gmail.com')
@@ -54,8 +55,8 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
 
 
 if __name__=='__main__':
-    g = Google()
-    '''with open('pickles/google.pickle', 'wb') as f:
+    '''g = Google()
+    with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)'''
     with open('pickles/google.pickle', 'rb') as f:
         g2 = pickle.load(f)
