@@ -9,7 +9,7 @@ class IEmailAddressee(Interface):
         pass
 
 class IEmailSender(Interface):
-    def send_mail(self, subject, msg, to_addr=''):
+    def send_email(self, subject, msg, contact_info):
         pass
 
 class ILetterSender(Interface):

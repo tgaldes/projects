@@ -9,6 +9,7 @@ import spreadsheet_constants
 import collections
 from Google import Google
 import pickle
+import enums
 
 class Contact(implements(IAddressee), implements(IEmailAddressee)):
     def __init__(self, named_tuple):
@@ -23,21 +24,34 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
 
     def send_mail(self, letter_sender):
         if self.data.address == '':
-            print('Skipping sending mail when address is empty for contact {},{},{}'.format(self.data.short_name, self.data.house, self.data.name))
+            print('Skipping sending mail when address is empty for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, self.data.name))
             return
         if self.data.code not in letters.letters:
             raise Exception('Code: {} is not in letters.py.letters map'.format(self.data.code))
-        letter = self.__format_letter(letters.letters[self.data.code])
+        letter = self.__format_letter()
         letter_sender.send_mail(self.data.address, letter, self.data) # TODO: what do we pass with a house instantiation?
 
     def send_email(self, email_sender):
-        email_sender.send_mail('A subject', 'This is a letter for {}'.format(self.name), 'tgaldes@gmail.com')
+        if self.data.email == '':
+            print('Skipping sending email when email is empty for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, self.data.name))
+            return
+        if self.data.code not in letters.emails:
+            raise Exception('Code: {} is not in letters.py.letters map'.format(self.data.code))
+        email = self.__format_email()
+        email_sender.send_email('TODO: subject', email, self.data)
 
 
-    def __format_letter(self, letter):
-        letter_class = letters.letters[self.data.code]
-        return letter_class.msg.format(
-            *[self.__get_attr(self.datas[x[1]], x[0]) for x in letter_class.fields]) 
+    def __format_email(self):
+        return self.__format_message(enums.MailType.EMAIL)
+    def __format_letter(self):
+        return self.__format_message(MailType.MAIL)
+    def __format_message(self, mail_type_enum):
+        if mail_type_enum == enums.MailType.EMAIL:
+            m = letters.emails[self.data.code]
+        else:
+            m = letters.letters[self.data.code]
+        return m.msg.format(
+            *[self.__get_attr(self.datas[x[1]], x[0]) for x in m.fields]) 
 
     def __get_attr(self, tup, key):
         attr = getattr(tup, key)
@@ -55,11 +69,11 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
 
 
 if __name__=='__main__':
-    '''g = Google()
-    with open('pickles/google.pickle', 'wb') as f:
-        pickle.dump(g, f)'''
+    g = Google()
+    '''with open('pickles/google.pickle', 'wb') as f:
+        pickle.dump(g, f)
     with open('pickles/google.pickle', 'rb') as f:
-        g2 = pickle.load(f)
+        g2 = pickle.load(f)'''
     #b = dch.pad_short_rows(g2.sheets['addresses_clean'])
     #a = dch.ffill(b, ['university', 'fraternity'])
     HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
@@ -68,7 +82,7 @@ if __name__=='__main__':
     contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(spreadsheet_constants.contact_data_info)]
     #print(contacts)
     for c in contacts:
-        c.send_mail(g2)
+        c.send_email(g)
         #print(getattr(c.data, 'name'))
 
 

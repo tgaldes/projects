@@ -14,12 +14,12 @@ from interface import implements
 
 from enums import MailType
 import datetime
-from Interfaces import ILetterSender
+from Interfaces import ILetterSender, IEmailSender
 import spreadsheet_constants
 SHEET_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 DOC_SCOPES = ['https://www.googleapis.com/auth/documents']
 
-class Google(implements(ILetterSender)):
+class Google(implements(ILetterSender), implements(IEmailSender)):
     def __init__(self, spreadsheet_id='1FXTd8S0OUK-dUV2flsX68G71YLFw37e2zY5DH-wqfoM', letter_id='1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'):
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
         self.letter_creds = self.__load_creds('pickles/cfldv1_letter_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/docs_credentials.json', DOC_SCOPES)
@@ -46,7 +46,7 @@ class Google(implements(ILetterSender)):
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
-        if os.pickle_path.exists(pickle_path):
+        if os.path.exists(pickle_path):
             with open(pickle_path, 'rb') as token:
                 creds = pickle.load(token)
         # If there are no (valid) credentials available, let the user log in.
@@ -82,15 +82,17 @@ class Google(implements(ILetterSender)):
         return m, sheets
 
 
-# TODO: letter sending interface
-# This will allow classes to append a string to a Google Sheet
+#IEmailSender
+    def send_email(self, subject, msg, contact_info):
+        print('Implement sending email with msg: {}'.format(msg))
+        self.__log_contact(contact_info, MailType.EMAIL)
 #ILetterSender
     def send_mail(self, address, msg, contact_info):
         print('Sending: "{}"\nAddress:\n{}'.format(msg, address))
         self.__append_to_letter_doc(address, msg)
         self.__log_contact(contact_info, MailType.MAIL)
     def __append_to_letter_doc(self, address, msg):
-        # TODO: append the page break instead of prepend
+        full_msg = '{}\n\n{}\n'.format(address, msg)
         requests = [
         {
             'insertText': 
@@ -99,7 +101,7 @@ class Google(implements(ILetterSender)):
                 {
                     'index': 1,
                 },
-                'text': '{}\n\n{}'.format(address, msg)
+                'text': full_msg
             } \
         }
         , \
@@ -108,22 +110,18 @@ class Google(implements(ILetterSender)):
             {
                 'location' :
                 {
-                    'index': 1
+                    'index': 1 + len(full_msg)
                 }
             }
         }
         ]
-        #{'paragraph': {'elements': [{'pageBreak': {'textStyle': {}}, 'startIndex': 1, 'endIndex': 2}
         result = self.letter_service.documents().batchUpdate(
                 documentId=self.letter_id, body={'requests': requests}).execute()
 
 # This will allow classes to make a note of the dates on which Contacts were messaged via email or snail mail
     def __log_contact(self, contact_info, mail_type_enum):
-        #print('Implement log_contact so that we can make a note of contacting {} via {} on {}:\n'.format(contact_info.short_name, mail_type_enum, date.today()))
-        #print(self.sheets_data['addresses_clean'])
 # get row number
         sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
-        sheet = self.sheets[spreadsheet_constants.sheet_names['contacts']]
         row_num = 1
         for i, row in enumerate(sheet_data):
             if row[0] == contact_info.short_name \
@@ -132,12 +130,20 @@ class Google(implements(ILetterSender)):
                 row_num += i
                 print('match for {} at row {}'.format(row[2], i + 1))
                 break
+        if row_num == 1:
+            print('ERROR: could not find a match for {} {} {}'.format(contact_info.short_name, contact_info.fraternity, contact_info.name))
+            return
 
 # get column from constants
-        col_num = 1 + sheet_data[0].index(spreadsheet_constants.mail_date_column_name)
+        col_num = 1 + sheet_data[0].index(spreadsheet_constants.mail_type_enum_to_column_name[mail_type_enum])
+        if col_num == 1:
+            raise Exception('Column number of mail date tracking column on sheet is misconfigured, aborting.')
         r = spreadsheet_constants.range_builder[col_num] + str(row_num)
         rangeName = "addresses_clean!{}".format(r)
-        values = [[datetime.date.today().strftime('%Y%m%d')]]
+
+# get the current value of the cell so we can append today's datetime
+        current_value = sheet_data[row_num - 1][col_num - 1]
+        values = [[current_value + datetime.date.today().strftime('%Y%m%d') + '\n']]
         Body = {
             'values' : values,
         }
@@ -145,9 +151,6 @@ class Google(implements(ILetterSender)):
         result = self.sheet_service.spreadsheets().values().update(
         spreadsheetId=self.spreadsheet_id, range=rangeName,
         valueInputOption='RAW', body=Body).execute()
-# create range
-# update request
-
 
 if __name__=='__main__':
     g = Google()

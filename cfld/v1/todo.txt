@@ -8,3 +8,8 @@ Epics
 3) data persistence schema and to docs
 4) letter writing
 5) UI integration
+
+
+next steps:
+    email sender interfaces w/ no sendgrid, will be able to extract out a little bit of the work
+    that we do when we track what mail is being sent out
