@@ -51,8 +51,26 @@ def main():
                 },
                 'text': 'test first line\n'
             }
+        },
+        {
+    'insertInlineImage': {
+        'location': {
+            'index': 1
+        },
+        'uri':
+            'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',
+        'objectSize': {
+            'height': {
+                'magnitude': 100,
+                'unit': 'PT'
+            },
+            'width': {
+                'magnitude': 100,
+                'unit': 'PT'
+            }
         }
-    ]
+    }
+}]
     result = service.documents().batchUpdate(
             documentId=DOCUMENT_ID, body={'requests': requests}).execute()
 
