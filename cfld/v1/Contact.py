@@ -44,7 +44,7 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
     def __format_email(self):
         return self.__format_message(enums.MailType.EMAIL)
     def __format_letter(self):
-        return self.__format_message(MailType.MAIL)
+        return self.__format_message(enums.MailType.MAIL)
     def __format_message(self, mail_type_enum):
         if mail_type_enum == enums.MailType.EMAIL:
             m = letters.emails[self.data.code]
@@ -69,11 +69,11 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
 
 
 if __name__=='__main__':
-    g = Google()
-    '''with open('pickles/google.pickle', 'wb') as f:
-        pickle.dump(g, f)
+    '''g = Google()
+    with open('pickles/google.pickle', 'wb') as f:
+        pickle.dump(g, f)'''
     with open('pickles/google.pickle', 'rb') as f:
-        g2 = pickle.load(f)'''
+        g2 = pickle.load(f)
     #b = dch.pad_short_rows(g2.sheets['addresses_clean'])
     #a = dch.ffill(b, ['university', 'fraternity'])
     HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
@@ -82,7 +82,8 @@ if __name__=='__main__':
     contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(spreadsheet_constants.contact_data_info)]
     #print(contacts)
     for c in contacts:
-        c.send_email(g)
+        c.send_email(g2)
+        c.send_mail(g2)
         #print(getattr(c.data, 'name'))
 
 

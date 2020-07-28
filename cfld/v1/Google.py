@@ -91,9 +91,35 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         print('Sending: "{}"\nAddress:\n{}'.format(msg, address))
         self.__append_to_letter_doc(address, msg)
         self.__log_contact(contact_info, MailType.MAIL)
+# TODO: don't format 'full_msg' and have the caller send that themselves, they can still pass address as a separate arg so we can do whatever our letter service needs here
     def __append_to_letter_doc(self, address, msg):
-        full_msg = '{}\n\n{}\n'.format(address, msg)
+        full_msg = '\n\n\n\n\n{}\n\n{}\n'.format(address, msg)
         requests = [
+        {
+            'insertInlineImage': 
+            {
+                'location': 
+                {
+                    'index': 1
+                },
+                'uri':
+                'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',
+                'objectSize': 
+                {
+                    'height': 
+                    {
+                        'magnitude': 100,
+                        'unit': 'PT'
+                    },
+                    'width': 
+                    {
+                        'magnitude': 100,
+                        'unit': 'PT'
+                    }
+                }
+            }
+        }
+        , \
         {
             'insertText': 
             {
@@ -103,15 +129,44 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 },
                 'text': full_msg
             } \
-        }
-        , \
+        }, \
         {
             'insertPageBreak': 
             {
                 'location' :
                 {
-                    'index': 1 + len(full_msg)
+                    'index': 2 + len(full_msg)
                 }
+            }
+        }, \
+        {
+            "updateParagraphStyle": 
+            {
+                "range": 
+                {
+                    "startIndex": 1,
+                    "endIndex": len(full_msg) + 1
+                },
+                "paragraphStyle": 
+                {
+                    "alignment": "START"
+                },
+                "fields": "alignment"
+            }
+        }, \
+        {
+            "updateParagraphStyle": 
+            {
+                "range": 
+                {
+                    "startIndex": len(full_msg) + 1,
+                    "endIndex": len(full_msg) + 1,
+                },
+                "paragraphStyle": 
+                {
+                    "alignment": "END"
+                },
+                "fields": "alignment"
             }
         }
         ]
