@@ -18,21 +18,30 @@ from Interfaces import ILetterSender, IEmailSender
 import spreadsheet_constants
 SHEET_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 DOC_SCOPES = ['https://www.googleapis.com/auth/documents']
+DRIVE_SCOPES = ['https://www.googleapis.com/auth/drive']
 
 class Google(implements(ILetterSender), implements(IEmailSender)):
     def __init__(self, spreadsheet_id='1FXTd8S0OUK-dUV2flsX68G71YLFw37e2zY5DH-wqfoM', letter_id='1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'):
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
         self.letter_creds = self.__load_creds('pickles/cfldv1_letter_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/docs_credentials.json', DOC_SCOPES)
+        self.drive_creds = self.__load_creds('pickles/cfldv1_drive_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/drive_credentials.json', DRIVE_SCOPES)
         self.sheet_service = build('sheets', 'v4', credentials=self.sheet_creds)
         self.spreadsheet_id = spreadsheet_id
-        self.spreadsheet = self.__get_spreadsheet()
+        self.spreadsheet = self.__get_spreadsheet(self.spreadsheet_id)
 
         # map name of sheet to data
-        self.sheets_data, self.sheets = self.__get_sheets()
+        self.sheets_data, self.sheets = self.__get_sheets(self.spreadsheet, self.spreadsheet_id)
 
         # get sheet we'll output letters to
-        self.letter_id = letter_id
+        #self.letter_id = letter_id
         self.letter_service = build('docs', 'v1', credentials=self.letter_creds)
+
+
+        self.drive_service = build('drive', 'v3', credentials=self.drive_creds)
+        self.address_letter_sheet_id = '1ebQ9mO9ciodQX7DtkrQ-k_zbK-94A_mkHX4kO8TWIDs'
+        self.address_letter_sheet = self.__get_spreadsheet(self.address_letter_sheet_id)
+        self.address_letter_sheet_data, self.address_letter = self.__get_sheets(self.address_letter_sheet, self.address_letter_sheet_id)
+        self.address_letter_row_num = 0
 
     def get_clean_data(self, sheet_name, ffill_columns):
         return dch.clean(self.sheets_data[sheet_name], ffill_columns)
@@ -66,18 +75,18 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 pickle.dump(creds, token)
         return creds
     
-    def __get_spreadsheet(self):
+    def __get_spreadsheet(self, id_):
         # Call the Sheets API
-        return self.sheet_service.spreadsheets().get(spreadsheetId=self.spreadsheet_id).execute()
+        return self.sheet_service.spreadsheets().get(spreadsheetId=id_).execute()
 
-    def __get_sheets(self):
+    def __get_sheets(self, spreadsheet, id_):
         m = {}
         sheets = {}
-        for sheet in self.spreadsheet.get('sheets'):
+        for sheet in spreadsheet.get('sheets'):
             title = sheet.get('properties').get('title')
 # Get the data from this sheet
             range_name='{}!A1:Z1000'.format(title) # TODO
-            sheets[title] = self.sheet_service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=range_name).execute()
+            sheets[title] = self.sheet_service.spreadsheets().values().get(spreadsheetId=id_, range=range_name).execute()
             m[title] = sheets[title].get('values', [])
         return m, sheets
 
@@ -89,11 +98,59 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 #ILetterSender
     def send_mail(self, address, msg, contact_info):
         print('Sending: "{}"\nAddress:\n{}'.format(msg, address))
-        self.__append_to_letter_doc(address, msg)
+        doc = self.__create_doc(contact_info)
+        self.__update_address_list(contact_info, doc)
+        self.__append_to_letter_doc(address, msg, doc)
         self.__log_contact(contact_info, MailType.MAIL)
+# will add the name of the document and address it should be sent to
+    def __update_address_list(self, contact_info, doc):
+        title = doc.get('title') + '.pdf'
+        sheet_data = self.address_letter_sheet_data['Sheet1']
+
+        if self.address_letter_row_num == 0:
+            self.address_letter_row_num = len(sheet_data) + 1
+        else:
+            self.address_letter_row_num += 1
+# schema is A:Address, B:file name
+# get column from constants
+        r = spreadsheet_constants.range_builder[1] + str(self.address_letter_row_num) + ':' + spreadsheet_constants.range_builder[2] + str(self.address_letter_row_num)
+        rangeName = "Sheet1!{}".format(r)
+
+# get the current value of the cell so we can append today's datetime
+        values = [[contact_info.address,title]]
+        Body = {
+            'values' : values,
+        }
+
+        result = self.sheet_service.spreadsheets().values().update(
+        spreadsheetId=self.address_letter_sheet_id, range=rangeName,
+        valueInputOption='RAW', body=Body).execute()
+# will create a doc and move it to the appropriate folder
+    def __create_doc(self, contact_info):
+        folder_id = '1XDba_UUbCoXkbRnjF9N0ju22ksWHcBGm' # TODO: not hardcoded/update to prod folder
+        title = '{} {} {}'.format(contact_info.short_name, contact_info.fraternity, contact_info.name) # TODO: same format as creating the letter
+        body = {
+                'title': title
+        }
+        doc = self.letter_service.documents() \
+        .create(body=body).execute()
+        print('Created document with title: {0}'.format(
+            doc.get('title')))
+        file_id = doc.get('documentId')
+# move it to dev sandbox
+        file = self.drive_service.files().get(fileId=file_id,
+                                         fields='parents').execute()
+        previous_parents = ",".join(file.get('parents'))
+# Move the file to the new folder
+        file = self.drive_service.files().update(fileId=file_id,
+                                            addParents=folder_id,
+                                            removeParents=previous_parents,
+                                            fields='id, parents').execute()
+        return doc
+
 # TODO: don't format 'full_msg' and have the caller send that themselves, they can still pass address as a separate arg so we can do whatever our letter service needs here
-    def __append_to_letter_doc(self, address, msg):
-        full_msg = '\n\n\n\n\n{}\n\n{}\n'.format(address, msg)
+    def __append_to_letter_doc(self, address, msg, doc):
+        full_msg = '\n\n\n\n\n{}\n'.format(msg)
         requests = [
         {
             'insertInlineImage': 
@@ -131,15 +188,6 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             } \
         }, \
         {
-            'insertPageBreak': 
-            {
-                'location' :
-                {
-                    'index': 2 + len(full_msg)
-                }
-            }
-        }, \
-        {
             "updateParagraphStyle": 
             {
                 "range": 
@@ -153,8 +201,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 },
                 "fields": "alignment"
             }
-        }, \
-        {
+        } \
+        ,{
             "updateParagraphStyle": 
             {
                 "range": 
@@ -171,7 +219,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         }
         ]
         result = self.letter_service.documents().batchUpdate(
-                documentId=self.letter_id, body={'requests': requests}).execute()
+                documentId=doc.get('documentId'), body={'requests': requests}).execute()
 
 # This will allow classes to make a note of the dates on which Contacts were messaged via email or snail mail
     def __log_contact(self, contact_info, mail_type_enum):
@@ -188,7 +236,6 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         if row_num == 1:
             print('ERROR: could not find a match for {} {} {}'.format(contact_info.short_name, contact_info.fraternity, contact_info.name))
             return
-
 # get column from constants
         col_num = 1 + sheet_data[0].index(spreadsheet_constants.mail_type_enum_to_column_name[mail_type_enum])
         if col_num == 1:
@@ -206,6 +253,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         result = self.sheet_service.spreadsheets().values().update(
         spreadsheetId=self.spreadsheet_id, range=rangeName,
         valueInputOption='RAW', body=Body).execute()
+
 
 if __name__=='__main__':
     g = Google()

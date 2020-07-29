@@ -37,7 +37,15 @@ def main():
             pickle.dump(creds, token)
 
     service = build('docs', 'v1', credentials=creds)
-
+    title = 'USC Kappa Alpha George Bremer'
+    body = {
+            'title': title
+    }
+    doc = service.documents() \
+    .create(body=body).execute()
+    print('Created document with title: {0}'.format(
+        doc.get('documentId')))
+    print(doc)
     # Retrieve the documents contents from the Docs service.
     document = service.documents().get(documentId=DOCUMENT_ID).execute()
     print(document['body']['content'][-1])
