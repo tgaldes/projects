@@ -1,15 +1,17 @@
 from interface import implements
 from Interfaces import IAddressee, IEmailAddressee
 import letters
+from global_funcs import safe_get_attr
+import enums
+import spreadsheet_constants
 
 # Imported for testing, used in main:
 #from LetterSender import MockLetterSender
 # TODO: fix MockLetterSender interface
-import spreadsheet_constants
 import collections
 from Google import Google
 import pickle
-import enums
+import pdb
 
 class Contact(implements(IAddressee), implements(IEmailAddressee)):
     def __init__(self, named_tuple):
@@ -51,29 +53,14 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
         else:
             m = letters.letters[self.data.code]
         return m.msg.format(
-            *[self.__get_attr(self.datas[x[1]], x[0]) for x in m.fields]) 
-
-    def __get_attr(self, tup, key):
-        attr = getattr(tup, key)
-        if attr == '':
-#           We didn't find what we were looking for, so go through all the NamedTuples until we find a value for the backup key
-            if key not in letters.backup_keys:
-                raise Exception('Could not find key {} in letters.backup_keys map'.format(key))
-            for named_tuple in self.datas:
-                attr = getattr(named_tuple, letters.backup_keys[key])
-                if attr != '':
-                    break
-            if attr == '':
-                raise Exception('Looking through data tuples for key: {} -> backup_key: {} yielded the empty string. Data tuples: {}'.format(key, letters.backup_keys[key], self.datas))
-        return attr
-
+            *[safe_get_attr(self.datas[x[1]], x[0], self.datas) for x in m.fields]) 
 
 if __name__=='__main__':
     g = Google()
-    '''with open('pickles/google.pickle', 'wb') as f:
+    with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)
     with open('pickles/google.pickle', 'rb') as f:
-        g2 = pickle.load(f)'''
+        g = pickle.load(f)
     #b = dch.pad_short_rows(g2.sheets['addresses_clean'])
     #a = dch.ffill(b, ['university', 'fraternity'])
     HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
@@ -82,9 +69,6 @@ if __name__=='__main__':
     contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(spreadsheet_constants.contact_data_info)]
     #print(contacts)
     for c in contacts:
-        c.send_email(g)
+        #c.send_email(g)
         c.send_mail(g)
-        #print(getattr(c.data, 'name'))
-
-
 

@@ -16,12 +16,22 @@ from enums import MailType
 import datetime
 from Interfaces import ILetterSender, IEmailSender
 import spreadsheet_constants
+from global_funcs import safe_get_attr
+
+
+
 SHEET_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 DOC_SCOPES = ['https://www.googleapis.com/auth/documents']
 DRIVE_SCOPES = ['https://www.googleapis.com/auth/drive']
 
 class Google(implements(ILetterSender), implements(IEmailSender)):
-    def __init__(self, spreadsheet_id='1FXTd8S0OUK-dUV2flsX68G71YLFw37e2zY5DH-wqfoM', letter_id='1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'):
+    def __init__(self, \
+            # PROD
+            #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g', \
+            # TEST
+            spreadsheet_id='1FXTd8S0OUK-dUV2flsX68G71YLFw37e2zY5DH-wqfoM', \
+            letter_id='1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'):
+
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
         self.letter_creds = self.__load_creds('pickles/cfldv1_letter_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/docs_credentials.json', DOC_SCOPES)
         self.drive_creds = self.__load_creds('pickles/cfldv1_drive_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/drive_credentials.json', DRIVE_SCOPES)
@@ -42,6 +52,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         self.address_letter_sheet = self.__get_spreadsheet(self.address_letter_sheet_id)
         self.address_letter_sheet_data, self.address_letter = self.__get_sheets(self.address_letter_sheet, self.address_letter_sheet_id)
         self.address_letter_row_num = 0
+        #self.__get_one_line_addresses()
 
     def get_clean_data(self, sheet_name, ffill_columns):
         return dch.clean(self.sheets_data[sheet_name], ffill_columns)
@@ -85,7 +96,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         for sheet in spreadsheet.get('sheets'):
             title = sheet.get('properties').get('title')
 # Get the data from this sheet
-            range_name='{}!A1:Z1000'.format(title) # TODO
+            range_name='{}!A1:Z2500'.format(title) # TODO
             sheets[title] = self.sheet_service.spreadsheets().values().get(spreadsheetId=id_, range=range_name).execute()
             m[title] = sheets[title].get('values', [])
         return m, sheets
@@ -99,11 +110,12 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def send_mail(self, address, msg, contact_info):
         print('Sending: "{}"\nAddress:\n{}'.format(msg, address))
         doc = self.__create_doc(contact_info)
-        self.__update_address_list(contact_info, doc)
-        self.__append_to_letter_doc(address, msg, doc)
+        if not self.__update_address_list(address, doc):
+            return
+        self.__append_to_letter_doc(msg, doc)
         self.__log_contact(contact_info, MailType.MAIL)
 # will add the name of the document and address it should be sent to
-    def __update_address_list(self, contact_info, doc):
+    def __update_address_list(self, address, doc):
         title = doc.get('title') + '.pdf'
         sheet_data = self.address_letter_sheet_data['Sheet1']
 
@@ -111,13 +123,28 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             self.address_letter_row_num = len(sheet_data) + 1
         else:
             self.address_letter_row_num += 1
-# schema is A:Address, B:file name
+# schema is A:Address line 1, B:Address line 2, C:Address line 3, D:file name
 # get column from constants
-        r = spreadsheet_constants.range_builder[1] + str(self.address_letter_row_num) + ':' + spreadsheet_constants.range_builder[2] + str(self.address_letter_row_num)
+        r = spreadsheet_constants.range_builder[1] + str(self.address_letter_row_num) + ':' + spreadsheet_constants.range_builder[4] + str(self.address_letter_row_num)
         rangeName = "Sheet1!{}".format(r)
 
 # get the current value of the cell so we can append today's datetime
-        values = [[contact_info.address,title]]
+        address_lines = address.split('\n')
+        for line in address_lines:
+            line = line.strip().strip(',')
+        if len(address_lines) == 3:
+            pass
+        elif len(address_lines) == 2:
+            address_lines.insert(1, '')
+        elif len(address_lines) > 3:
+            print('Address had too many lines: {}'.format(address_lines))
+            return False # TODO
+            #raise Exception('Address had too many lines: {}'.format(address_lines))
+        else:
+            print('Address had only one line: {}'.format(address_lines))
+            return False # TODO: would rather throw and fix the issue in the data
+            #raise Exception('Address had only one line: {}'.format(address_lines))
+        values = [[*address_lines, title]]
         Body = {
             'values' : values,
         }
@@ -125,10 +152,12 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         result = self.sheet_service.spreadsheets().values().update(
         spreadsheetId=self.address_letter_sheet_id, range=rangeName,
         valueInputOption='RAW', body=Body).execute()
+        return True
+
 # will create a doc and move it to the appropriate folder
     def __create_doc(self, contact_info):
         folder_id = '1XDba_UUbCoXkbRnjF9N0ju22ksWHcBGm' # TODO: not hardcoded/update to prod folder
-        title = '{} {} {}'.format(contact_info.short_name, contact_info.fraternity, contact_info.name) # TODO: same format as creating the letter
+        title = '{} {} {}'.format(contact_info.short_name, contact_info.fraternity, safe_get_attr(contact_info, 'name')) # TODO: same format as creating the letter
         body = {
                 'title': title
         }
@@ -149,7 +178,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         return doc
 
 # TODO: don't format 'full_msg' and have the caller send that themselves, they can still pass address as a separate arg so we can do whatever our letter service needs here
-    def __append_to_letter_doc(self, address, msg, doc):
+    def __append_to_letter_doc(self, msg, doc):
         full_msg = '\n\n\n\n\n{}\n'.format(msg)
         requests = [
         {
@@ -226,15 +255,16 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 # get row number
         sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
         row_num = 1
+        # TODO: look at house data as well here
         for i, row in enumerate(sheet_data):
             if row[0] == contact_info.short_name \
                     and row[1] == contact_info.fraternity \
-                    and row[2] == contact_info.name:
+                    and row[2] == safe_get_attr(contact_info, 'name'):
                 row_num += i
                 print('match for {} at row {}'.format(row[2], i + 1))
                 break
         if row_num == 1:
-            print('ERROR: could not find a match for {} {} {}'.format(contact_info.short_name, contact_info.fraternity, contact_info.name))
+            print('ERROR: could not find a match for {} {} {}'.format(contact_info.short_name, contact_info.fraternity, safe_get_attr(contact_info, 'name')))
             return
 # get column from constants
         col_num = 1 + sheet_data[0].index(spreadsheet_constants.mail_type_enum_to_column_name[mail_type_enum])
@@ -254,13 +284,28 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         spreadsheetId=self.spreadsheet_id, range=rangeName,
         valueInputOption='RAW', body=Body).execute()
 
+# output the row numbers of addresses that are only one line
+    def __get_one_line_addresses(self):
+        sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
+        address_col_num = sheet_data[0].index(spreadsheet_constants.address_column_name)
+        rows = []
+        for i, row in enumerate(sheet_data):
+            if i == 0: continue # skip header
+            if row and row[address_col_num] and row[address_col_num].count('\n') == 0:
+                rows.append(i + 1)
+        print('The following rows have addresses that only have one line:')
+        for row in rows:
+            print(row)
+                
+
+        
+
 
 if __name__=='__main__':
     g = Google()
-    with open('pickles/google.pickle', 'wb') as f:
+    '''with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)
     with open('pickles/google.pickle', 'rb') as f:
-        g2 = pickle.load(f)
-    pdb.set_trace()
+        g2 = pickle.load(f)'''
     b = dch.pad_short_rows(g2.sheets['addresses_clean'])
     a = dch.ffill(b, ['university', 'fraternity'])

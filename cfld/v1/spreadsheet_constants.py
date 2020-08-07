@@ -18,6 +18,7 @@ ffill_column_names = { \
 mail_type_enum_to_column_name = {enums.MailType.MAIL : 'mail_dates', enums.MailType.EMAIL : 'email_dates'}
 mail_date_column_name = 'mail_dates'
 email_date_column_name = 'email_dates'
+address_column_name = 'address'
 
 range_builder = {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: 'J', 11: 'K', 12: 'L', 13: 'M', 14: 'N', 15: 'O', 16: 'P', 17: 'Q', 18: 'R', 19: 'S', 20: 'T', 21: 'U', 22: 'V', 23: 'W', 24: 'X', 25: 'Y', 26: 'Z'}
 
@@ -35,7 +36,7 @@ contact_data_header = ['short_name', 'fraternity', 'name', 'address', 'contact',
 contact_data_info = [ \
 ['USC', 'Alpha Tau Omega', 'Curtis Westfall', '11500 Tennessee Ave\nUnit 324\nLos Angeles, CA 90064', '', '', '',  'tgaldes@gmail.com', '', 'board', '0', '', '', '','', '', '', '', ''], \
 ['SJSU', 'Theta Chi', 'George Bremer', '629 Gayley Ave\nLos Angeles, CA 90024', '', '', '', 'tgaldes@gmail.com', '', 'undergrad', '0', '', '', '', '', '', '','', '']]
-house_data_header = ['short_name', 'fraternity', 'chapter_address', 'chapter_designation', 'mailing_address', 'corporate_filing', 'code', 'chapter_website', 'alumni_website', 'notes', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'helper_label', 'number_of_confirmed_emails']
-house_data_info = [['USC', 'Alpha Tau Omega', 'TODO', 'Gamma Xi', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO'], \
-['SJSU', 'Theta Chi', 'TODO', 'Gamma Xi', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO']]
+house_data_header = ['short_name', 'fraternity', 'address', 'chapter_designation', 'mailing_address', 'corporate_filing', 'code', 'chapter_website', 'alumni_website', 'notes', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'helper_label', 'number_of_confirmed_emails']
+house_data_info = [['USC', 'Alpha Tau Omega', '2715 Portland St\nLos Angeles, CA 90007', 'Gamma Xi', 'TODO', 'TODO', 'house', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO'], \
+['SJSU', 'Theta Chi', '123 S 11th St\nSan Jose, CA 95217', 'Gamma Xi', 'TODO', 'TODO', 'house', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO']]
 
