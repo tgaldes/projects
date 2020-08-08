@@ -10,6 +10,9 @@ Epics
 5) UI integration
 
 
+To make more robust:
+- globally visible function that's always used to access values of NamedTuples (like contact info that COULD have been populated with fields from a House) so that we can use backup keys to redirect to the fields we want for a house/other class
+
 next steps:
     email sender interfaces w/ no sendgrid, will be able to extract out a little bit of the work
     that we do when we track what mail is being sent out

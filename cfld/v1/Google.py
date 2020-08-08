@@ -179,7 +179,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
 # TODO: don't format 'full_msg' and have the caller send that themselves, they can still pass address as a separate arg so we can do whatever our letter service needs here
     def __append_to_letter_doc(self, msg, doc):
-        full_msg = '\n\n\n\n\n{}\n'.format(msg)
+        full_msg = '\n\n{}\n'.format(msg)
         requests = [
         {
             'insertInlineImage': 
@@ -204,8 +204,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                     }
                 }
             }
-        }
-        , \
+        }, \
         {
             'insertText': 
             {
@@ -217,12 +216,37 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             } \
         }, \
         {
+            'insertInlineImage': 
+            {
+                'location': 
+                {
+                    'index': 1
+                },
+                'uri':
+                #'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/08/logo.png',
+                'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/08/logo_clipped_rev_1.png',
+                'objectSize': 
+                {
+                    'height': 
+                    {
+                        'magnitude': 100,
+                        'unit': 'PT'
+                    },
+                    'width': 
+                    {
+                        'magnitude': 100,
+                        'unit': 'PT'
+                    }
+                }
+            }
+        }, \
+        {
             "updateParagraphStyle": 
             {
                 "range": 
                 {
-                    "startIndex": 1,
-                    "endIndex": len(full_msg) + 1
+                    "startIndex": 2,
+                    "endIndex": len(full_msg) + 2
                 },
                 "paragraphStyle": 
                 {
@@ -230,14 +254,14 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 },
                 "fields": "alignment"
             }
-        } \
-        ,{
+        }, \
+        {
             "updateParagraphStyle": 
             {
                 "range": 
                 {
-                    "startIndex": len(full_msg) + 1,
-                    "endIndex": len(full_msg) + 1,
+                    "startIndex": len(full_msg) + 2,
+                    "endIndex": len(full_msg) + 2,
                 },
                 "paragraphStyle": 
                 {
