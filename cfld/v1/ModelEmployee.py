@@ -11,15 +11,20 @@ class ModelEmployee:
         #self.apiToken = apiToken
         self.google = g
 # TODO: verify on creation that (self.data.short_name, self.data.fraternity, self.data.name) in list of contacts creates a unique person, if it doesn't we need to rethink the keys
-        '''HouseData = collections.namedtuple('HouseData', g.get_header(spreadsheet_constants.sheet_names['houses']))
-        ContactData = collections.namedtuple('ContactData', g.get_header(spreadsheet_constants.sheet_names['contacts']))
+        HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
+        ContactData = collections.namedtuple('ContactData', spreadsheet_constants.contact_data_header)
 # maybe we should hold Iaddressees and Iemailaddresses in two lists
         self.houses = []
         self.contacts = []
-        for data in g.get_clean_data(spreadsheet_constants.sheet_names['houses'], spreadsheet_constants.ffill_column_names['houses'])[1:]:
-            self.houses.append(House(HouseData(*data)))
-        for data in g.get_clean_data(spreadsheet_constants.sheet_names['contacts'], spreadsheet_constants.ffill_column_names['contacts'])[1:]:
-            self.contacts.append(Contact(ContactData(*data)))'''
+        for data in g.get_clean_data(spreadsheet_constants.sheet_names['houses'], spreadsheet_constants.ffill_column_names['houses'])[1:]: # skip the header
+            self.houses.append(House(HouseData(*(data[:spreadsheet_constants.house_data_header_length]))))
+        for data in g.get_clean_data(spreadsheet_constants.sheet_names['contacts'], spreadsheet_constants.ffill_column_names['contacts'])[1:]: # skip the header
+            # look up the right house in the list of houses
+            lookup_keys = data[:spreadsheet_constants.columns_that_define_unique_house]
+            for house in self.houses:
+                if lookup_keys == house.data[:spreadsheet_constants.columns_that_define_unique_house]:
+                    self.contacts.append(Contact(ContactData(*(data[:spreadsheet_constants.contact_data_header_length - 1]), house.data))) # subtract 1 so we can add the house data named tuple to the contact data
+                    break
 
     def send_intro_emails(self, min_duplicate_days,
                           school_filter=[],
@@ -41,9 +46,10 @@ class ModelEmployee:
                           house_code_filter_is_include=True,
                           contact_code_filter=[],
                           contact_code_filter_is_include=True):
-        for house in self.houses:
-            print(house.write_letter())
-        print('writing letters')
+        '''for house in self.houses:
+            print(house.write_letter())'''
+        for contact in self.contacts:
+            contact.send_mail(self.g)
     def get_school_list(self):
         return ['UCLA', 'USC', 'Denver', 'Georgia Tech']
     def get_house_code_list(self):
@@ -55,9 +61,8 @@ class ModelEmployee:
 
 
 if __name__=='__main__':
-    with open('pickles/google.pickle', 'rb') as f:
-        g2 = pickle.load(f)
+    g2 = Google()
     emp = ModelEmployee(g2)
-    #emp.send_snail_mail(365)
+    emp.send_snail_mail(365, 'USC')
 
 

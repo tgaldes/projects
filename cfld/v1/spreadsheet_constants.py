@@ -33,10 +33,12 @@ if sheet_names.keys() != ffill_column_names.keys():
 
 # for testing, names of columns subject to change
 contact_data_header = ['short_name', 'fraternity', 'name', 'address', 'contact', 'phone', 'linkedin', 'email', 'links', 'code', 'old', 'notes', 'mail_dates', 'helper_label', 'is_confirmed_email', 'is_confirmed_board_address', 'have_confirmed_email_for_alumni', 'have_board_address_for_house', 'have_client_at_school', 'house_tuple']
+contact_data_header_length = len(contact_data_header)
 contact_data_info = [ \
 ['USC', 'Alpha Tau Omega', 'Curtis Westfall', '11500 Tennessee Ave\nUnit 324\nLos Angeles, CA 90064', '', '', '',  'tgaldes@gmail.com', '', 'board', '0', '', '', '','', '', '', '', ''], \
 ['SJSU', 'Theta Chi', 'George Bremer', '629 Gayley Ave\nLos Angeles, CA 90024', '', '', '', 'tgaldes@gmail.com', '', 'undergrad', '0', '', '', '', '', '', '','', '']]
 house_data_header = ['short_name', 'fraternity', 'address', 'chapter_designation', 'mailing_address', 'corporate_filing', 'code', 'chapter_website', 'alumni_website', 'notes', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'helper_label', 'number_of_confirmed_emails']
+house_data_header_length = len(house_data_header)
 house_data_info = [['USC', 'Alpha Tau Omega', '2715 Portland St\nLos Angeles, CA 90007', 'Gamma Xi', 'TODO', 'TODO', 'house', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO'], \
 ['SJSU', 'Theta Chi', '123 S 11th St\nSan Jose, CA 95217', 'Gamma Xi', 'TODO', 'TODO', 'house', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'TODO', 'helper_label', 'TODO']]
 

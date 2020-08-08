@@ -22,7 +22,8 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
             l = getattr(self.data, spreadsheet_constants.column_names['contacts'][i])
             r = getattr(self.house_data, spreadsheet_constants.column_names['houses'][i])
             if l != r:
-               raise Exception('Cannot construct contact with different values {} and {} for {}'.format(l, r, spreadsheet_constants.column_names['contacts'][i]))
+                pdb.set_trace()
+                raise Exception('Cannot construct contact with different values {} and {} for {}'.format(l, r, spreadsheet_constants.column_names['contacts'][i]))
 
     def send_mail(self, letter_sender):
         if self.data.address == '':

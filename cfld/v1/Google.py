@@ -178,6 +178,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         return doc
 
 # TODO: don't format 'full_msg' and have the caller send that themselves, they can still pass address as a separate arg so we can do whatever our letter service needs here
+# TODO: we'll also need to add newlines where we're formatting the msg  based on it's length so it fits nice with the pictures
     def __append_to_letter_doc(self, msg, doc):
         full_msg = '\n\n{}\n'.format(msg)
         requests = [
