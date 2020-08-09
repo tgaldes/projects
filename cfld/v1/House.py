@@ -15,6 +15,8 @@ class House(Contact):
         self.data = named_tuple
         self.house_data = named_tuple
         self.datas = [self.data, self.data]
+        if self.data.code == '':
+            raise Exception('Tried to create a House with code = \'\', school: {} chapter: {}'.format(self.data.short_name, self.data.fraternity))
 
 if __name__=='__main__':
     '''g = Google()

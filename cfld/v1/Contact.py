@@ -14,6 +14,8 @@ import pickle
 import pdb
 
 class Contact(implements(IAddressee), implements(IEmailAddressee)):
+    mail_skip_codes = ['contact', '', 'contact_form', 'skip', 'undergrad_contact_form']
+    email_skip_codes = ['contact', '', 'contact_form', 'skip', 'undergrad_contact_form']
     def __init__(self, named_tuple):
         self.data = named_tuple
         self.house_data = named_tuple.house_tuple
@@ -25,18 +27,25 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
                 pdb.set_trace()
                 raise Exception('Cannot construct contact with different values {} and {} for {}'.format(l, r, spreadsheet_constants.column_names['contacts'][i]))
 
+
     def send_mail(self, letter_sender):
         if self.data.address == '':
             print('Skipping sending mail when address is empty for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, self.data.name))
             return
+        if self.data.code in Contact.mail_skip_codes:
+            print('Skipping sending mail for code: {}'.format(self.data.code))
+            return
         if self.data.code not in letters.letters:
             raise Exception('Code: {} is not in letters.py.letters map'.format(self.data.code))
         letter = self.__format_letter()
-        letter_sender.send_mail(self.data.address, letter, self.data) # TODO: what do we pass with a house instantiation?
+        letter_sender.send_mail(self.data.address, letter, self.data)
 
     def send_email(self, email_sender):
         if self.data.email == '':
             print('Skipping sending email when email is empty for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, self.data.name))
+            return
+        if self.data.code in Contact.email_skip_codes:
+            print('Skipping sending email for code: {}'.format(self.data.code))
             return
         if self.data.code not in letters.emails:
             raise Exception('Code: {} is not in letters.py.letters map'.format(self.data.code))
@@ -53,8 +62,8 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
             m = letters.emails[self.data.code]
         else:
             m = letters.letters[self.data.code]
-        return m.msg.format(
-            *[safe_get_attr(self.datas[x[1]], x[0], self.datas) for x in m.fields]) 
+            a = [safe_get_attr(self.datas[x[1]], x[0], self.datas) for x in m.fields]
+        return m.msg.format(*a) 
 
 if __name__=='__main__':
     g = Google()

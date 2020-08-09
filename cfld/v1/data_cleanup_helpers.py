@@ -22,9 +22,10 @@ def ffill(ll, col_names):
     return ll
 
 def remove_empty_rows(ll):
+    # trim the rows off the end
     ll_ = []
     for i in ll:
-        if i: ll_.append(i)
+        if i and i[0]: ll_.append(i)
     ll = ll_
     return ll
 

@@ -59,6 +59,32 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
     def get_header(self, sheet_name):
         return self.sheets_data[sheet_name][0]
+    
+    def get_last_date_for_contact(self, data, enum):
+        sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
+        return self.__get_last_mailed_date(data, enum, sheet_data, spreadsheet_constants.columns_that_define_unique_contact)
+
+    def get_last_date_for_house(self, data, enum):
+        sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['houses']]
+        return self.__get_last_mailed_date(data, enum, sheet_data, spreadsheet_constants.columns_that_define_unique_house)
+
+    def __get_last_mailed_date(self, data, enum, haystack, num_columns):
+        header = haystack[0]
+        if enum == MailType.EMAIL:
+            col_name = spreadsheet_constants.email_date_column_name
+        elif enum == MailType.MAIL:
+            col_name = spreadsheet_constants.mail_date_column_name
+        else:
+            raise Exception('Unsupported MailType enum')
+        last_action_column_index = haystack[0].index(col_name)
+        for attempt in haystack:
+            if data[:num_columns] == tuple(attempt[:num_columns]):
+                last_date_str = attempt[last_action_column_index].split('\n')[-1]
+                if not last_date_str:
+                    return datetime.date(1970, 1, 1)
+                last_date = datetime.date.strptime(last_date_str, '%Y%m%d')
+                return last_date
+        raise Exception('Could not find match for last action for type: {} values we tried to match: {}'.format(enum, data[:num_columns])) 
 
 
     def __load_creds(self, pickle_path, json_path, scopes):

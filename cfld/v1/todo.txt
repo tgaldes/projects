@@ -11,8 +11,9 @@ Epics
 
 
 To make more robust:
+- exponential backoff while making api requests so that we can handle a server error code 500 httperror
+    https://console.cloud.google.com/iam-admin/quotas/details;servicem=docs.googleapis.com;metricm=docs.googleapis.com%2Fwrite_requests;limitIdm=1%2Fmin%2F%7Bproject%7D%2F%7Buser%7D?authuser=2&project=cfldv1
 - globally visible function that's always used to access values of NamedTuples (like contact info that COULD have been populated with fields from a House) so that we can use backup keys to redirect to the fields we want for a house/other class
 
 next steps:
-    email sender interfaces w/ no sendgrid, will be able to extract out a little bit of the work
-    that we do when we track what mail is being sent out
+    figure out where we want to hold the codes that we aren't sending out mail for (for example, we wouldn't want to send mail to a client marked as 'skip')

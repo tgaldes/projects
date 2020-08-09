@@ -4,15 +4,20 @@ class Message:
         with open(fn, 'r') as f:
             for line in f:
                 self.msg += line
-        #self.msg = self.msg.format(
         self.fields = fields
 
-# TODO: house -> active / suspended / inactive / etc
 letters = \
 {
-    'board' : Message('letters/board.txt', (('chapter_designation', 1), ('fraternity', 0), ('name', 0))),
-    'undergrad' : Message('letters/undergrad.txt', (('fraternity', 0), ('name', 0))),
-    'house' : Message('letters/house.txt', (('chapter_designation', 0), ('fraternity', 0), ('short_name', 0), ('address', 0)))
+    'board' : Message('letters/board.txt', [('name', 0), ('chapter_designation', 1), ('fraternity', 0), ('name', 0)]),
+    'undergrad' : Message('letters/undergrad.txt', [('fraternity', 0), ('name', 0)]),
+    'active' : Message('letters/active.txt', [('chapter_designation', 0), ('fraternity', 0), ('short_name', 0), ('address', 0)]),
+    'agent' : Message('letters/todo.txt', [('code', 0)]),
+    'campaign_chair' : Message('letters/todo.txt', [('code', 0)]),
+    'general_board' : Message('letters/todo.txt', [('code', 0)]),
+    'general_undergrad' : Message('letters/todo.txt', [('code', 0)]),
+    'general_board' : Message('letters/todo.txt', [('code', 0)]),
+    'high_value' : Message('letters/todo.txt', [('code', 0)]),
+    'suspended' : Message('letters/todo.txt', [('code', 0)])
 }
 
 backup_keys = { \
@@ -22,7 +27,16 @@ backup_keys = { \
 
 emails = \
 {
-    'board' : Message('emails/board.txt', (('chapter_designation', 1), ('fraternity', 0), ('name', 0))),
-    'undergrad' : Message('emails/undergrad.txt', (('fraternity', 0), ('name', 0))),
-    'house' : Message('emails/house.txt', (('chapter_designation', 0), ('fraternity', 0), ('short_name', 0), ('address', 0)))
+    'board' : Message('emails/board.txt', [('chapter_designation', 1), ('fraternity', 0), ('name', 0)]),
+    'undergrad' : Message('emails/undergrad.txt', [('fraternity', 0), ('name', 0)]),
+    'active' : Message('emails/active.txt', [('chapter_designation', 0), ('fraternity', 0), ('short_name', 0), ('address', 0)]),
+    'board' : Message('emails/board.txt', [('name', 0), ('chapter_designation', 1), ('fraternity', 0), ('name', 0)]),
+    'undergrad' : Message('emails/undergrad.txt', [('fraternity', 0), ('name', 0)]),
+    'agent' : Message('emails/todo.txt', [('code', 0)]),
+    'campaign_chair' : Message('emails/todo.txt', [('code', 0)]),
+    'general_board' : Message('emails/todo.txt', [('code', 0)]),
+    'general_undergrad' : Message('emails/todo.txt', [('code', 0)]),
+    'general_board' : Message('emails/todo.txt', [('code', 0)]),
+    'high_value' : Message('emails/todo.txt', [('code', 0)]),
+    'suspended' : Message('emails/todo.txt', [('code', 0)])
 }

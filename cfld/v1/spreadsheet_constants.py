@@ -3,7 +3,8 @@ sheet_names = { \
 'houses' : 'houses',
 'contacts' : 'addresses_clean'}
 
-columns_that_define_unique_house = 2
+columns_that_define_unique_house = 2 # school, fraternity
+columns_that_define_unique_contact = columns_that_define_unique_house + 1 # school, fraternity, name
 # can these be dynamically populated?
 column_names = { \
 'houses' : ['short_name', 'fraternity'], \
