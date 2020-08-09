@@ -79,10 +79,10 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         last_action_column_index = haystack[0].index(col_name)
         for attempt in haystack:
             if data[:num_columns] == tuple(attempt[:num_columns]):
-                last_date_str = attempt[last_action_column_index].split('\n')[-1]
+                last_date_str = attempt[last_action_column_index].strip('\n').split('\n')[-1]
                 if not last_date_str:
                     return datetime.date(1970, 1, 1)
-                last_date = datetime.date.strptime(last_date_str, '%Y%m%d')
+                last_date = datetime.datetime.strptime(last_date_str, '%Y%m%d').date()
                 return last_date
         raise Exception('Could not find match for last action for type: {} values we tried to match: {}'.format(enum, data[:num_columns])) 
 
@@ -134,7 +134,6 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         self.__log_contact(contact_info, MailType.EMAIL)
 #ILetterSender
     def send_mail(self, address, msg, contact_info):
-        print('Sending: "{}"\nAddress:\n{}'.format(msg, address))
         doc = self.__create_doc(contact_info)
         if not self.__update_address_list(address, doc):
             return
@@ -164,12 +163,12 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             address_lines.insert(1, '')
         elif len(address_lines) > 3:
             print('Address had too many lines: {}'.format(address_lines))
-            return False # TODO
-            #raise Exception('Address had too many lines: {}'.format(address_lines))
+            #return False # TODO
+            raise Exception('Address had too many lines: {}'.format(address_lines))
         else:
             print('Address had only one line: {}'.format(address_lines))
-            return False # TODO: would rather throw and fix the issue in the data
-            #raise Exception('Address had only one line: {}'.format(address_lines))
+            #return False # TODO: would rather throw and fix the issue in the data
+            raise Exception('Address had only one line: {}'.format(address_lines))
         values = [[*address_lines, title]]
         Body = {
             'values' : values,
@@ -305,15 +304,29 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def __log_contact(self, contact_info, mail_type_enum):
 # get row number
         sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
+        rangeName = "addresses_clean!{}"
         row_num = 1
-        # TODO: look at house data as well here
+# try to match a contact
         for i, row in enumerate(sheet_data):
-            if row[0] == contact_info.short_name \
+# only match when we look at the contact sheet, otherwise look at a match in houses # TODO: this is a kind of hacky way to figure out how we know if we're using a contact or a house
+            if row and 'name' in contact_info._fields \
+                    and row[0] == contact_info.short_name \
                     and row[1] == contact_info.fraternity \
                     and row[2] == safe_get_attr(contact_info, 'name'):
                 row_num += i
-                print('match for {} at row {}'.format(row[2], i + 1))
+                print('match for {} at row {} in contacts sheet'.format(row[2], i + 1))
                 break
+        if row_num == 1:
+# try to match a house
+            sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['houses']]
+            rangeName = "houses!{}"
+            for i, row in enumerate(sheet_data):
+                if row and row[0] == contact_info.short_name \
+                    and row[1] == contact_info.fraternity:
+                    row_num += i
+                    print('match for {} at row {} in houses sheet'.format(row[2], i + 1))
+                    break
+
         if row_num == 1:
             print('ERROR: could not find a match for {} {} {}'.format(contact_info.short_name, contact_info.fraternity, safe_get_attr(contact_info, 'name')))
             return
@@ -322,7 +335,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         if col_num == 1:
             raise Exception('Column number of mail date tracking column on sheet is misconfigured, aborting.')
         r = spreadsheet_constants.range_builder[col_num] + str(row_num)
-        rangeName = "addresses_clean!{}".format(r)
+        rangeName = rangeName.format(r)
 
 # get the current value of the cell so we can append today's datetime
         current_value = sheet_data[row_num - 1][col_num - 1]

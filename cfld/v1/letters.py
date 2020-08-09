@@ -8,7 +8,7 @@ class Message:
 
 letters = \
 {
-    'board' : Message('letters/board.txt', [('name', 0), ('chapter_designation', 1), ('fraternity', 0), ('name', 0)]),
+    'board' : Message('letters/board.txt', [('name', 0), ('city', 1), ('chapter_designation', 1), ('fraternity', 0), ('name', 0)]),
     'undergrad' : Message('letters/undergrad.txt', [('fraternity', 0), ('name', 0)]),
     'active' : Message('letters/active.txt', [('chapter_designation', 0), ('fraternity', 0), ('short_name', 0), ('address', 0)]),
     'agent' : Message('letters/todo.txt', [('code', 0)]),

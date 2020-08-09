@@ -15,6 +15,10 @@ class ModelEmployee:
 # TODO: verify on creation that (self.data.short_name, self.data.fraternity, self.data.name) in list of contacts creates a unique person, if it doesn't we need to rethink the keys
         HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
         ContactData = collections.namedtuple('ContactData', spreadsheet_constants.contact_data_header)
+        print('Using the following namedtuple class for house data:')
+        print(HouseData._fields)
+        print('Using the following namedtuple class for contact data:')
+        print(ContactData._fields)
 # maybe we should hold Iaddressees and Iemailaddresses in two lists
         self.houses = []
         self.contacts = []
@@ -70,12 +74,12 @@ class ModelEmployee:
             return False
         if (data.code in code_filter and not code_filter_is_include) \
                 or (data.code not in code_filter and code_filter_is_include): 
+            print('Skipping Code: {} not included in current selection'.format(data.code))
             return False
         last_date = min_duplicate_days_func(data, enum)
         if datetime.date.today() - last_date < datetime.timedelta(min_duplicate_days):
             print('Skipping when last {} date is {} and today is {} and min_duplicate days is {}'.format(enum, last_date, datetime.date.today(), min_duplicate_days))
             return False
-        # TODO: min duplicate days
         return True
 
 
@@ -83,6 +87,6 @@ class ModelEmployee:
 if __name__=='__main__':
     g2 = Google()
     emp = ModelEmployee(g2)
-    emp.send_snail_mail(100, 'USC', True, ['board', 'active'], True)
+    emp.send_snail_mail(100, 'SMU', True, ['board', 'active', 'agent'], True)
 
 
