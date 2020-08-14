@@ -1,6 +1,7 @@
 import letters
 import pdb
 from copy import copy
+from spreadsheet_constants import bullet_code, end_bullet_code
 
 def safe_get_attr(tup, key, alt_tups=[]):
     try:
@@ -23,3 +24,39 @@ def safe_get_attr(tup, key, alt_tups=[]):
     # When we get here we didn't find any of the backup keys
     raise Exception('Looking through data tuples for key: {} -> backup_keys: {} yielded the empty string. Data tuples: {}'.format(key, letters.backup_keys[key], alt_tups_))
 
+
+# Return list of tuples [('text in here', bool isBullet)...]
+def parse_for_bullets(msg):
+    tups = []
+    parsing_bullet = False
+    i = 0
+    current_start_index = 0
+    while i < len(msg):
+# end check
+        if parsing_bullet and i + len(end_bullet_code) >= len(msg):
+            if msg[i:] != end_bullet_code:
+                raise Exception('Unclosed bullet in: {}'.format(msg))
+            tups.append((msg[current_start_index:i], True))
+            return tups
+        elif not parsing_bullet and i + len(bullet_code) >= len(msg):
+            tups.append((msg[current_start_index:], False))
+            return tups
+        # finish a bullet, start a non bullet
+        elif parsing_bullet and msg[i:i+len(end_bullet_code)] == end_bullet_code:
+            tups.append((msg[current_start_index:i], True))
+            i += len(end_bullet_code)
+            current_start_index = i
+            parsing_bullet = False
+            continue
+        # finish a non bullet, start a bullet
+        elif not parsing_bullet and msg[i:i+len(bullet_code)] == bullet_code:
+            tups.append((msg[current_start_index:i], False))
+            i += len(bullet_code)
+            current_start_index = i
+            parsing_bullet = True
+            continue
+        i += 1
+        # continue parse
+
+if __name__=='__main__':
+    print(parse_for_bullets('paragraph one\nBULLEThere are some bullets\nhere\'s another\nlast one\nENDBULLETText continues in the next paragraph\nlast paragraphBULLEThere are some bullets\nhere\'s another\nlast one\nENDBULLET'))

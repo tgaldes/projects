@@ -1,4 +1,5 @@
 from __future__ import print_function
+import pprint
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -16,13 +17,15 @@ from enums import MailType
 import datetime
 from Interfaces import ILetterSender, IEmailSender
 import spreadsheet_constants
-from global_funcs import safe_get_attr
+from global_funcs import safe_get_attr, parse_for_bullets
 
 
 
 SHEET_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 DOC_SCOPES = ['https://www.googleapis.com/auth/documents']
 DRIVE_SCOPES = ['https://www.googleapis.com/auth/drive']
+pp = pprint.PrettyPrinter(indent=4)
+
 
 class Google(implements(ILetterSender), implements(IEmailSender)):
     def __init__(self, \
@@ -202,10 +205,50 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                                             fields='id, parents').execute()
         return doc
 
-# TODO: don't format 'full_msg' and have the caller send that themselves, they can still pass address as a separate arg so we can do whatever our letter service needs here
-# TODO: we'll also need to add newlines where we're formatting the msg  based on it's length so it fits nice with the pictures
+# return (list of requests for each text/bullet paragraph,
+#           list of createParagraphBulletRequests)
+# start offset defaulted to 2 since we'll have 1 inline image before the text 
+# and google docs is 1 indexed
+    def __create_text_inserts_to_doc(self, msg, start_offset=2):
+        tups = parse_for_bullets(msg)
+        #print(tups)
+        insert_text_reqs = []
+        format_reqs = []
+        index = start_offset
+        for p, is_bullet in tups:
+            if is_bullet:
+                start_index = index
+                end_index = index + len(p)
+                format_reqs.insert(0,
+                {
+                    'createParagraphBullets': {
+                        'range': {
+                            'startIndex': start_index,
+                            'endIndex':  end_index
+                        },
+                        'bulletPreset': 'BULLET_DISC_CIRCLE_SQUARE',
+                    }
+                })
+            # we'll update the index and add to the text requests for all text
+            insert_text_reqs.insert(0,
+            {
+                'insertText': 
+                {
+                    'location': 
+                    {
+                        'index': 1,
+                    },
+                    'text': p
+                }
+            })
+            index += len(p)
+        #print(insert_text_reqs)
+        #print(format_reqs)
+        return insert_text_reqs, format_reqs, index
+
+
     def __append_to_letter_doc(self, msg, doc):
-        full_msg = '\n\n{}\n'.format(msg)
+        text_reqs, format_reqs, full_msg_size = self.__create_text_inserts_to_doc(msg)
         requests = [
         {
             'insertInlineImage': 
@@ -231,16 +274,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 }
             }
         }, \
-        {
-            'insertText': 
-            {
-                'location': 
-                {
-                    'index': 1,
-                },
-                'text': full_msg
-            } \
-        }, \
+        *text_reqs,
         {
             'insertInlineImage': 
             {
@@ -249,7 +283,6 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                     'index': 1
                 },
                 'uri':
-                #'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/08/logo.png',
                 'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/08/logo_clipped_rev_1.png',
                 'objectSize': 
                 {
@@ -266,19 +299,33 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 }
             }
         }, \
+        *format_reqs,
         {
-            "updateParagraphStyle": 
+            'updateDocumentStyle' : 
             {
-                "range": 
+                'documentStyle' : 
                 {
-                    "startIndex": 2,
-                    "endIndex": len(full_msg) + 2
+                    'marginBottom' : 
+                    {
+                        'magnitude' : 36,
+                        'unit' : 'PT'
+                    }
                 },
-                "paragraphStyle": 
+                'fields' : 'marginBottom'
+            }
+        }, \
+        {
+            'updateDocumentStyle' : 
+            {
+                'documentStyle' : 
                 {
-                    "alignment": "START"
+                    'marginTop' : 
+                    {
+                        'magnitude' : 36,
+                        'unit' : 'PT'
+                    }
                 },
-                "fields": "alignment"
+                'fields' : 'marginTop'
             }
         }, \
         {
@@ -286,8 +333,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             {
                 "range": 
                 {
-                    "startIndex": len(full_msg) + 2,
-                    "endIndex": len(full_msg) + 2,
+                    "startIndex": full_msg_size + 1,
+                    "endIndex": full_msg_size + 1,
                 },
                 "paragraphStyle": 
                 {
@@ -297,6 +344,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             }
         }
         ]
+        #pp.pprint(requests)
         result = self.letter_service.documents().batchUpdate(
                 documentId=doc.get('documentId'), body={'requests': requests}).execute()
 

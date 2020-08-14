@@ -67,10 +67,10 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
 
 if __name__=='__main__':
     g = Google()
-    with open('pickles/google.pickle', 'wb') as f:
+    '''with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)
     with open('pickles/google.pickle', 'rb') as f:
-        g = pickle.load(f)
+        g = pickle.load(f)'''
     #b = dch.pad_short_rows(g2.sheets['addresses_clean'])
     #a = dch.ffill(b, ['university', 'fraternity'])
     HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)

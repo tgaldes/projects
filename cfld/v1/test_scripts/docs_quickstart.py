@@ -10,7 +10,8 @@ import pdb
 SCOPES = ['https://www.googleapis.com/auth/documents']
 
 # The ID of a sample document.
-DOCUMENT_ID = '1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'
+#DOCUMENT_ID = '1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'
+DOCUMENT_ID = '1BuRTdSA6zVNiyw4NcPWV0pKdTeU6HlfIPumhM8IRAGE'
 
 def main():
     """Shows basic usage of the Docs API.
@@ -48,37 +49,71 @@ def main():
     print(doc)
     # Retrieve the documents contents from the Docs service.
     document = service.documents().get(documentId=DOCUMENT_ID).execute()
+    print(document)
     print(document['body']['content'][-1])
 
     print('The title of the document is: {}'.format(document.get('title')))
+    smarket = 'BULLETS'
+    emarker = 'ENDBULLETS'
+    fs = '\tThis is the first paragraph.\n'
+    ss = '\n\tThis is the second paragraph.\n'
+    #+ smarker + 'test first line\ntest second\ntest third' + emarker
+    bullets = 'test first line\ntest second\ntest third\n'
+    '''{
+        'insertInlineImage': {
+            'location': {
+                'index': 1
+            },
+            'uri':
+                'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',
+            'objectSize': {
+                'height': {
+                    'magnitude': 100,
+                    'unit': 'PT'
+                },
+                'width': {
+                    'magnitude': 100,
+                    'unit': 'PT'
+                }
+            }
+        }
+    }, '''
     requests = [
-         {
+        {
             'insertText': {
                 'location': {
                     'index': 1,
                 },
-                'text': 'test first line\n'
+                'text': ss
             }
-        },
+        }, \
         {
-    'insertInlineImage': {
-        'location': {
-            'index': 1
-        },
-        'uri':
-            'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',
-        'objectSize': {
-            'height': {
-                'magnitude': 100,
-                'unit': 'PT'
-            },
-            'width': {
-                'magnitude': 100,
-                'unit': 'PT'
+            'insertText': {
+                'location': {
+                    'index': 1,
+                },
+                'text': bullets
+            }
+        }, \
+        {
+            'insertText': {
+                'location': {
+                    'index': 1,
+                },
+                'text': fs
+            }
+        }, \
+        {
+            'createParagraphBullets': {
+                'range': {
+                    'startIndex': len(fs) + 1,
+                    'endIndex':  len(bullets) + 1 + len(fs)
+                },
+                'bulletPreset': 'BULLET_DISC_CIRCLE_SQUARE',
             }
         }
-    }
-}]
+
+    ]
     result = service.documents().batchUpdate(
             documentId=DOCUMENT_ID, body={'requests': requests}).execute()
 
