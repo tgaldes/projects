@@ -62,10 +62,13 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
             m = letters.emails[self.data.code]
         else:
             m = letters.letters[self.data.code]
-            a = [safe_get_attr(self.datas[x[1]], x[0], self.datas) for x in m.fields]
-        return m.msg.format(*a) 
+        return m.format_letter(self.datas)
 
 if __name__=='__main__':
+    HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
+    ContactData = collections.namedtuple('ContactData', spreadsheet_constants.contact_data_header)
+    houses = [HouseData(*x) for x in spreadsheet_constants.house_data_info]
+    contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(spreadsheet_constants.contact_data_info)]
     g = Google()
     '''with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)
@@ -73,10 +76,6 @@ if __name__=='__main__':
         g = pickle.load(f)'''
     #b = dch.pad_short_rows(g2.sheets['addresses_clean'])
     #a = dch.ffill(b, ['university', 'fraternity'])
-    HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
-    ContactData = collections.namedtuple('ContactData', spreadsheet_constants.contact_data_header)
-    houses = [HouseData(*x) for x in spreadsheet_constants.house_data_info]
-    contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(spreadsheet_constants.contact_data_info)]
     #print(contacts)
     for c in contacts:
         #c.send_email(g)

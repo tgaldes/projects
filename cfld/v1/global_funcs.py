@@ -1,7 +1,7 @@
 import letters
 import pdb
 from copy import copy
-from spreadsheet_constants import bullet_code, end_bullet_code
+from spreadsheet_constants import bullet_code, end_bullet_code, qr_date_column_name, qr_file_name_column_name
 
 def safe_get_attr(tup, key, alt_tups=[]):
     try:
@@ -57,6 +57,15 @@ def parse_for_bullets(msg):
             continue
         i += 1
         # continue parse
+
+def get_qr_code_url(data):
+   base = 'https://cleanfloorslockingdoors.com/wp-content/uploads/' 
+   qr_date = getattr(data, qr_date_column_name)
+   fn = getattr(data, qr_file_name_column_name)
+   qr_year = qr_date[:4]
+   qr_month = qr_date[4:6]
+   return base + qr_year + '/' + qr_month + '/' + fn
+
 
 if __name__=='__main__':
     print(parse_for_bullets('paragraph one\nBULLEThere are some bullets\nhere\'s another\nlast one\nENDBULLETText continues in the next paragraph\nlast paragraphBULLEThere are some bullets\nhere\'s another\nlast one\nENDBULLET'))

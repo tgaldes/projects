@@ -17,7 +17,7 @@ from enums import MailType
 import datetime
 from Interfaces import ILetterSender, IEmailSender
 import spreadsheet_constants
-from global_funcs import safe_get_attr, parse_for_bullets
+from global_funcs import safe_get_attr, parse_for_bullets, get_qr_code_url
 
 
 
@@ -32,7 +32,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             # PROD
             #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g', \
             # TEST
-            spreadsheet_id='1FXTd8S0OUK-dUV2flsX68G71YLFw37e2zY5DH-wqfoM', \
+            spreadsheet_id='1Z7SOpVAoUiWwXMQ6JLkQnfHKryaf-yJlJIyoh8_uzxs', \
             letter_id='1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'):
 
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
@@ -140,7 +140,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         doc = self.__create_doc(contact_info)
         if not self.__update_address_list(address, doc):
             return
-        self.__append_to_letter_doc(msg, doc)
+        self.__append_to_letter_doc(msg, doc, contact_info)
         self.__log_contact(contact_info, MailType.MAIL)
 # will add the name of the document and address it should be sent to
     def __update_address_list(self, address, doc):
@@ -186,6 +186,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def __create_doc(self, contact_info):
         folder_id = '1XDba_UUbCoXkbRnjF9N0ju22ksWHcBGm' # TODO: not hardcoded/update to prod folder
         title = '{} {} {}'.format(contact_info.short_name, contact_info.fraternity, safe_get_attr(contact_info, 'name')) # TODO: same format as creating the letter
+        title = contact_info.qr_code_file_name[:-4] # remove the '.png'
         body = {
                 'title': title
         }
@@ -247,7 +248,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         return insert_text_reqs, format_reqs, index
 
 
-    def __append_to_letter_doc(self, msg, doc):
+    def __append_to_letter_doc(self, msg, doc, contact_info):
         text_reqs, format_reqs, full_msg_size = self.__create_text_inserts_to_doc(msg)
         requests = [
         {
@@ -257,8 +258,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 {
                     'index': 1
                 },
-                'uri':
-                'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',
+                'uri': 'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',#get_qr_code_url(contact_info), TODO
+                
                 'objectSize': 
                 {
                     'height': 
@@ -359,11 +360,11 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 # only match when we look at the contact sheet, otherwise look at a match in houses # TODO: this is a kind of hacky way to figure out how we know if we're using a contact or a house
             if row and 'name' in contact_info._fields \
                     and row[0] == contact_info.short_name \
-                    and row[1] == contact_info.fraternity \
-                    and row[2] == safe_get_attr(contact_info, 'name'):
-                row_num += i
-                print('match for {} at row {} in contacts sheet'.format(row[2], i + 1))
-                break
+                    and row[1] == contact_info.fraternity:
+                if mail_type_enum == MailType.MAIL and row[spreadsheet_constants.contact_data_header.index('address')] == contact_info.address:
+                    row_num += i
+                    print('match for {} at row {} in contacts sheet'.format(row[2], i + 1))
+                    break
         if row_num == 1:
 # try to match a house
             sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['houses']]
@@ -372,7 +373,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 if row and row[0] == contact_info.short_name \
                     and row[1] == contact_info.fraternity:
                     row_num += i
-                    print('match for {} at row {} in houses sheet'.format(row[2], i + 1))
+                    print('match for {} at row {} in houses sheet'.format(row[1], i + 1))
                     break
 
         if row_num == 1:

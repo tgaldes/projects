@@ -1,6 +1,6 @@
 
 
-Dear Mr. {},
+{}
 
 	Declining membership in fraternity chapters drives vacancy in the chapter house and reduces revenue. This creates a vicious cycle in which:
 BULLETthere is less money invested in recruitment, impacting membership
@@ -17,7 +17,7 @@ sends out electronic leases
 collects rent and deposits
 ENDBULLETYour job is as simple as signing a lease.
 
-	I’m reaching out to see if the Alpha Zeta chapter of Theta Xi has a vacancy problem that you want to solve. You can take a picture of the code below to see some of what we’ve put together for our current clients. If you prefer a more direct approach, email me at tyler@cleanfloorslockingdoors.com and we’ll schedule a time to talk on the phone.
+	I’m reaching out to see if the {} chapter of {} has a vacancy problem that you want to solve. You can take a picture of the code below to see some of what we’ve put together for our current clients. If you prefer a more direct approach, email me at tyler@cleanfloorslockingdoors.com and we’ll schedule a time to talk on the phone.
 
 
 Best,
