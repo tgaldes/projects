@@ -41,6 +41,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         self.sheet_service = build('sheets', 'v4', credentials=self.sheet_creds)
         self.spreadsheet_id = spreadsheet_id
         self.spreadsheet = self.__get_spreadsheet(self.spreadsheet_id)
+        self.parent_mailer_folder_id = '15--fLcMPKG_Au0HIbo4Q30VCWzw9j0vl'
 
         # map name of sheet to data
         self.sheets_data, self.sheets = self.__get_sheets(self.spreadsheet, self.spreadsheet_id)
@@ -51,7 +52,10 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
 
         self.drive_service = build('drive', 'v3', credentials=self.drive_creds)
-        self.address_letter_sheet_id = '1ebQ9mO9ciodQX7DtkrQ-k_zbK-94A_mkHX4kO8TWIDs'
+
+        now_string = datetime.datetime.now().strftime('%Y%m%d %H:%M')
+        self.folder_id = self.__create_folder(now_string)
+        self.address_letter_sheet_id = self.__create_address_sheet(now_string)
         self.address_letter_sheet = self.__get_spreadsheet(self.address_letter_sheet_id)
         self.address_letter_sheet_data, self.address_letter = self.__get_sheets(self.address_letter_sheet, self.address_letter_sheet_id)
         self.address_letter_row_num = 0
@@ -70,6 +74,26 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def get_last_date_for_house(self, data, enum):
         sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['houses']]
         return self.__get_last_mailed_date(data, enum, sheet_data, spreadsheet_constants.columns_that_define_unique_house)
+
+    def __create_address_sheet(self, now_string):
+        file_metadata = {
+            'name': 'addresses_{}'.format(now_string),
+            'parents': [self.folder_id],
+            'mimeType': 'application/vnd.google-apps.spreadsheet',
+        }
+        response = self.drive_service.files().create(body=file_metadata).execute()
+        return response.get('id')
+    def __create_folder(self, now_string):
+        file_metadata = {
+                'name': 'mailer_{}'.format(now_string),
+                'mimeType': 'application/vnd.google-apps.folder',
+                'parents' : [self.parent_mailer_folder_id]
+        }
+        file = self.drive_service.files().create(body=file_metadata,
+                                            fields='id').execute()
+        return file.get('id')
+        folder_id = '1XDba_UUbCoXkbRnjF9N0ju22ksWHcBGm' # TODO: not hardcoded/update to prod folder
+        return folder_id
 
     def __get_last_mailed_date(self, data, enum, haystack, num_columns):
         header = haystack[0]
@@ -184,7 +208,6 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
 # will create a doc and move it to the appropriate folder
     def __create_doc(self, contact_info):
-        folder_id = '1XDba_UUbCoXkbRnjF9N0ju22ksWHcBGm' # TODO: not hardcoded/update to prod folder
         title = '{} {} {}'.format(contact_info.short_name, contact_info.fraternity, safe_get_attr(contact_info, 'name')) # TODO: same format as creating the letter
         title = contact_info.qr_code_file_name[:-4] # remove the '.png'
         body = {
@@ -201,7 +224,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         previous_parents = ",".join(file.get('parents'))
 # Move the file to the new folder
         file = self.drive_service.files().update(fileId=file_id,
-                                            addParents=folder_id,
+                                            addParents=self.folder_id,
                                             removeParents=previous_parents,
                                             fields='id, parents').execute()
         return doc
