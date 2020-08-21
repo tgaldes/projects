@@ -1,5 +1,7 @@
 from __future__ import print_function
+import sys
 import pprint
+from time import sleep
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -32,7 +34,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             # PROD
             #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g', \
             # TEST
-            spreadsheet_id='1Z7SOpVAoUiWwXMQ6JLkQnfHKryaf-yJlJIyoh8_uzxs', \
+            spreadsheet_id='1_f7NKIMD8QDZ79pxeB8a07HKQVIEN74EcFUn6upx3c4', \
             letter_id='1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'):
 
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
@@ -59,7 +61,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         self.address_letter_sheet = self.__get_spreadsheet(self.address_letter_sheet_id)
         self.address_letter_sheet_data, self.address_letter = self.__get_sheets(self.address_letter_sheet, self.address_letter_sheet_id)
         self.address_letter_row_num = 0
-        #self.__get_one_line_addresses()
+        self.__get_one_line_addresses()
 
     def get_clean_data(self, sheet_name, ffill_columns):
         return dch.clean(self.sheets_data[sheet_name], ffill_columns)
@@ -81,7 +83,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             'parents': [self.folder_id],
             'mimeType': 'application/vnd.google-apps.spreadsheet',
         }
-        response = self.drive_service.files().create(body=file_metadata).execute()
+        response = self.__exponential_backoff('''self.drive_service.files().create(body=args[0]).execute()''', file_metadata)
         return response.get('id')
     def __create_folder(self, now_string):
         file_metadata = {
@@ -89,8 +91,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 'mimeType': 'application/vnd.google-apps.folder',
                 'parents' : [self.parent_mailer_folder_id]
         }
-        file = self.drive_service.files().create(body=file_metadata,
-                                            fields='id').execute()
+        file = self.__exponential_backoff('''self.drive_service.files().create(body=args[0], fields='id').execute()''', file_metadata)
         return file.get('id')
         folder_id = '1XDba_UUbCoXkbRnjF9N0ju22ksWHcBGm' # TODO: not hardcoded/update to prod folder
         return folder_id
@@ -141,7 +142,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     
     def __get_spreadsheet(self, id_):
         # Call the Sheets API
-        return self.sheet_service.spreadsheets().get(spreadsheetId=id_).execute()
+        a = self.__exponential_backoff('''self.sheet_service.spreadsheets().get(spreadsheetId=args[0]).execute()''', id_)
+        return a
 
     def __get_sheets(self, spreadsheet, id_):
         m = {}
@@ -150,7 +152,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             title = sheet.get('properties').get('title')
 # Get the data from this sheet
             range_name='{}!A1:Z2500'.format(title) # TODO
-            sheets[title] = self.sheet_service.spreadsheets().values().get(spreadsheetId=id_, range=range_name).execute()
+            sheets[title] = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().get(spreadsheetId=args[0], range=args[1]).execute()''', id_, range_name)
             m[title] = sheets[title].get('values', [])
         return m, sheets
 
@@ -178,7 +180,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 # schema is A:Address line 1, B:Address line 2, C:Address line 3, D:file name
 # get column from constants
         r = spreadsheet_constants.range_builder[1] + str(self.address_letter_row_num) + ':' + spreadsheet_constants.range_builder[4] + str(self.address_letter_row_num)
-        rangeName = "Sheet1!{}".format(r)
+        range_name = "Sheet1!{}".format(r)
 
 # get the current value of the cell so we can append today's datetime
         address_lines = address.split('\n')
@@ -197,13 +199,11 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             #return False # TODO: would rather throw and fix the issue in the data
             raise Exception('Address had only one line: {}'.format(address_lines))
         values = [[*address_lines, title]]
-        Body = {
+        body = {
             'values' : values,
         }
 
-        result = self.sheet_service.spreadsheets().values().update(
-        spreadsheetId=self.address_letter_sheet_id, range=rangeName,
-        valueInputOption='RAW', body=Body).execute()
+        result = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().update(spreadsheetId=self.address_letter_sheet_id, range=args[0], valueInputOption='RAW', body=args[1]).execute()''', range_name, body)
         return True
 
 # will create a doc and move it to the appropriate folder
@@ -213,20 +213,15 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         body = {
                 'title': title
         }
-        doc = self.letter_service.documents() \
-        .create(body=body).execute()
+        doc = self.__exponential_backoff('''self.letter_service.documents().create(body=args[0]).execute()''', body)
         print('Created document with title: {0}'.format(
             doc.get('title')))
         file_id = doc.get('documentId')
 # move it to dev sandbox
-        file = self.drive_service.files().get(fileId=file_id,
-                                         fields='parents').execute()
+        file = self.__exponential_backoff('''self.drive_service.files().get(fileId=args[0], fields='parents').execute()''', file_id)
         previous_parents = ",".join(file.get('parents'))
 # Move the file to the new folder
-        file = self.drive_service.files().update(fileId=file_id,
-                                            addParents=self.folder_id,
-                                            removeParents=previous_parents,
-                                            fields='id, parents').execute()
+        self.__exponential_backoff('''self.drive_service.files().update(fileId=args[0], addParents=self.folder_id, removeParents=args[1], fields='id, parents').execute()''', file_id, previous_parents)
         return doc
 
 # return (list of requests for each text/bullet paragraph,
@@ -369,14 +364,13 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         }
         ]
         #pp.pprint(requests)
-        result = self.letter_service.documents().batchUpdate(
-                documentId=doc.get('documentId'), body={'requests': requests}).execute()
+        result = self.__exponential_backoff('''self.letter_service.documents().batchUpdate(documentId=args[0], body={'requests': args[1]}).execute()''', doc.get('documentId'), requests)
 
 # This will allow classes to make a note of the dates on which Contacts were messaged via email or snail mail
     def __log_contact(self, contact_info, mail_type_enum):
 # get row number
         sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
-        rangeName = "addresses_clean!{}"
+        range_name = "addresses_clean!{}"
         row_num = 1
 # try to match a contact
         for i, row in enumerate(sheet_data):
@@ -391,7 +385,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         if row_num == 1:
 # try to match a house
             sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['houses']]
-            rangeName = "houses!{}"
+            range_name = "houses!{}"
             for i, row in enumerate(sheet_data):
                 if row and row[0] == contact_info.short_name \
                     and row[1] == contact_info.fraternity:
@@ -407,19 +401,36 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         if col_num == 1:
             raise Exception('Column number of mail date tracking column on sheet is misconfigured, aborting.')
         r = spreadsheet_constants.range_builder[col_num] + str(row_num)
-        rangeName = rangeName.format(r)
+        range_name = range_name.format(r)
 
 # get the current value of the cell so we can append today's datetime
         current_value = sheet_data[row_num - 1][col_num - 1]
         values = [[current_value + datetime.date.today().strftime('%Y%m%d') + '\n']]
-        Body = {
+        body = {
             'values' : values,
         }
 
-        result = self.sheet_service.spreadsheets().values().update(
-        spreadsheetId=self.spreadsheet_id, range=rangeName,
-        valueInputOption='RAW', body=Body).execute()
+        result = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range=args[0], valueInputOption='RAW', body=args[1]).execute()''', range_name, body)
 
+    def __exponential_backoff(self, request, *args):
+        local_request = 'local_result = ' + request
+        attempts = 0
+        max_attempts = 5
+        start_backoff = 2
+        while attempts <= max_attempts:
+            attempts += 1
+            try:
+                exec(local_request)
+                return locals()['local_result']
+            except Exception as e:
+                print(local_request)
+                print(str(e))
+                print('Received error from google, backing off {} seconds and retrying. ({}/{}) attempts made.'.format(start_backoff, attempts, max_attempts))
+                sleep(start_backoff)
+                start_backoff *= 2
+        raise Exception('Reach max exponential backoff attempts ({}), raising exception'.format(attempts))
+                
+# -------------- One/two of test functions ----------------------- #
 # output the row numbers of addresses that are only one line
     def __get_one_line_addresses(self):
         sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
