@@ -87,6 +87,7 @@ class ModelEmployee:
 if __name__=='__main__':
     g2 = Google()
     emp = ModelEmployee(g2)
-    emp.send_snail_mail(100, 'SMU', True, ['board', 'active', 'agent'], True)
+    #emp.send_snail_mail(1, 'OSU', True, ['active'], True)
+    emp.send_snail_mail(0, ['SMU'], True, [], False)
 
 

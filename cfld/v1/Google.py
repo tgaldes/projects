@@ -34,7 +34,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             # PROD
             #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g', \
             # TEST
-            spreadsheet_id='1_f7NKIMD8QDZ79pxeB8a07HKQVIEN74EcFUn6upx3c4', \
+            spreadsheet_id='1Hx3ln_nlHuoU7UTRo5ZsEOSqQU2MP8zn27FViQ5wbl8', \
             letter_id='1pHxpyICZrnwbNxyg8jBW_hXppQgqQNOVXnqWIdiucjU'):
 
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
@@ -62,6 +62,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         self.address_letter_sheet_data, self.address_letter = self.__get_sheets(self.address_letter_sheet, self.address_letter_sheet_id)
         self.address_letter_row_num = 0
         self.__get_one_line_addresses()
+        #self.__get_bad_names()
 
     def get_clean_data(self, sheet_name, ffill_columns):
         return dch.clean(self.sheets_data[sheet_name], ffill_columns)
@@ -93,8 +94,6 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         }
         file = self.__exponential_backoff('''self.drive_service.files().create(body=args[0], fields='id').execute()''', file_metadata)
         return file.get('id')
-        folder_id = '1XDba_UUbCoXkbRnjF9N0ju22ksWHcBGm' # TODO: not hardcoded/update to prod folder
-        return folder_id
 
     def __get_last_mailed_date(self, data, enum, haystack, num_columns):
         header = haystack[0]
@@ -162,14 +161,14 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         print('Implement sending email with msg: {}'.format(msg))
         self.__log_contact(contact_info, MailType.EMAIL)
 #ILetterSender
-    def send_mail(self, address, msg, contact_info):
-        doc = self.__create_doc(contact_info)
-        if not self.__update_address_list(address, doc):
+    def send_mail(self, address, msg, contact):
+        doc = self.__create_doc(contact.data)
+        if not self.__update_address_list(address, doc, contact.get_name()):
             return
-        self.__append_to_letter_doc(msg, doc, contact_info)
-        self.__log_contact(contact_info, MailType.MAIL)
+        self.__append_to_letter_doc(msg, doc, contact.data)
+        self.__log_contact(contact.data, MailType.MAIL)
 # will add the name of the document and address it should be sent to
-    def __update_address_list(self, address, doc):
+    def __update_address_list(self, address, doc, contact_name):
         title = doc.get('title') + '.pdf'
         sheet_data = self.address_letter_sheet_data['Sheet1']
 
@@ -177,28 +176,28 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             self.address_letter_row_num = len(sheet_data) + 1
         else:
             self.address_letter_row_num += 1
-# schema is A:Address line 1, B:Address line 2, C:Address line 3, D:file name
+# schema is A:Address line 1, B:Address line 2, C:Address line 3, D:file name, E:recipient name
 # get column from constants
-        r = spreadsheet_constants.range_builder[1] + str(self.address_letter_row_num) + ':' + spreadsheet_constants.range_builder[4] + str(self.address_letter_row_num)
+        r = spreadsheet_constants.range_builder[1] + str(self.address_letter_row_num) + ':' + spreadsheet_constants.range_builder[5] + str(self.address_letter_row_num)
         range_name = "Sheet1!{}".format(r)
 
 # get the current value of the cell so we can append today's datetime
         address_lines = address.split('\n')
-        for line in address_lines:
-            line = line.strip().strip(',')
+        for i, line in enumerate(address_lines):
+            address_lines[i] = line.strip().strip(',')
         if len(address_lines) == 3:
             pass
         elif len(address_lines) == 2:
             address_lines.insert(1, '')
         elif len(address_lines) > 3:
-            print('Address had too many lines: {}'.format(address_lines))
-            #return False # TODO
+            print('ERROR: Address had too many lines: {}'.format(address_lines))
+            return False # TODO
             raise Exception('Address had too many lines: {}'.format(address_lines))
         else:
-            print('Address had only one line: {}'.format(address_lines))
-            #return False # TODO: would rather throw and fix the issue in the data
+            print('ERROR: Address had only one line: {}'.format(address_lines))
+            return False # TODO: would rather throw and fix the issue in the data
             raise Exception('Address had only one line: {}'.format(address_lines))
-        values = [[*address_lines, title]]
+        values = [[*address_lines, title, contact_name]]
         body = {
             'values' : values,
         }
@@ -276,7 +275,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 {
                     'index': 1
                 },
-                'uri': 'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',#get_qr_code_url(contact_info), TODO
+                #'uri': 'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/07/frame.png',#get_qr_code_url(contact_info), TODO
+                'uri': get_qr_code_url(contact_info),
                 
                 'objectSize': 
                 {
@@ -441,6 +441,17 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             if row and row[address_col_num] and row[address_col_num].count('\n') == 0:
                 rows.append(i + 1)
         print('The following rows have addresses that only have one line:')
+        for row in rows:
+            print(row)
+    def __get_bad_names(self):
+        sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
+        name_col_num = sheet_data[0].index('name')
+        rows = []
+        for i, row in enumerate(sheet_data):
+            if i == 0: continue # skip header
+            if row and row[name_col_num] and ((len(row[name_col_num].split()) != 2 and len(row[name_col_num].split()) != 3) or ',' in row[name_col_num]):
+                rows.append((i + 1, row[name_col_num]))
+        print('The following names might be more than (first, last)')
         for row in rows:
             print(row)
                 

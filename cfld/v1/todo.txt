@@ -5,8 +5,6 @@ start reading from real sheet while we aren't writing out data?
 Epics
 1) send mail as tyler@cfld.com
 2) sendgrid api
-3) data persistence schema and to docs
-4) letter writing
 5) UI integration
 
 
@@ -15,7 +13,7 @@ To make more robust:
     https://console.cloud.google.com/iam-admin/quotas/details;servicem=docs.googleapis.com;metricm=docs.googleapis.com%2Fwrite_requests;limitIdm=1%2Fmin%2F%7Bproject%7D%2F%7Buser%7D?authuser=2&project=cfldv1
 
 next steps:
-    - try out letter with tagline (better without)
+    - try out letter with tagline (better without, but good on envelope)
     - review letter with sam
     - think about website layout- what new pages will we need?
     - QR code by code (house/undergrad/board/etc)
@@ -23,3 +21,16 @@ next steps:
             - even better, we can do a redirect by school/fraternity as well, so the QR code link will be something like cfld.com/smu-kappa-sigma
         - to get really fancy: A/B testing, can hold enum, QR code image link, webpage link, in google sheet, then add which qr code they got in their letter to the mail_dates column update call
 
+
+Big list for mailer
+- clean data, everything in the sheet needs to be compatible with my code, will need to add one line addresses on house sheet
+- A/B testing for board members and undergrads (need page for undergrads, review pages for board members)
+- confirm we'll see redirects with google analytics, design parsing that data and adding to pnc sheet
+- create unique qr codes and upload to wordpress
+- log instead of print, summarize errors/warnings after run
+- change line in board/agent mailer when we're sending out to multiple people
+DONE- google analytics track clicking on the mailto: link on the pages 
+DONE- figure out if we want the logo in the mail
+- trial
+    - bank account in postalocity
+    - 10 qr codes

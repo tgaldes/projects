@@ -38,7 +38,7 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
         if self.data.code not in letters.letters:
             raise Exception('Code: {} is not in letters.py.letters map'.format(self.data.code))
         letter = self.__format_letter()
-        letter_sender.send_mail(self.data.address, letter, self.data)
+        letter_sender.send_mail(self.data.address, letter, self)
 
     def send_email(self, email_sender):
         if self.data.email == '':
@@ -51,7 +51,24 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
             raise Exception('Code: {} is not in letters.py.letters map'.format(self.data.code))
         email = self.__format_email()
         email_sender.send_email('TODO: subject', email, self.data)
-
+    
+    def get_name(self):
+        try:
+            if self.data.name != '':
+                return self.data.name.title()
+        except:
+            pass
+        first = safe_get_attr(self.datas[1], 'chapter_designation')
+        second = safe_get_attr(self.datas[1], 'fraternity')
+        if self.datas[1].chapter_designation != '':
+# out of short_name, fraternity, and chapter_designation, we need to make sure we clean the formatting of fraternity and chapter_designation
+            ret = '{} of {}'.format(first.title(), second.title())
+        else:
+            ret = '{} {}'.format(first, second.title())
+# format for the board
+        if self.data.code in ['general_board', 'suspended']:
+            ret += ' House Corporation'
+        return ret
 
     def __format_email(self):
         return self.__format_message(enums.MailType.EMAIL)
