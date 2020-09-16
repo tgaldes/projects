@@ -25,6 +25,7 @@ email_date_column_name = 'email_dates'
 address_column_name = 'address'
 qr_date_column_name = 'qr_date'
 qr_file_name_column_name = 'qr_code_file_name'
+unique_url_visited_column_name = 'unique_url_visited'
 
 range_builder = {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: 'J', 11: 'K', 12: 'L', 13: 'M', 14: 'N', 15: 'O', 16: 'P', 17: 'Q', 18: 'R', 19: 'S', 20: 'T', 21: 'U', 22: 'V', 23: 'W', 24: 'X', 25: 'Y', 26: 'Z'}
 
@@ -39,13 +40,13 @@ if sheet_names.keys() != ffill_column_names.keys():
 
 # TODO: add the columns for the qr code and website page titles
 # for testing, names of columns subject to change
-contact_data_header = ['short_name', 'fraternity', 'name', 'address', 'contact', 'phone', 'linkedin', 'email', 'links', 'code', 'old', 'notes', 'unlinked_lower_name', 'house_base_short_name', 'unique_url', 'qr_code_file_name', 'qr_date', 'unique_qr_helper', 'reduced_code', 'mail_dates', 'email_dates', 'house_tuple']
+contact_data_header = ['short_name', 'fraternity', 'name', 'address', 'contact', 'phone', 'linkedin', 'email', 'links', 'code', 'old', 'notes', 'unlinked_lower_name', 'house_base_short_name', 'unique_url', 'qr_code_file_name', 'qr_date', 'unique_qr_helper', 'reduced_code', 'mail_dates', 'email_dates', 'unique_url_visited', 'house_tuple']
 
 contact_data_header_length = len(contact_data_header)
 contact_data_info = [ \
-['USC', 'Alpha Tau Omega', 'Curtis Westfall', '11500 Tennessee Ave\nUnit 324\nLos Angeles, CA 90064', '', '', '',  'tgaldes@gmail.com', '', 'board', '0', '', 'curtis-westfall', 'usc-ato', 'https://cleanfloorslockingdoors.com/qr-board-usc-ato-curtis-westfall', 'usc-ato-curtis-westfall-1.png', '20200816', '', '','', '', '', '', '', ''], \
-['SJSU', 'Theta Chi', 'George Bremer', '629 Gayley Ave\nLos Angeles, CA 90024', '', '', '', 'tgaldes@gmail.com', '', 'undergrad', '0', '', 'george-bremer', 'sjsu-theta-chi', 'https://cleanfloorslockingdoors.com/qr-undergrad-sjsu-theta-chi-george-bremer', 'sjsu-theta-chi-george-bremer-3.png', '20200816','', '', '', '', '','', '', '']]
-house_data_header = ['short_name', 'fraternity', 'address', 'chapter_designation', 'mailing_address', 'corporate_filing', 'code', 'chapter_website', 'alumni_website', 'notes', 'city', 'helper_label', 'mail_dates', 'email_dates', 'unlinked_lower_name', 'base_short_name_house_name', 'unique_url', 'qr_code_file_name', 'qr_date']
+['USC', 'Alpha Tau Omega', 'Curtis Westfall', '11500 Tennessee Ave\nUnit 324\nLos Angeles, CA 90064', '', '', '',  'tgaldes@gmail.com', '', 'board', '0', '', 'curtis-westfall', 'usc-ato', 'https://cleanfloorslockingdoors.com/qr-board-usc-ato-curtis-westfall', 'usc-ato-curtis-westfall-1.png', '20200816', '20200915', '', '','', '', '', '', '', ''], \
+['SJSU', 'Theta Chi', 'George Bremer', '629 Gayley Ave\nLos Angeles, CA 90024', '', '', '', 'tgaldes@gmail.com', '', 'undergrad', '0', '', 'george-bremer', 'sjsu-theta-chi', 'https://cleanfloorslockingdoors.com/qr-undergrad-sjsu-theta-chi-george-bremer', 'sjsu-theta-chi-george-bremer-3.png', '20200816', '20200916', '', '', '', '', '','', '', '']]
+house_data_header = ['short_name', 'fraternity', 'address', 'chapter_designation', 'mailing_address', 'corporate_filing', 'code', 'chapter_website', 'alumni_website', 'notes', 'city', 'helper_label', 'mail_dates', 'email_dates', 'unlinked_lower_name', 'base_short_name_house_name', 'unique_url', 'qr_code_file_name', 'qr_date', 'unique_url_visited']
 house_data_header_length = len(house_data_header)
-house_data_info = [['USC', 'Alpha Tau Omega', '2715 Portland St\nLos Angeles, CA 90007', 'Gamma Xi', 'TODO', 'TODO', 'house', 'chapter_website', 'alumni_website', 'notes', 'city', 'helper_label', '', '', 'alpha-tau-omega', 'usc-ato', 'https://cleanfloorslockingdoors.com/qr-usc-ato', 'usc-ato.png', '20200816', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'number_of_confirmed_emails'], \
-['SJSU', 'Theta Chi', '123 S 11th St\nSan Jose, CA 95217', 'Gamma Xi', 'TODO', 'TODO', 'house', 'chapter_website', 'alumni_website', 'notes', 'city', 'helper_label', '', '', 'theta-chi', 'sjsu-theta-chi', 'https://cleanfloorslockingdoors.com/qr-sjsu-theta-chi', 'sjsu-theta-chi.png', '20200816', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'number_of_confirmed_emails']]
+house_data_info = [['USC', 'Alpha Tau Omega', '2715 Portland St\nLos Angeles, CA 90007', 'Gamma Xi', 'TODO', 'TODO', 'house', 'chapter_website', 'alumni_website', 'notes', 'city', 'helper_label', '', '', 'alpha-tau-omega', 'usc-ato', 'https://cleanfloorslockingdoors.com/qr-usc-ato', 'usc-ato.png', '20200816', '20200915', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'number_of_confirmed_emails'], \
+['SJSU', 'Theta Chi', '123 S 11th St\nSan Jose, CA 95217', 'Gamma Xi', 'TODO', 'TODO', 'house', 'chapter_website', 'alumni_website', 'notes', 'city', 'helper_label', '', '', 'theta-chi', 'sjsu-theta-chi', 'https://cleanfloorslockingdoors.com/qr-sjsu-theta-chi', 'sjsu-theta-chi.png', '20200816', '20200915', 'have_corporate_filing', 'have_alumni_website', 'either', 'have_client_at_this_school', 'number_of_confirmed_emails']]

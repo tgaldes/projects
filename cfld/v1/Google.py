@@ -62,7 +62,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         self.address_letter_sheet_data, self.address_letter = self.__get_sheets(self.address_letter_sheet, self.address_letter_sheet_id)
         self.address_letter_row_num = 0
         self.__get_one_line_addresses()
-        #self.__get_bad_names()
+        self.__get_bad_names()
 
     def get_clean_data(self, sheet_name, ffill_columns):
         return dch.clean(self.sheets_data[sheet_name], ffill_columns)
@@ -77,6 +77,56 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def get_last_date_for_house(self, data, enum):
         sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['houses']]
         return self.__get_last_mailed_date(data, enum, sheet_data, spreadsheet_constants.columns_that_define_unique_house)
+
+# Take a list of urls visited and add any new dates to the rows of the csv with the matching url
+# visits is list of [(url, date)....]
+    def update_page_visits(self, visits):
+# TODO: the matching is similar to __log_contact, we can have a generic func that finds the matching row based on the info we have availble
+        total_logged = 0
+        for url, date in visits:
+            # try to find a match in the contact data
+            row_num = 1
+# try to match a contact
+            sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['contacts']]
+            range_name = "addresses_clean!{}"
+            for i, row in enumerate(sheet_data):
+# only match when we look at the contact sheet, otherwise look at a match in houses # TODO: this is a kind of hacky way to figure out how we know if we're using a contact or a house
+                if row \
+                        and url in row[spreadsheet_constants.contact_data_header.index('unique_url')]:
+                        row_num += i
+                        print('match for {} at row {} in contacts sheet'.format(url, i + 1))
+                        break
+            if row_num == 1:
+                # try to find a match in the house data
+                sheet_data = self.sheets_data[spreadsheet_constants.sheet_names['houses']]
+                range_name = "houses!{}"
+                for i, row in enumerate(sheet_data):
+                    if row \
+                            and url in row[spreadsheet_constants.house_data_header.index('unique_url')]:
+                        row_num += i
+                        print('match for {} at row {} in house sheet'.format(row[spreadsheet_constants.contact_data_header.index('unique_url')], i + 1))
+                        break
+
+            if row_num == 1:
+                print('No match for url {}'.format(url)) # There will be urls in the log that don't match anyone from my testing
+                continue
+# get column from constants
+            col_num = 1 + sheet_data[0].index(spreadsheet_constants.unique_url_visited_column_name)
+            if col_num == 1:
+                raise Exception('Column number of unique url visited on sheet is misconfigured, aborting.')
+            r = spreadsheet_constants.range_builder[col_num] + str(row_num)
+            range_name = range_name.format(r)
+
+# get the current value of the cell so we can append today's datetime
+            current_value = sheet_data[row_num - 1][col_num - 1]
+            values = [[current_value + date.strftime('%Y%m%d') + '\n']]
+            body = {
+                'values' : values,
+            }
+
+            result = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range=args[0], valueInputOption='RAW', body=args[1]).execute()''', range_name, body)
+            total_logged += 1
+        print('Recorded a total of {} visits, it is now safe to clear the logs of redirect in wordpress to avoid seeing duplicates'.format(total_logged))
 
     def __create_address_sheet(self, now_string):
         file_metadata = {

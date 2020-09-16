@@ -7,6 +7,8 @@ import pdb
 import pickle
 import datetime
 from enums import MailType
+import datetime
+from global_funcs import parse_redirect_log
 
 class ModelEmployee:
     def __init__(self, g):
@@ -81,13 +83,20 @@ class ModelEmployee:
             print('Skipping when last {} date is {} and today is {} and min_duplicate days is {}'.format(enum, last_date, datetime.date.today(), min_duplicate_days))
             return False
         return True
+    
+    def update_redirects(self, fn):
+        visits = parse_redirect_log(fn)
+        print(visits)
+        self.google.update_page_visits(visits)
 
 
 
 if __name__=='__main__':
     g2 = Google()
     emp = ModelEmployee(g2)
+    #emp.update_redirects('/home/tgaldes/Desktop/redirects.csv')
+
     #emp.send_snail_mail(1, 'OSU', True, ['active'], True)
-    emp.send_snail_mail(0, ['SMU'], True, [], False)
+    #emp.send_snail_mail(0, ['SMU'], True, [], False)
 
 

@@ -2,6 +2,7 @@ import letters
 import pdb
 from copy import copy
 from spreadsheet_constants import bullet_code, end_bullet_code, qr_date_column_name, qr_file_name_column_name
+import datetime
 
 def safe_get_attr(tup, key, alt_tups=[]):
     try:
@@ -65,6 +66,35 @@ def get_qr_code_url(data):
    qr_year = qr_date[:4]
    qr_month = qr_date[4:6]
    return base + qr_year + '/' + qr_month + '/' + fn
+
+def parse_redirect_log(fn):
+    csv = []
+    started = False;
+    visits = []
+    with open(fn, 'r') as f:
+        for line in f:
+            if 'Select All' in line and 'Source URL' in line:
+                started = True
+                continue
+            if not started:
+                continue
+            if 'RSS' in line:
+                break
+            csv.append(line)
+    parsing_date = True
+    for line in csv:
+        cells = line.split(',')
+        if parsing_date:
+            print(cells)
+            ds = cells[1][1:]# will get 'September 15'
+            year = cells[2].split()[0] # will get '2020'
+            date = datetime.datetime.strptime(ds + ' ' + year, '%B %d %Y').date()
+            parsing_date = False
+        else:
+            url = cells[1].split('A')[0]
+            visits.append((url, date))
+            parsing_date = True
+    return visits
 
 
 if __name__=='__main__':
