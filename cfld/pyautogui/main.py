@@ -167,7 +167,6 @@ if __name__=='__main__':
         for data in all_buy_sells:
             if data.short_name in schools:
                 run_buy_sell_group(data)
-                exit(0) # TODO
             else:
                 print('Skipping {}'.format(data.short_name))
     else:
