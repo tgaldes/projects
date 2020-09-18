@@ -23,9 +23,9 @@ all_coords = {
 # normal group
             'file_upload_path' : (1202, 250),
             'write_something' : (1144, 590),
-            'one_line_group_photo_video' : (1066, 786),
-            'two_line_group_photo_video' : (1066, 820),
-            'three_line_group_photo_video' : (1066, 853),
+            'one_line_group_photo_video' : (956, 786),
+            'two_line_group_photo_video' : (956, 820),
+            'three_line_group_photo_video' : (956, 853),
 # buy and sell group
             'one_line_sell_something' : (1238, 737),
             'two_line_sell_something' : (1238, 768),
