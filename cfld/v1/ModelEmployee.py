@@ -83,7 +83,7 @@ class ModelEmployee:
             print('Skipping when last {} date is {} and today is {} and min_duplicate days is {}'.format(enum, last_date, datetime.date.today(), min_duplicate_days))
             return False
         return True
-    
+# one off functions --------------------------------------------------- 
     def update_redirects(self, fn):
         visits = parse_redirect_log(fn)
         print(visits)
@@ -93,10 +93,11 @@ class ModelEmployee:
 
 if __name__=='__main__':
     g2 = Google()
+    #g2.create_qr_codes('/tmp/qr_codes/', True)
     emp = ModelEmployee(g2)
     #emp.update_redirects('/home/tgaldes/Desktop/redirects.csv')
 
-    #emp.send_snail_mail(1, 'OSU', True, ['active'], True)
+    #emp.send_snail_mail(0, 'LSU', True, ['active'], True)
     #emp.send_snail_mail(0, ['SMU'], True, [], False)
 
 

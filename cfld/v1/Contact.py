@@ -3,7 +3,7 @@ from Interfaces import IAddressee, IEmailAddressee
 import letters
 from global_funcs import safe_get_attr
 import enums
-import spreadsheet_constants
+import spreadsheet_constants as sc
 
 # Imported for testing, used in main:
 #from LetterSender import MockLetterSender
@@ -20,12 +20,12 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
         self.data = named_tuple
         self.house_data = named_tuple.house_tuple
         self.datas = [self.data, self.house_data]
-        for i in range(spreadsheet_constants.columns_that_define_unique_house):
-            l = getattr(self.data, spreadsheet_constants.column_names['contacts'][i])
-            r = getattr(self.house_data, spreadsheet_constants.column_names['houses'][i])
+        for i in range(sc.columns_that_define_unique_house):
+            l = getattr(self.data, sc.column_names['contacts'][i])
+            r = getattr(self.house_data, sc.column_names['houses'][i])
             if l != r:
                 pdb.set_trace()
-                raise Exception('Cannot construct contact with different values {} and {} for {}'.format(l, r, spreadsheet_constants.column_names['contacts'][i]))
+                raise Exception('Cannot construct contact with different values {} and {} for {}'.format(l, r, sc.column_names['contacts'][i]))
 
 
     def send_mail(self, letter_sender):
@@ -79,13 +79,21 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
             m = letters.emails[self.data.code]
         else:
             m = letters.letters[self.data.code]
-        return m.format_letter(self.datas)
+        return m.format_letter(self.datas, self._number_of_messages_going_to_chapter(mail_type_enum))
+
+    def _number_of_messages_going_to_chapter(self, mail_type):
+        if mail_type == enums.MailType.MAIL:
+            return int(getattr(self.datas[0], sc.populated_addresses_column_names))
+        elif mail_type == enums.MailType.MAIL:
+            return int(getattr(self.datas[0], sc.populated_emails_column_names))
+        raise Exception("unexpected mail type enum")
+        
 
 if __name__=='__main__':
-    HouseData = collections.namedtuple('HouseData', spreadsheet_constants.house_data_header)
-    ContactData = collections.namedtuple('ContactData', spreadsheet_constants.contact_data_header)
-    houses = [HouseData(*x) for x in spreadsheet_constants.house_data_info]
-    contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(spreadsheet_constants.contact_data_info)]
+    HouseData = collections.namedtuple('HouseData', sc.house_data_header)
+    ContactData = collections.namedtuple('ContactData', sc.contact_data_header)
+    houses = [HouseData(*x) for x in sc.house_data_info]
+    contacts = [Contact(ContactData(*x, houses[i])) for i, x in enumerate(sc.contact_data_info)]
     g = Google()
     '''with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)

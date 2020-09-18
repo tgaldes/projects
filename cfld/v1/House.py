@@ -17,6 +17,14 @@ class House(Contact):
         self.datas = [self.data, self.data]
         if self.data.code == '':
             raise Exception('Tried to create a House with code = \'\', school: {} chapter: {}'.format(self.data.short_name, self.data.fraternity))
+    def _number_of_messages_going_to_chapter(self, mail_type):
+        return 1
+
+
+
+
+
+
 
 if __name__=='__main__':
     '''g = Google()
@@ -31,6 +39,7 @@ if __name__=='__main__':
         #h.send_email(g) # TODO
         h.send_mail(g2)
         #print(getattr(c.data, 'name'))
+
 
 
 
