@@ -33,11 +33,11 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def __init__(self, \
 
             # PROD
-            #parent_mailer_folder_id='197j8yOL5i_EBdjt_ObneXDXj6NtZsDXs',
-            #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g'):
+            parent_mailer_folder_id='197j8yOL5i_EBdjt_ObneXDXj6NtZsDXs',
+            spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g'):
             # TEST
-            parent_mailer_folder_id='15--fLcMPKG_Au0HIbo4Q30VCWzw9j0vl',
-            spreadsheet_id='1iA4vIyZHUeeBHKxlCYePKEm097lhvpyt_WkOEDpAU5g'):
+            #parent_mailer_folder_id='15--fLcMPKG_Au0HIbo4Q30VCWzw9j0vl',
+            #spreadsheet_id='1iA4vIyZHUeeBHKxlCYePKEm097lhvpyt_WkOEDpAU5g'):
 
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
         self.letter_creds = self.__load_creds('pickles/cfldv1_letter_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/docs_credentials.json', DOC_SCOPES)
@@ -70,6 +70,11 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         self.address_letter_sheet = self.__get_spreadsheet(self.address_letter_sheet_id)
         self.address_letter_row_num = 0
         self.address_letter_sheet_data, self.address_letter = self.__get_sheets(self.address_letter_sheet, self.address_letter_sheet_id)
+        self.snail_mail_contacts_to_log = []
+
+    def confirm_sending_mail(self):
+        for data, mail_type in self.snail_mail_contacts_to_log:
+            self.__log_contact(data, mail_type)
 
     def get_clean_data(self, sheet_name, ffill_columns):
         return dch.clean(self.sheets_data[sheet_name], ffill_columns)
@@ -110,28 +115,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             os.make_dirs(output_dir)
         except:
             pass
-        sheet_data = self.sheets_data[sc.sheet_names['contacts']]
         raw_cmd = 'qrencode -o "{}/{}" "{}"'
         date_string = datetime.datetime.now().date().strftime('%Y%m')
-# TODO: import the house/contact data named tuple instead of indexing into the header
-# Contacts
-        for i, row in enumerate(sheet_data):
-            if i == 0: continue
-            # at least address/email/links need to be populated
-            if (overwrite or not row[sc.contact_data_header.index(sc.qr_date_column_name)]) \
-                        and \
-                        (row[sc.contact_data_header.index(sc.address_column_name)] or row[sc.contact_data_header.index(sc.email_column_name)] or row[sc.contact_data_header.index(sc.links_column_name)]):
-                cmd = raw_cmd.format(output_dir,
-                        row[sc.contact_data_header.index(sc.qr_file_name_column_name)],
-                        row[sc.contact_data_header.index(sc.unique_url_column_name)])
-                rc = os.system(cmd)
-                if rc != 0:
-                    print('Error creating qr code with filename {}'.format(row[sc.contact_data_header.index(sc.qr_file_name_column_name)]))
-                    continue
-                j = sheet_data[0].index(sc.qr_date_column_name)
-                self.update_cell(i, j, date_string, sc.sheet_names['contacts'])
-                sleep(10)
-# Houses
         sheet_data = self.sheets_data[sc.sheet_names['houses']]
         for i, row in enumerate(sheet_data):
             if i == 0: continue
@@ -141,10 +126,31 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                         row[sc.house_data_header.index(sc.unique_url_column_name)])
                 rc = os.system(cmd)
                 if rc != 0:
+                    pdb.set_trace()
                     print('Error creating qr code with filename {}'.format(row[sc.house_data_header.index(sc.qr_file_name_column_name)]))
                     continue
                 j = sheet_data[0].index(sc.qr_date_column_name)
                 self.update_cell(i, j, date_string, sc.sheet_names['houses'])
+# TODO: import the house/contact data named tuple instead of indexing into the header
+# Contacts
+        sheet_data = self.sheets_data[sc.sheet_names['contacts']]
+        for i, row in enumerate(sheet_data):
+            if i == 0: continue
+            # at least address/email/links need to be populated
+            if (overwrite or not row[sc.contact_data_header.index(sc.qr_date_column_name)]) \
+                        and \
+                        (row[sc.contact_data_header.index(sc.address_column_name)] or row[sc.contact_data_header.index(sc.email_column_name)] or row[sc.contact_data_header.index(sc.links_column_name)] or row[sc.contact_data_header.index(sc.name_column_name)]):
+                cmd = raw_cmd.format(output_dir,
+                        row[sc.contact_data_header.index(sc.qr_file_name_column_name)],
+                        row[sc.contact_data_header.index(sc.unique_url_column_name)])
+                rc = os.system(cmd)
+                if rc != 0:
+                    pdb.set_trace()
+                    print('Error creating qr code with filename {}'.format(row[sc.contact_data_header.index(sc.qr_file_name_column_name)]))
+                    continue
+                j = sheet_data[0].index(sc.qr_date_column_name)
+                self.update_cell(i, j, date_string, sc.sheet_names['contacts'])
+# Houses
 
 
 
@@ -290,7 +296,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         if not self.__update_address_list(address, doc, contact.get_name()):
             return
         self.__append_to_letter_doc(msg, doc, contact.data)
-        self.__log_contact(contact.data, MailType.MAIL)
+        self.snail_mail_contacts_to_log.append((contact.data, MailType.MAIL))
 # will add the name of the document and address it should be sent to
     def __update_address_list(self, address, doc, contact_name):
         title = doc.get('title') + '.pdf'
@@ -400,8 +406,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 {
                     'index': 1
                 },
-                'uri': 'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/09/default.png',#get_qr_code_url(contact_info), TODO
-                #'uri': get_qr_code_url(contact_info),
+                #'uri': 'https://cleanfloorslockingdoors.com/wp-content/uploads/2020/09/default.png',#get_qr_code_url(contact_info), TODO
+                'uri': get_qr_code_url(contact_info),
                 
                 'objectSize': 
                 {
@@ -540,7 +546,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def __exponential_backoff(self, request, *args):
         local_request = 'local_result = ' + request
         attempts = 0
-        max_attempts = 5
+        max_attempts = 6
         start_backoff = 2
         while attempts <= max_attempts:
             attempts += 1
@@ -608,9 +614,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
 if __name__=='__main__':
     g = Google()
+    g.create_qr_codes('/tmp/qr_codes', False)
     '''with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)
     with open('pickles/google.pickle', 'rb') as f:
         g2 = pickle.load(f)'''
-    b = dch.pad_short_rows(g2.sheets['addresses_clean'])
-    a = dch.ffill(b, ['university', 'fraternity'])

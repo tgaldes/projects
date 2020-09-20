@@ -1,4 +1,3 @@
-import pdb
 from global_funcs import safe_get_attr
 class Message:
     def __init__(self, fn, fields):
@@ -51,7 +50,7 @@ class Message:
 common_formats = {
     'fraternity' : ('fraternity', 0, str.title),
     'chapter_designation' : ('chapter_designation', 1),
-    'multiple_contacts' : ('', ' several contacts I have available', 1, 'unused_var'),
+    'multiple_contacts' : ('', ' several contacts I have available to', 1, 'unused_var'),
     'saluatation' : ('name', 0, 'Dear Mr. ', ',', 'To whom it may concern,'),
 }
 common_format_lists = {
@@ -68,13 +67,8 @@ letters = \
     'campaign_chair' : Message('letters/board.txt', common_format_lists['general']),
     'general_board' : Message('letters/board.txt', common_format_lists['general']),
     'general_undergrad' : Message('letters/undergrad.txt', common_format_lists['general']),
-    'high_value' : Message('letters/board.txt', [('name', 0, 'Dear Mr. ', ',', 'To whom it may concern,'), ('chapter_designation', 1), ('fraternity', 0, str.title)]),
+    'high_value' : Message('letters/board.txt', common_format_lists['general']),
     'suspended' : Message('letters/board.txt', [('name', 0, 'Dear Mr. ', ',', 'To whom it may concern,'), ('chapter_designation', 1), ('fraternity', 0, str.title)])
-}
-
-backup_keys = { \
-    'chapter_designation' : ['short_name'],
-    'name' : ['fraternity']
 }
 
 emails = \

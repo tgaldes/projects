@@ -1,4 +1,3 @@
-from ModelEmployee import ModelEmployee
 from Google import Google
 import pickle
 import pdb
@@ -7,17 +6,16 @@ import pdb
 
 
 class UI:
-    def __init__(self, emp):
+    def __init__(self):
         self.errorMessage = 'Please try again'
         self.booleans = ['Y', 'N']
         self.booleans_string = '(Y/N)'
         self.numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        self.employee = emp
 
-        self.menu = [('Send emails', emp.send_intro_emails),
+        '''self.menu = [('Send emails', emp.send_intro_emails),
                       ('Make phone calls', emp.make_phone_calls),
                       ('Send snail mail', emp.send_snail_mail)]
-                      #('Explore data (I can\'t wait to implement this!', lambda *args: None)]
+                      #('Explore data (I can\'t wait to implement this!', lambda *args: None)]'''
         self.finished = 'Done'
     def validate_input(self, userInput, options):
         # match strings
@@ -57,9 +55,7 @@ class UI:
             numbers = self.numbers
         return int(self.prompt_for_input('Please select a number', numbers))
     def prompt_for_bool(self):
-        return self.prompt_for_input('Please select a value', self.booleans)
-    def prompt_for_school(self):
-        return self.prompt_for_input('Please select a house', self.employee.get_school_list)
+        return self.prompt_for_input('Please select a value', self.booleans[0])
 
     def prompt_for_input(self, msg, options):
         msg = '{}: {} or {}'.format(msg, options, self.finished)
@@ -83,7 +79,7 @@ class UI:
 
 
 
-    def show_menu(self):
+    '''def show_menu(self):
         while True:
             print('Select a menu option')
             for i, option in enumerate(self.menu):
@@ -93,14 +89,13 @@ class UI:
             f = self.menu[selection][1]
 # TODO we should look at the function signature here and use that to determine what arguments we need to prompt for
             self.build_filter(self.employee.get_school_list())
-            f()
+            f()'''
 
 
 
 if __name__=='__main__':
     with open('pickles/google.pickle', 'rb') as f:
         g2 = pickle.load(f)
-    emp = ModelEmployee(g2)
     ui = UI(emp)
     ui.show_menu()
 

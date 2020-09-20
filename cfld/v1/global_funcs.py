@@ -1,7 +1,6 @@
-import letters
 import pdb
 from copy import copy
-from spreadsheet_constants import bullet_code, end_bullet_code, qr_date_column_name, qr_file_name_column_name
+from spreadsheet_constants import bullet_code, end_bullet_code, qr_date_column_name, qr_file_name_column_name, backup_keys
 import datetime
 
 def safe_get_attr(tup, key, alt_tups=[]):
@@ -14,7 +13,7 @@ def safe_get_attr(tup, key, alt_tups=[]):
         
     alt_tups_ = copy(alt_tups)
     alt_tups_.insert(0, tup)
-    for backup_key in letters.backup_keys[key]:
+    for backup_key in backup_keys[key]:
         for current_tup in alt_tups_:
             try:
                 attr = getattr(current_tup, backup_key)
@@ -23,7 +22,7 @@ def safe_get_attr(tup, key, alt_tups=[]):
             except:
                 pass # keep looking at backup keys
     # When we get here we didn't find any of the backup keys
-    raise Exception('Looking through data tuples for key: {} -> backup_keys: {} yielded the empty string. Data tuples: {}'.format(key, letters.backup_keys[key], alt_tups_))
+    raise Exception('Looking through data tuples for key: {} -> backup_keys: {} yielded the empty string. Data tuples: {}'.format(key, backup_keys[key], alt_tups_))
 
 
 # Return list of tuples [('text in here', bool isBullet)...]

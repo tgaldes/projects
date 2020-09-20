@@ -17,9 +17,16 @@ ffill_column_names = { \
 bullet_code = 'BULLET'
 end_bullet_code = 'END' + bullet_code
 
+backup_keys = { \
+    'chapter_designation' : ['short_name'],
+    'name' : ['fraternity']
+}
+
+
 
 # specific columns
 mail_type_enum_to_column_name = {enums.MailType.MAIL : 'mail_dates', enums.MailType.EMAIL : 'email_dates'}
+name_column_name = 'name'
 code_column_name = 'code'
 mail_date_column_name = 'mail_dates'
 email_date_column_name = 'email_dates'
@@ -48,7 +55,7 @@ if sheet_names.keys() != ffill_column_names.keys():
 
 # TODO: add the columns for the qr code and website page titles
 # for testing, names of columns subject to change
-contact_data_header = ['short_name', 'fraternity', 'name', address_column_name, 'contact', 'phone', 'linkedin', email_column_name, links_column_name, code_column_name, 'old', 'notes', 'unlinked_lower_name', 'house_base_short_name', unique_url_column_name, qr_file_name_column_name, qr_date_column_name, 'unique_qr_helper', 'reduced_code', mail_date_column_name, email_date_column_name, unique_url_visited_column_name, populated_addresses_column_names,
+contact_data_header = ['short_name', 'fraternity', name_column_name, address_column_name, 'contact', 'phone', 'linkedin', email_column_name, links_column_name, code_column_name, 'old', 'notes', 'unlinked_lower_name', 'house_base_short_name', unique_url_column_name, qr_file_name_column_name, qr_date_column_name, 'unique_qr_helper', 'reduced_code', mail_date_column_name, email_date_column_name, unique_url_visited_column_name, populated_addresses_column_names,
 populated_emails_column_names, populated_total_column_names, 'house_tuple']
 
 contact_data_header_length = len(contact_data_header)

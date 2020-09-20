@@ -9,9 +9,11 @@ import datetime
 from enums import MailType
 import datetime
 from global_funcs import parse_redirect_log
+from UI import UI
 
-class ModelEmployee:
+class ModelEmployee(UI):
     def __init__(self, g):
+        UI.__init__(self)
         #self.apiToken = apiToken
         self.google = g
 # TODO: verify on creation that (self.data.short_name, self.data.fraternity, self.data.name) in list of contacts creates a unique person, if it doesn't we need to rethink the keys
@@ -58,6 +60,10 @@ class ModelEmployee:
         for house in self.houses:
             if self.__filter(house.data, min_duplicate_days, self.google.get_last_date_for_house, MailType.MAIL, school_filter, school_filter_is_include, code_filter, code_filter_is_include):
                 house.send_mail(self.google)
+        print("Should we log the dates we're contacting people included in the snail mailer? Aka are we sending this batch?")
+        if self.prompt_for_bool():
+            self.google.confirm_sending_mail()
+
     def get_school_list(self):
         return ['UCLA', 'USC', 'Denver', 'Georgia Tech']
     def get_house_code_list(self):
@@ -93,11 +99,11 @@ class ModelEmployee:
 
 if __name__=='__main__':
     g2 = Google()
-    #g2.create_qr_codes('/tmp/qr_codes/', True)
+    #g2.create_qr_codes('/tmp/qr_codes/', False)
     emp = ModelEmployee(g2)
     #emp.update_redirects('/home/tgaldes/Desktop/redirects.csv')
 
-    #emp.send_snail_mail(0, 'LSU', True, ['active'], True)
+    emp.send_snail_mail(0, ['Brown', 'UTC', 'UTK', 'FSU', 'Akron', 'Utah', 'LSU'], True, [], False)
     #emp.send_snail_mail(0, ['SMU'], True, [], False)
 
 
