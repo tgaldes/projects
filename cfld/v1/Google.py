@@ -584,6 +584,23 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         print('The following rows contain "city" and might be good or might need to be fixed :')
         for row in city_rows:
             print(row)
+        print('Now looking at house addresses')
+        sheet_data = self.sheets_data[sc.sheet_names['houses']]
+        address_col_num = sheet_data[0].index(sc.address_column_name)
+        rows = []
+        for i, row in enumerate(sheet_data):
+            if i == 0: continue # skip header
+            if row and row[address_col_num] and row[address_col_num].count('\n') == 0:
+                rows.append(i + 1)
+            elif row and ('address' in row[address_col_num].lower()
+                    or 'state' in row[address_col_num].lower()
+                    or 'zip' in row[address_col_num].lower()):
+                rows.append(i + 1)
+            elif row and 'city' in row[address_col_num].lower():
+                city_rows.append(i + 1)
+        print('The following rows have bad addresses :')
+        for row in rows:
+            print(row)
     def __get_bad_names(self):
         sheet_data = self.sheets_data[sc.sheet_names['contacts']]
         name_col_num = sheet_data[0].index('name')
@@ -593,6 +610,14 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             if row and row[sc.contact_data_header.index(sc.code_column_name)] != 'agent_corp' and row[name_col_num] and ((len(row[name_col_num].split()) != 2 and len(row[name_col_num].split()) != 3) or ',' in row[name_col_num]):
                 rows.append((i + 1, row[name_col_num]))
         print('The following names might be more than (first, last)')
+        for row in rows:
+            print(row)
+        rows = []
+        for i, row in enumerate(sheet_data):
+            if i == 0: continue # skip header
+            if row and row[name_col_num].strip() != row[name_col_num]:
+                rows.append((i + 1, row[name_col_num]))
+        print('The following names need whitespace at the start and end changed.')
         for row in rows:
             print(row)
     def __get_bad_chapter_designations(self):
@@ -614,7 +639,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
 if __name__=='__main__':
     g = Google()
-    g.create_qr_codes('/tmp/qr_codes', False)
+    #g.create_qr_codes('/tmp/qr_codes', False)
     '''with open('pickles/google.pickle', 'wb') as f:
         pickle.dump(g, f)
     with open('pickles/google.pickle', 'rb') as f:

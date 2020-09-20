@@ -8,6 +8,7 @@ import pdb
 class UI:
     def __init__(self):
         self.errorMessage = 'Please try again'
+        self.true_boolean = 'Y'
         self.booleans = ['Y', 'N']
         self.booleans_string = '(Y/N)'
         self.numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -55,7 +56,7 @@ class UI:
             numbers = self.numbers
         return int(self.prompt_for_input('Please select a number', numbers))
     def prompt_for_bool(self):
-        return self.prompt_for_input('Please select a value', self.booleans[0])
+        return self.prompt_for_input('Please select a value', self.booleans) == self.true_boolean
 
     def prompt_for_input(self, msg, options):
         msg = '{}: {} or {}'.format(msg, options, self.finished)
