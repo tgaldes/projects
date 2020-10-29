@@ -44,6 +44,17 @@ def run_buy_sell_group(nt):
                                    lambda : pag.scroll(1000)):
         return
 
+    # Populate the condition
+    if not wait_for_screen_or_clean_up('new_condition',
+                                   new_condition_color,
+                                   True,
+                                   lambda : [
+                                        mouse_click('condition_selection'),
+                                        move_to('new_condition'),
+                                        pag.moveRel(200, 200, .1),
+                                        pag.moveRel(-200, -200, .1), sleep(1)]):
+        return
+    mouse_click('new_condition')
     # Populate the title, price from the named tuple
     copy_paste(nt.title, 'title')
     copy_paste(nt.price, 'price')
@@ -100,6 +111,7 @@ def run_buy_sell_group(nt):
 def run_group(nt): #google_doc_link, folder_path, group_tup, post_coords):
     mouse_click('menu')
     keyboard('Chrome')
+    sleep(2) # TODO: wait for screen
     mouse_click('chrome')
     if not wait_for_screen_or_clean_up('url_bar', chrome_url_bar_color):
         return
@@ -152,16 +164,7 @@ def test(x):
     x()
 if __name__=='__main__':
     schools = ['USC']
-    selections = ['buy_sell']
-    if 'group' in selections:
-        for data in all_groups:
-            if data.short_name in schools:
-                run_group(data)
-            else:
-                print('Skipping {}'.format(data.short_name))
-    else:
-        print('Skipping normal groups')
-
+    selections = ['buy_sell', 'group']
 
     if 'buy_sell' in selections:
         for data in all_buy_sells:
@@ -171,3 +174,12 @@ if __name__=='__main__':
                 print('Skipping {}'.format(data.short_name))
     else:
         print('Skipping buy_sell')
+    if 'group' in selections:
+        for data in all_groups:
+            if data.short_name in schools:
+                run_group(data)
+            else:
+                print('Skipping {}'.format(data.short_name))
+    else:
+        print('Skipping normal groups')
+

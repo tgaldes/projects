@@ -15,7 +15,7 @@ group_data = {'USC' :(
                  ('https://www.facebook.com/groups/143384839561246/', 3),
                  ('https://www.facebook.com/groups/161010671290969/', 1)
              ],
-             (1194, 1419), # coords to the 'post' button when we c/p the blurb into the text box
+             (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
         ),
         'SJSU' :
@@ -27,7 +27,7 @@ group_data = {'USC' :(
                 ('https://www.facebook.com/groups/SJSUhousing/', 2),
                 ('https://www.facebook.com/groups/574981909329531/', 2)
             ],
-             (1194, 1419), # coords to the 'post' button when we c/p the blurb into the text box
+             (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
         ),
         'UMN' :
@@ -39,7 +39,7 @@ group_data = {'USC' :(
                 ('https://www.facebook.com/groups/153997765269550/', 2),
                 ('https://www.facebook.com/groups/607733796013823/', 1)
             ],
-             (1194, 1419), # coords to the 'post' button when we c/p the blurb into the text box
+             (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
          )
         }
@@ -47,15 +47,17 @@ buy_sell_data = {'USC' :(
              'https://docs.google.com/document/d/1wOmbPiLod6B-WPjF4ygP6JbjqGP8Em4VXPMk0yekX_8',
              '/home/tgaldes/Dropbox/Fraternity PM/Pictures/2715 Portland USC/selections',
              [
-                 #('https://www.facebook.com/groups/151027485336692/?ref=gysj', 1),
+                 ('https://www.facebook.com/groups/151027485336692/?ref=gysj', 1),
                  ('https://www.facebook.com/groups/55449183852/', 2), 
                  ('https://www.facebook.com/groups/roompiklosangelesroommaterentals', 2),
                  ('https://www.facebook.com/groups/LosAngelesHousingRentals/', 2),
                  ('https://www.facebook.com/groups/1286269061395308/', 2),
                  ('https://www.facebook.com/groups/LA4stay/', 2),
+                 ('https://www.facebook.com/groups/764096300371317/', 3),
+                 ('https://www.facebook.com/groups/uschousing/', 2),
              ],
              'USC Student Housing',
-             '550'
+             '500'
         ),
         'SJSU' :
         (

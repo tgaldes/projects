@@ -30,14 +30,16 @@ all_coords = {
             'one_line_sell_something' : (1238, 737),
             'two_line_sell_something' : (1238, 768),
             'three_line_sell_something' : (1238, 810),
-            'add_photos' : (1111, 432),
-            'title' : (1121, 685),
-            'price' : (1121, 764),
-            'description' : (1121, 836),
-            'gray_next_that_shows_window_is_open' : (1111, 1285),
+            'add_photos' : (1111, 438),
+            'title' : (1121, 643),
+            'price' : (1121, 718),
+            'description' : (1121, 891),
+            'gray_next_that_shows_window_is_open' : (1411, 1316),
             'blue_next' : (1169, 1486),
 # drive
             'google_drive_ready' : (949, 286),
+            'new_condition' : (1346, 847),
+            'condition_selection' : (1292, 802),
         }
     }
 mkey = 'm' # TODO
@@ -56,3 +58,4 @@ open_file_color = (71, 70, 64)
 buy_sell_post_pending_color = (229, 230, 235)
 buy_sell_window_open_color = (229, 230, 235)
 sell_something_button_mouseover = (217, 218, 223)
+new_condition_color = (242, 242, 242)
