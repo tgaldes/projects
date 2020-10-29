@@ -41,7 +41,7 @@ class ModelEmployee(UI):
                           school_filter_is_include=True,
                           code_filter=[],
                           code_filter_is_include=True):
-        print('sending into emails')
+        self.do_sends(min_duplicate_days, MailType.EMAIL, Contact.send_email, school_filter, school_filter_is_include, code_filter, code_filter_is_include)
     def make_phone_calls(self, min_duplicate_days,
                           school_filter=[],
                           school_filter_is_include=True,
@@ -54,15 +54,22 @@ class ModelEmployee(UI):
                           school_filter_is_include=True,
                           code_filter=[],
                           code_filter_is_include=True):
-        for contact in self.contacts:
-            if self.__filter(contact.data, min_duplicate_days, self.google.get_last_date_for_contact, MailType.MAIL, school_filter, school_filter_is_include, code_filter, code_filter_is_include):
-                contact.send_mail(self.google)
-        for house in self.houses:
-            if self.__filter(house.data, min_duplicate_days, self.google.get_last_date_for_house, MailType.MAIL, school_filter, school_filter_is_include, code_filter, code_filter_is_include):
-                house.send_mail(self.google)
+        self.do_sends(min_duplicate_days, MailType.MAIL, Contact.send_mail, school_filter, school_filter_is_include, code_filter, code_filter_is_include)
         print("Should we log the dates we're contacting people included in the snail mailer? Aka are we sending this batch?")
         if self.prompt_for_bool():
             self.google.confirm_sending_mail()
+    def do_sends(self, min_duplicate_days, mail_type, f,
+                          school_filter=[],
+                          school_filter_is_include=True,
+                          code_filter=[],
+                          code_filter_is_include=True):
+        '''for contact in self.contacts:
+            if self.__filter(contact.data, min_duplicate_days, self.google.get_last_date_for_contact, MailType.MAIL, school_filter, school_filter_is_include, code_filter, code_filter_is_include):
+                f(contact, self.google)'''
+        for house in self.houses:
+            if self.__filter(house.data, min_duplicate_days, self.google.get_last_date_for_house, MailType.MAIL, school_filter, school_filter_is_include, code_filter, code_filter_is_include):
+                f(house, self.google)
+
 
     def get_school_list(self):
         return ['UCLA', 'USC', 'Denver', 'Georgia Tech']
@@ -99,11 +106,12 @@ class ModelEmployee(UI):
 
 if __name__=='__main__':
     g2 = Google()
-    #g2.create_qr_codes('/tmp/qr_codes/', False)
     emp = ModelEmployee(g2)
     #emp.update_redirects('/home/tgaldes/Desktop/redirects.csv')
 
-    emp.send_snail_mail(0, ['Brown', 'UTC', 'UTK', 'FSU', 'Akron', 'Utah', 'LSU'], True, [], False)
-    #emp.send_snail_mail(0, ['SMU'], True, [], False)
+    #emp.send_snail_mail(0, ['USA', 'VCU', 'ODU', 'UNR', 'UW Madison', 'Duke' 'Toledo', 'UCF', 'Nebraska'], True, [], False)
+    emp.send_snail_mail(0, ['Temple', 'Stanford', 'TCU', 'Rutgers', 'Memphis', 'UNM', 'CSU Fresno', 'CSULB', 'Tulsa', 'UTA', 'Tulane', 'Wichita State', 'Marquette', 'UK', 'Cincinnati'], True, [], False)
+    #emp.send_snail_mail(0, ['UW'], True, ['active'], True)
+    #emp.send_intro_emails(0, ['USC'], True, ['board'], True)
 
 

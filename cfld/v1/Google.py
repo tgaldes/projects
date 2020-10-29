@@ -26,6 +26,7 @@ from global_funcs import safe_get_attr, parse_for_bullets, get_qr_code_url
 SHEET_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 DOC_SCOPES = ['https://www.googleapis.com/auth/documents']
 DRIVE_SCOPES = ['https://www.googleapis.com/auth/drive']
+GMAIL_SCOPES = ['https://www.googleapis.com/auth/drive']
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -33,15 +34,16 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
     def __init__(self, \
 
             # PROD
-            parent_mailer_folder_id='197j8yOL5i_EBdjt_ObneXDXj6NtZsDXs',
-            spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g'):
+            #parent_mailer_folder_id='197j8yOL5i_EBdjt_ObneXDXj6NtZsDXs',
+            #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g'):
             # TEST
-            #parent_mailer_folder_id='15--fLcMPKG_Au0HIbo4Q30VCWzw9j0vl',
-            #spreadsheet_id='1iA4vIyZHUeeBHKxlCYePKEm097lhvpyt_WkOEDpAU5g'):
+            parent_mailer_folder_id='15--fLcMPKG_Au0HIbo4Q30VCWzw9j0vl',
+            spreadsheet_id='1W0Ve0Prv8H9LSSDlyKxYUAXBuHNp7li0yIz6B-bI6uU'):
 
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
         self.letter_creds = self.__load_creds('pickles/cfldv1_letter_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/docs_credentials.json', DOC_SCOPES)
         self.drive_creds = self.__load_creds('pickles/cfldv1_drive_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/drive_credentials.json', DRIVE_SCOPES)
+        self.gmail_creds = self.__load_creds('pickles/cfldv1_gmail_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', GMAIL_SCOPES)
         self.sheet_service = build('sheets', 'v4', credentials=self.sheet_creds)
         self.spreadsheet_id = spreadsheet_id
         self.spreadsheet = self.__get_spreadsheet(self.spreadsheet_id)
@@ -57,9 +59,13 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
         self.drive_service = build('drive', 'v3', credentials=self.drive_creds)
 
+        self.gmail_service = build('drive', 'v3', credentials=self.gmail_creds)
+
+        #self.__strip_whitespace('houses', 'chapter_designation')
         self.__get_bad_addresses()
-        self.__get_bad_names()
-        self.__get_bad_chapter_designations()
+        #self.__get_bad_names()
+        #self.__get_bad_chapter_designations()
+        #self.__separate_emails()
 
 # Will create a sheet for all the addresses, and a folder for the letters on demand
     def __set_up_mailer(self):
@@ -277,7 +283,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         for sheet in spreadsheet.get('sheets'):
             title = sheet.get('properties').get('title')
 # Get the data from this sheet
-            range_name='{}!A1:Z2500'.format(title) # TODO
+            range_name='{}!A1:AB2500'.format(title) # TODO: maybe can hardcode the name of the last column we need in python per sheet, get the whole first row, and then get the column letter from that then re get the whole sheet to that column
             sheets[title] = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().get(spreadsheetId=args[0], range=args[1]).execute()''', id_, range_name)
             m[title] = sheets[title].get('values', [])
         return m, sheets
@@ -286,7 +292,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 #IEmailSender
     def send_email(self, subject, msg, contact_info):
         print('Implement sending email with msg: {}'.format(msg))
-        self.__log_contact(contact_info, MailType.EMAIL)
+        #self.__log_contact(contact_info, MailType.EMAIL)
 #ILetterSender
     def send_mail(self, address, msg, contact):
         if not self.set_up_mailer:
@@ -548,7 +554,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         attempts = 0
         max_attempts = 6
         start_backoff = 2
-        while attempts <= max_attempts:
+        while True:
             attempts += 1
             try:
                 exec(local_request)
@@ -556,6 +562,8 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             except Exception as e:
                 print(local_request)
                 print(str(e))
+                if attempts >= max_attempts:
+                    break
                 print('Received error from google, backing off {} seconds and retrying. ({}/{}) attempts made.'.format(start_backoff, attempts, max_attempts))
                 sleep(start_backoff)
                 start_backoff *= 2
@@ -567,11 +575,15 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         sheet_data = self.sheets_data[sc.sheet_names['contacts']]
         address_col_num = sheet_data[0].index(sc.address_column_name)
         rows = []
+        one_line = []
         city_rows = []
+        four_or_more_lines = []
         for i, row in enumerate(sheet_data):
             if i == 0: continue # skip header
             if row and row[address_col_num] and row[address_col_num].count('\n') == 0:
-                rows.append(i + 1)
+                one_line.append(i + 1)
+            if len(row[address_col_num].split('\n')) > 3:
+                four_or_more_lines.append((i + 1, row[address_col_num]))
             elif row and ('address' in row[address_col_num].lower()
                     or 'state' in row[address_col_num].lower()
                     or 'zip' in row[address_col_num].lower()):
@@ -591,7 +603,9 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         for i, row in enumerate(sheet_data):
             if i == 0: continue # skip header
             if row and row[address_col_num] and row[address_col_num].count('\n') == 0:
-                rows.append(i + 1)
+                one_line.append(i + 1)
+            if len(row[address_col_num].split('\n')) > 3:
+                four_or_more_lines.append((i + 1, row[address_col_num]))
             elif row and ('address' in row[address_col_num].lower()
                     or 'state' in row[address_col_num].lower()
                     or 'zip' in row[address_col_num].lower()):
@@ -600,6 +614,12 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 city_rows.append(i + 1)
         print('The following rows have bad addresses :')
         for row in rows:
+            print(row)
+        print('The following address have four or more lines:')
+        for row in four_or_more_lines:
+            print(row)
+        print('The following rows have one line addresses :')
+        for row in one_line:
             print(row)
     def __get_bad_names(self):
         sheet_data = self.sheets_data[sc.sheet_names['contacts']]
@@ -632,10 +652,44 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         print('The following chapter designations might need their capitalization fixed')
         for row in rows:
             print(row)
+
+    def __strip_whitespace(self, sheet_name, col_name):
+        sheet_data = self.sheets_data[sc.sheet_names[sheet_name]]
+        raw_range='{}!'.format(sc.sheet_names[sheet_name]) + '{}'
+        col_num = sheet_data[0].index(col_name)
+        for i, row in enumerate(sheet_data):
+            if row[col_num] and row[col_num].strip() != row[col_num]:
+                print(row[col_num])
+                row_num = i + 1
+                r = sc.range_builder[col_num + 1] + str(row_num)
+                range_name = raw_range.format(r)
+                values = [[row[col_num].strip()]]
+                body = { 'values' : values, }
+                result = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range=args[0], valueInputOption='RAW', body=args[1]).execute()''', range_name, body)
+        
                 
+    def __separate_emails(self):
+        sheet_data = self.sheets_data[sc.sheet_names['contacts']]
+        raw_range='{}!'.format(sc.sheet_names['contacts']) + '{}'
+        email_col_num = sheet_data[0].index('email')
+        for i, row in enumerate(sheet_data):
+            if i == 0: continue # skip header
+            email_string = row[email_col_num]
+            if not email_string:
+                continue
+            elif email_string.split()[0] != email_string:
+                print(email_string.split())
+                row_num = i + 1
+                r = sc.range_builder[email_col_num + 1] + str(row_num)
+                if len(email_string.split()) > 1:
+                    r += ':' + sc.range_builder[email_col_num + len(email_string.split())] + str(row_num)
+                range_name = raw_range.format(r)
+                values = [email_string.split()]
+                body = { 'values' : values, }
+                result = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range=args[0], valueInputOption='RAW', body=args[1]).execute()''', range_name, body)
+
 
         
-
 
 if __name__=='__main__':
     g = Google()

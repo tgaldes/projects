@@ -1,4 +1,5 @@
 from global_funcs import safe_get_attr
+import spreadsheet_constants as sc
 class Message:
     def __init__(self, fn, fields):
         self.msg = ''
@@ -44,6 +45,7 @@ class Message:
             else:
                 print(tup)
                 raise Exception('Unsupported tuple len (not 1, 2, 4, or 5): '.format(tup))
+        print(attrs)
         return self.msg.format(*attrs)
 
 
@@ -55,6 +57,7 @@ common_formats = {
 }
 common_format_lists = {
     'general' : [common_formats['saluatation'], common_formats['multiple_contacts'], common_formats['chapter_designation'],  common_formats['fraternity']],
+    'general_email' : [common_formats['saluatation'], common_formats['multiple_contacts'], common_formats['chapter_designation'],  common_formats['fraternity'], (sc.unique_url_column_name, 0)],
 }
 letters = \
 {
@@ -68,12 +71,12 @@ letters = \
     'general_board' : Message('letters/board.txt', common_format_lists['general']),
     'general_undergrad' : Message('letters/undergrad.txt', common_format_lists['general']),
     'high_value' : Message('letters/board.txt', common_format_lists['general']),
-    'suspended' : Message('letters/board.txt', [('name', 0, 'Dear Mr. ', ',', 'To whom it may concern,'), ('chapter_designation', 1), ('fraternity', 0, str.title)])
+    'suspended' : Message('letters/board.txt', common_format_lists['general'])
 }
 
 emails = \
 {
-    'board' : Message('emails/board.txt', [('chapter_designation', 1), ('fraternity', 0), ('name', 0)]),
+    'board' : Message('emails/board.txt', common_format_lists['general_email']),
     'undergrad' : Message('emails/undergrad.txt', [('fraternity', 0), ('name', 0)]),
     'active' : Message('emails/active.txt', [('chapter_designation', 0), ('fraternity', 0), ('short_name', 0), ('address', 0)]),
     'undergrad' : Message('emails/undergrad.txt', [('fraternity', 0), ('name', 0)]),

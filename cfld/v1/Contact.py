@@ -30,7 +30,7 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
 
     def send_mail(self, letter_sender):
         if self.data.address == '':
-            print('Skipping sending mail when address is empty for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, self.data.name))
+            print('Skipping sending mail when address is empty for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, safe_get_attr(self.data, 'name')))
             return
         if self.data.code in Contact.mail_skip_codes:
             print('Skipping sending mail for code: {}'.format(self.data.code))
@@ -84,7 +84,7 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
     def _number_of_messages_going_to_chapter(self, mail_type):
         if mail_type == enums.MailType.MAIL:
             return int(getattr(self.datas[0], sc.populated_addresses_column_names))
-        elif mail_type == enums.MailType.MAIL:
+        elif mail_type == enums.MailType.EMAIL:
             return int(getattr(self.datas[0], sc.populated_emails_column_names))
         raise Exception("unexpected mail type enum")
         
