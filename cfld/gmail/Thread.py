@@ -18,6 +18,8 @@ class Thread:
     
     def field(self, field_name):
 # handle a thread
+        if field_name in self.thread:
+            return self.thread[field_name]
         message = self.thread
         if 'payload' not in self.thread or 'headers' not in self.thread['payload']:
             message = self.thread['messages'][0]
