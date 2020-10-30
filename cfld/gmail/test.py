@@ -3,7 +3,9 @@ from interface import Interface, implements
 import pdb
 
 
-# ------------------  globals  ----------------------
+# ----------- GMail wrapper --------------------
+# TESTING: can have this be a part of a global interface
+# implented by test class or by GMail class
 def set_label(email, label_string):
     return g_instance.set_label(email, label_string)
 
@@ -14,6 +16,18 @@ def get_short_name(val):
 def get_email_subject(email):
     return g_instance.get_subject(email)
 
+def add_draft(email, body, destinations):
+    return g_instance.add_draft(email, body, destinations)
+
+def get_default_reply(email):
+    return g_instance.get_default_reply(email)
+# ----------- End GMail wrapper --------------------
+
+# ------------------  globals  ----------------------
+def evaluate_expression(expression, matches = []): # TODO: this will go in a base class
+    local_request = 'local_result = ' + expression
+    exec(local_request)
+    return locals()['local_result']
 
 # ------------------  end globals  ----------------------
 
@@ -36,24 +50,29 @@ import collections
 class LabelAction(implements(IAction)):
     def __init__(self):#, nt):
         # grab and save the appropriate members from the named tuple
-        self.expression = '"Signed leases/" + get_short_name(matches[0])'
-
-    def get_value(self, matches): # TODO: this will go in a base class
-        local_request = 'local_result = ' + self.expression
-        exec(local_request)
-        return locals()['local_result']
+        self.value = '"Signed leases/" + get_short_name(matches[0])'
 
     def process(self, email, matches):
         # use the values we saved in the constructor to run the appropriate code
-        label_string = self.get_value(matches)
+        label_string = evaluate_expression(self.value, matches)
         print(label_string)
         set_label(email, label_string)
+
+class DraftAction(implements(IAction)):
+    def __init__(self):
+        self.value = '"this is a test draft message"'
+        self.destinations = '[get_default_reply(email)]'
+    def process(self, email, matches):
+        draft_content = evaluate_expression(self.value, matches)
+        destinations = evaluate_expression(self.destinations)
+        add_draft(email, draft_content, destinations)
 
 import re
 class SubjectMatcher(implements(IMatcher)):
     def __init__(self):#, nt):
          
-        self.re_string = 'Lease agreement - (.*) - [0-9A-Za-z]* between .*'#nt.subject_regex
+        #self.re_string = 'Lease agreement - (.*) - [0-9A-Za-z]* between .*'#nt.subject_regex
+        self.re_string = 'test subject'
         self.re = re.compile(self.re_string)
 
     def matches(self, email):
@@ -81,8 +100,8 @@ class RuleHolder:
             self.action.process(email, match_groups)
 
 if __name__=='__main__':
-    action = LabelAction()
+    action = DraftAction()
     matcher = SubjectMatcher()
     rule_holder = RuleHolder(action, matcher)
-    email = g_instance.get_one_email()
+    email = g_instance.get_one_thread()
     rule_holder.process(email)
