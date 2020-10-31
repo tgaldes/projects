@@ -15,10 +15,11 @@ from Matchers import *
 from RuleHolder import RuleHolder
 from Thread import Thread
 if __name__=='__main__':
-    service = GMailService()
+    service = GMailService('tyler@cleanfloorslockingdoors.com')
+    #service_apply = GMailService('apply@cleanfloorslockingdoors.com')
     holders = []
-    holders.append(RuleHolder(DraftAction(), SubjectMatcher('test subject')))
     holders.append(RuleHolder(LabelAction('"Signed leases/USC"'), SubjectMatcher('test subject')))
+    holders.append(RuleHolder(DraftAction(), SubjectMatcher('test subject')))
 
     thread = Thread(service.get_one_thread(), service)
 

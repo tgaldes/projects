@@ -1,6 +1,6 @@
 from Interfaces import IAction
 from interface import implements
-from util import evaluate_expression, get_short_name
+from util import evaluate_expression
 import pdb
 
 class LabelAction(implements(IAction)):
@@ -14,12 +14,12 @@ class LabelAction(implements(IAction)):
 
 class DraftAction(implements(IAction)):
     def __init__(self):
-        self.value = '"this is an additional test draft message"'
-        self.destinations = '[kwargs["thread"].default_reply()]'
+        self.value = '"this is a draft message saying whatever it is that we want to say"'
+        self.destinations = 'kwargs["thread"].default_reply()' # TODO: figure out a wrapper like match()
         self.count = 0
     def process(self, thread, matches):
-        draft_content = evaluate_expression(self.value, **locals()) + ' ' + str(self.count)
+        draft_content = evaluate_expression(self.value, **locals())
         destinations = evaluate_expression(self.destinations, **locals())
         thread.append_to_draft(draft_content, destinations)
         self.count += 1
-
+        

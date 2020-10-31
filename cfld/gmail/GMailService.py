@@ -12,10 +12,12 @@ from util import list_of_emails_to_string_of_emails
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 class GMailService:
-    def __init__(self):
+    def __init__(self, email):
+        self.user = email.split('@')[0]
         creds = None
-        if os.path.exists('token.gmail.tyler.pickle'): # TODO: take name of user in the constructor, that should have reliable mapping to secret and token path
-            with open('token.gmail.tyler.pickle', 'rb') as token:
+        pickle_path = 'token.gmail.{}.pickle'.format(self.user)
+        if os.path.exists(pickle_path):
+            with open(pickle_path, 'rb') as token:
                 creds = pickle.load(token)
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
@@ -26,7 +28,7 @@ class GMailService:
                     '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
-            with open('token.gmail.tyler.pickle', 'wb') as token:
+            with open(pickle_path, 'wb') as token:
                 pickle.dump(creds, token)
 
         self.service = build('gmail', 'v1', credentials=creds)
@@ -61,7 +63,7 @@ class GMailService:
 
     def set_label(self, id, payload, userId='me'):
 # TODO: same expo backoff function as v1
-        message = self.service.users().messages().modify(userId=userId,
+        message = self.service.users().threads().modify(userId=userId,
                                               id=id,
                                               body=payload).execute()
         return message
@@ -70,6 +72,8 @@ class GMailService:
         return self.drafts
 
 # if id=None we will create a new draft, otherwise update draft with id = id
+# add the new draft to our internal state
+# return the MESSAGE object of the associated draft
     def append_or_create_draft(self, payload, draft_id=None, userId='me'):
 # update an existing draft
         if draft_id:
@@ -78,4 +82,6 @@ class GMailService:
         else:
             draft = self.service.users().drafts().create(userId=userId, body=payload).execute()
             self.drafts.append(draft)
-        return draft
+
+        message = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
+        return message
