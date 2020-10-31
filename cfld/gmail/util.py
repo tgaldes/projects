@@ -14,7 +14,7 @@ def match(index):
     return kw['matches'][index]
 
 def evaluate_expression(expression, **kwargs):
-    local_request = 'local_result = ' + expression
+    local_request = 'local_result = ' + expression.replace('thread.', 'kwargs["thread"].')
     exec(local_request)
     return locals()['local_result']
 

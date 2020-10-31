@@ -6,13 +6,16 @@ from email import encoders
 import pdb
 
 from util import list_of_emails_to_string_of_emails, update_thread
+from Logger import Logger
 
 
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
-class Thread:
+class Thread(Logger):
     def __init__(self, thread, service):
+        super(Thread, self).__init__()
         self.service = service
         self.thread = thread
+        self.li('initialized thread with id {}'.format(self.field('id')))
 
     def subject(self):
         return self.field('Subject')
@@ -81,6 +84,7 @@ class Thread:
     # We would need to implement for each Zillow/RentPath/Zumper auto reach out
     # Once we have a message sent by us, we can grab the first line of the email and use that
     def salutation(self):
+        return 'Hi this method is not implemented'
         pass
     # Return true if we want to send a follow up email to the thread confirming that the 
     # tenant is no longer interested in housing
@@ -103,5 +107,15 @@ class Thread:
     # Return a list of all the people in the from, to, and cc fields
     # Filter out the email of userId='me'
     def reply_all(self):
+        pass
+
+    # return the epoch time of the last message sent or received
+    def last_ts(self):
+        pass
+
+    # parse the thread created when a tenant submits their application 
+    # and return the tenant email address
+    def get_new_application_email(self):
+        return '' # TODO
         pass
 
