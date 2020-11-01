@@ -21,11 +21,17 @@ def evaluate_expression(expression, **kwargs):
 def update_thread(thread, new_messages):
     if 'messages' not in thread or 'messages' not in new_messages:
         return thread
+    # update indiv messages
     for message in thread['messages']:
         for new_message in new_messages['messages']:
             if message['id'] == new_message['id']:
                 message.update(new_message)
                 break
+
+    # update thread attributes
+    for item in new_messages:
+        if item != 'messages':
+            thread[item] = new_messages[item]
 
 def lookup_info(k1, k2):
     names = {'short_name' : {'2715 Portland Street' : 'USC'}} # TODO: read from sheets

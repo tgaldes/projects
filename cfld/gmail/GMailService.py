@@ -7,12 +7,14 @@ from google.auth.transport.requests import Request
 import pdb
 
 from util import list_of_emails_to_string_of_emails
+from Logger import Logger
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
-class GMailService:
+class GMailService(Logger):
     def __init__(self, email):
+        super(GMailService, self).__init__()
         self.user = email.split('@')[0]
         creds = None
         pickle_path = 'token.gmail.{}.pickle'.format(self.user)
@@ -35,7 +37,7 @@ class GMailService:
         results = self.service.users().messages().list(userId='me', maxResults = 10, labelIds=('INBOX')).execute() # TODO: unread query in a refresh function
         results = self.service.users().messages().list(userId='me', maxResults = 10).execute()
         self.mails = results.get('messages', [])
-        self.threads = self.service.users().threads().list(userId='me').execute().get('threads', [])
+        self.threads = self.service.users().threads().list(userId='me', q='New submission for UCLA').execute().get('threads', [])
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()
@@ -48,17 +50,21 @@ class GMailService:
             for label in labels:
                 self.label_string_2_id[label['name']] = label['id']
                 print(label['name'], label['id'])
-        return
+        self.thread_index = 0
 
     def get_label_id(self, label_string): # TODO: create label on demand? Or force an exception when the desired label doesn't match somehting I've already created
         if label_string in self.label_string_2_id:
             return self.label_string_2_id[label_string]
         return None
-    def get_one_thread(self):
-        for thread in self.threads:
-            indiv_thread = self.service.users().threads().get(userId='me', id=thread['id']).execute() # TODO: hardcoded to get the message that will trigger our hardcoded rule
-            print(indiv_thread)
-            return indiv_thread
+    def get_next_thread(self):
+        if self.thread_index >= len(self.threads):
+            return None
+        indiv_thread = self.service.users().threads().get(userId='me', id=self.threads[self.thread_index]['id'], format='full').execute()
+        msg = self.service.users().messages().get(userId='me', id=indiv_thread['messages'][0]['id']).execute()
+        self.thread_index += 1
+        self.li('Returning raw thread with id: {}'.format(indiv_thread['id']))
+        pdb.set_trace()
+        return indiv_thread
 
 
     def set_label(self, id, payload, userId='me'):

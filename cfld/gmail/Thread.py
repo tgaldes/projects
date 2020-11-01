@@ -7,6 +7,7 @@ import pdb
 
 from util import list_of_emails_to_string_of_emails, update_thread
 from Logger import Logger
+import base64
 
 
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
@@ -21,12 +22,16 @@ class Thread(Logger):
         return self.field('Subject')
     
     def field(self, field_name):
+        if not self.thread:
+            return None
 # handle a thread
         if field_name in self.thread:
             return self.thread[field_name]
         message = self.thread
         if 'payload' not in self.thread or 'headers' not in self.thread['payload']:
             message = self.thread['messages'][0]
+        if field_name in message:
+            return message[field_name]
         header = message['payload']['headers']
         for m in header:
             if m['name'] == field_name:
@@ -38,14 +43,14 @@ class Thread(Logger):
             payload = { 'addLabelIds' : [label_id],
                         'removeLabelIds' : []
                       }
-            resp = self.service.set_label(self.thread['id'], payload) # TODO: test we update our state after label call
+            resp = self.service.set_label(self.thread['id'], payload)
             update_thread(self.thread, resp)
         else:
-            pass # TODO: create label on demand
+            raise Exception('Service cannot find a label id for label: {}'.format(label_string))
 
     def existing_draft_text(self):
         if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
-            return self.thread['messages'][-1]['snippet'] + '\n\n' # TODO: who should be adding the newlines?
+            return self.thread['messages'][-1]['snippet']
         return ''
 
     def existing_draft_id(self):
@@ -74,7 +79,7 @@ class Thread(Logger):
         message['References'] = self.field('Message-ID')# + ',' + self.get('References')
         payload = {'message' : {'threadId' : self.thread['id'], 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         message = self.service.append_or_create_draft(payload, draft_id)
-        self.add_or_update_message(message) # TODO: test that we update or add the message
+        self.add_or_update_message(message)
 
 
     # Get the greeting we want to use for messages sent to the thread
@@ -111,11 +116,24 @@ class Thread(Logger):
 
     # return the epoch time of the last message sent or received
     def last_ts(self):
-        pass
-
+        return self.thread['messages'][-1]['internalDate']
+    
+        
     # parse the thread created when a tenant submits their application 
     # and return the tenant email address
-    def get_new_application_email(self):
-        return '' # TODO
-        pass
+    def get_new_application_email(self): # TODO unittest
+        # REFACTOR: we might want to create a Message class similar to thread, in
+        # which case we would have a .decode() function
+        substring = '<tr><th>Email:</th><td>'
+        decoded_html = self.__decode_message(0)
+        start_index = decoded_html.find(substring) + len(substring)
+        if start_index == -1:
+            raise Exception('Could not find the substring: {} in the first message of the thread.'.format(substring))
+        end_index = decoded_html[start_index:].index('<') + start_index
+        return decoded_html[start_index:end_index]
 
+    # Decode the payload of the message, useful when getting emails that contain a lot
+    # of html formatting
+    def __decode_message(self, index):
+        return base64.urlsafe_b64decode(self.thread['messages'][index]['payload']['body']['data'].encode('UTF8')).decode('UTF8')
+        

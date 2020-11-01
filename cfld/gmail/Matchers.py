@@ -1,6 +1,7 @@
 from Interfaces import IMatcher
 from interface import implements
 import re
+import pdb
 class SubjectMatcher(implements(IMatcher)):
     def __init__(self, re_string):#, nt):
          

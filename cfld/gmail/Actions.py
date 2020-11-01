@@ -14,9 +14,10 @@ class LabelAction(implements(IAction)):
         thread.set_label(label_string)
 
 class DraftAction(implements(IAction)):
-    def __init__(self):
-        self.value = '"this is a draft message saying whatever it is that we want to say"'
-        self.destinations = 'kwargs["thread"].default_reply()' # TODO: figure out a wrapper like match()
+# TODO: add a need human to review label on all drafts we create
+    def __init__(self, value, destinations):
+        self.value = value
+        self.destinations = destinations
         self.count = 0
     def process(self, thread, matches):
         draft_content = evaluate_expression(self.value, **locals())
@@ -31,11 +32,11 @@ class DraftAction(implements(IAction)):
 # - inbox he'll be sending to
 # - how to find the thread he'll be drafting on
 class RedirectAction(implements(IAction)):
-    def __init__(self, inbox):
+    def __init__(self, inbox, finder_expression, value, destinations):
         self.inbox = inbox # set up by factory
-        self.thread_finder_expression = 'self.inbox.get_threads_from_email_address(thread.get_new_application_email())'
-        self.value = '"{}, we got your app and processed it, you\'ll need to approve it on your end so we can get your background and credit score.".format(thread.salutation())'
-        self.destinations = 'thread.default_reply()'
+        self.thread_finder_expression = finder_expression
+        self.value = value
+        self.destinations = destinations
         
     def process(self, thread, matches):
         
