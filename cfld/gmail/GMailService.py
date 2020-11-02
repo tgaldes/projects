@@ -14,7 +14,8 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 class GMailService(Logger):
     def __init__(self, email):
-        super(GMailService, self).__init__()
+        super(GMailService, self).__init__(__name__)
+        self.email = email
         self.user = email.split('@')[0]
         creds = None
         pickle_path = 'token.gmail.{}.pickle'.format(self.user)
@@ -37,18 +38,20 @@ class GMailService(Logger):
         results = self.service.users().messages().list(userId='me', maxResults = 10, labelIds=('INBOX')).execute() # TODO: unread query in a refresh function
         results = self.service.users().messages().list(userId='me', maxResults = 10).execute()
         self.mails = results.get('messages', [])
-        self.threads = self.service.users().threads().list(userId='me', q='New submission for UCLA').execute().get('threads', [])
+        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX')).execute().get('threads', [])
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
         self.label_string_2_id = {}
+        self.label_id_2_string = {}
         if not labels:
             print('No labels found.')
         else:
             print('Labels:')
             for label in labels:
                 self.label_string_2_id[label['name']] = label['id']
+                self.label_id_2_string[label['id']] = label['name']
                 print(label['name'], label['id'])
         self.thread_index = 0
 
@@ -56,6 +59,15 @@ class GMailService(Logger):
         if label_string in self.label_string_2_id:
             return self.label_string_2_id[label_string]
         return None
+
+    def get_label_name(self, label_id):
+        if label_id in self.label_id_2_string:
+            return self.label_id_2_string[label_id]
+        return None
+
+    def get_email(self):
+        return self.email
+
     def get_next_thread(self):
         if self.thread_index >= len(self.threads):
             return None
@@ -63,7 +75,6 @@ class GMailService(Logger):
         msg = self.service.users().messages().get(userId='me', id=indiv_thread['messages'][0]['id']).execute()
         self.thread_index += 1
         self.li('Returning raw thread with id: {}'.format(indiv_thread['id']))
-        pdb.set_trace()
         return indiv_thread
 
 

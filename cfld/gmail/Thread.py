@@ -4,6 +4,7 @@ from email.mime.image import MIMEImage
 import base64
 from email import encoders
 import pdb
+from time import time
 
 from util import list_of_emails_to_string_of_emails, update_thread
 from Logger import Logger
@@ -13,7 +14,7 @@ import base64
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
 class Thread(Logger):
     def __init__(self, thread, service):
-        super(Thread, self).__init__()
+        super(Thread, self).__init__(__name__)
         self.service = service
         self.thread = thread
         self.li('initialized thread with id {}'.format(self.field('id')))
@@ -21,15 +22,18 @@ class Thread(Logger):
     def subject(self):
         return self.field('Subject')
     
-    def field(self, field_name):
-        if not self.thread:
+    def field(self, field_name, subset={}):
+        search_dict = self.thread
+        if subset:
+            search_dict = subset
+        if not search_dict:
             return None
 # handle a thread
-        if field_name in self.thread:
-            return self.thread[field_name]
-        message = self.thread
-        if 'payload' not in self.thread or 'headers' not in self.thread['payload']:
-            message = self.thread['messages'][0]
+        if field_name in search_dict:
+            return search_dict[field_name]
+        message = search_dict
+        if 'payload' not in search_dict or 'headers' not in search_dict['payload']:
+            message = search_dict['messages'][0]
         if field_name in message:
             return message[field_name]
         header = message['payload']['headers']
@@ -37,12 +41,16 @@ class Thread(Logger):
             if m['name'] == field_name:
                 return m['value']
 
-    def set_label(self, label_string):
+    def set_label(self, label_string, unset=False):
         label_id = self.service.get_label_id(label_string)
         if label_id:
-            payload = { 'addLabelIds' : [label_id],
+            payload = { 'addLabelIds' : [],
                         'removeLabelIds' : []
                       }
+            if unset:
+                payload['removeLabelIds'] = [label_string]
+            else:
+                payload['addLabelIds'] = [label_string]
             resp = self.service.set_label(self.thread['id'], payload)
             update_thread(self.thread, resp)
         else:
@@ -91,11 +99,19 @@ class Thread(Logger):
     def salutation(self):
         return 'Hi this method is not implemented'
         pass
+
     # Return true if we want to send a follow up email to the thread confirming that the 
     # tenant is no longer interested in housing
     # Conditions- last message was sent by userId='me' more than duration_days ago
-    def make_them_say_no(self, duration_days=5):
-        pass
+    def need_make_them_say_no(self, duration_days=2, time_getter_f=time):
+        ts_true = self.last_ts() + duration_days * 86400 < time_getter_f()
+        # last message is from userId=me 
+        # AND we have sent that message (as opposed to a draft)
+        last_msg_true = \
+            self.service.get_email() in self.field('From', subset=self.thread['messages'][-1]) \
+            and 'labelIds' in self.thread['messages'][-1] \
+            and 'SENT' in self.thread['messages'][-1]['labelIds']
+        return ts_true and last_msg_true
 
     # return a dictionary of all the fields in the New Submission for short_name message
     # dictionary will look like {'name' : 'Tony K', 'email' : 'tony@ucla.edu' .....}
@@ -116,9 +132,24 @@ class Thread(Logger):
 
     # return the epoch time of the last message sent or received
     def last_ts(self):
-        return self.thread['messages'][-1]['internalDate']
+        return int(self.thread['messages'][-1]['internalDate']) / 1000
+
+    # We'll need this one so that we can do matching against the contents of the mesasges we get from zillow/zumper/rentpath
+    # We want to be able to populate the draft response that answers their questions they might type
+    # in the site dialouge before sending it to us
+    def generic_decode(self):
+        pass
     
-        
+    # Retun a string representing the short name of the school
+    # empty string if we can't find a label matching 'Schools/.*'
+    def short_name(self):
+        delim = 'Schools/'
+        for label_id in self.field('labelIds'):
+            label_name = self.service.get_label_name(label_id)
+            if label_name and label_name.find(delim) == 0:
+                return label_name[len(delim):]
+        return 'the campus' # TODO: are we sure?
+
     # parse the thread created when a tenant submits their application 
     # and return the tenant email address
     def get_new_application_email(self): # TODO unittest

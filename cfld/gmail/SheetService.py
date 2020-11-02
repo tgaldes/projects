@@ -12,8 +12,8 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 # This class is kept very simple for now
 # Will just load and make available a 2D array of the prod_rules named sheet
 class SheetService(Logger):
-    def __init__(self, email):
-        super(SheetService, self).__init__()
+    def __init__(self, email, sheet_name):
+        super(SheetService, self).__init__(__name__)
         self.user = email.split('@')[0]
         creds = None
         pickle_path = 'token.sheets.{}.pickle'.format(self.user)
@@ -32,12 +32,12 @@ class SheetService(Logger):
             with open(pickle_path, 'wb') as token:
                 pickle.dump(creds, token)
         self.service = build('sheets', 'v4', credentials=creds)
-        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId='1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI', range='prod_rules!A1:L100').execute().get('values', [])
+        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId='1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI', range='{}_rules!A1:L100'.format(sheet_name)).execute().get('values', [])
         if not self.rule_construction_data:
             self.lf('No info loaded for rule construction data. Aborting.')
             exit(1)
         else:
-            self.li('Loaded info to construct {} rules.'.format(len(self.rule_construction_data)))
+            self.li('Loaded info to construct {} rules.'.format(len(self.rule_construction_data) - 1))
 
     def rule_construction_info(self):
         return self.rule_construction_data

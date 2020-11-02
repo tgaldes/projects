@@ -5,13 +5,14 @@ from Thread import Thread
 import pdb
 
 class LabelAction(implements(IAction)):
-    def __init__(self, value):
+    def __init__(self, value, unset=False):
         self.value = value
+        self.unset = unset
 
     def process(self, thread, matches):
         # use the values we saved in the constructor to run the appropriate code
         label_string = evaluate_expression(self.value, **locals())
-        thread.set_label(label_string)
+        thread.set_label(label_string, unset=self.unset)
 
 class DraftAction(implements(IAction)):
 # TODO: add a need human to review label on all drafts we create

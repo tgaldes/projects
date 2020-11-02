@@ -1,16 +1,23 @@
 import logging
+from NewLogger import getLogger
+import pdb
 
 # TODO: redirect to console as well
 class Logger:
-    def __init__(self):
-        logging.basicConfig(filename='./example.log'
-                            , level=logging.INFO
-                            , datefmt='%Y%m%d %H:%M:%S'
-                            , format='%(asctime)s [%(levelname)-8s] %(message)s')
+    def __init__(self, parent_name):
+        self.logger = getLogger('example', parent_name, root=True, stdout=True)
+
+    def ld(self, s):
+        self.logger.debug(s)
 
     def li(self, s):
-        logging.info(s)
+        self.logger.info(s)
 
     def lw(self, s):
-        logging.warn(s)
+        self.logger.warn(s)
         
+    def le(self, s):
+        self.logger.error(s)
+
+    def lf(self, s):
+        self.logger.fatal(s)

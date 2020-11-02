@@ -20,6 +20,15 @@ def dict_from_fn(fn):
 
 class ThreadTest(unittest.TestCase):
 
+    def test_field(self):
+        d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
+        mock_service = Mock()
+        thread = Thread(d, mock_service)
+        # Will grab the 'To' field from the first message in thread
+        self.assertEqual('apply@cf-ld.com', thread.field('To'))
+        # Will grab the 'To' field from the last message in thread
+        self.assertEqual('tonyma@uchicago.edu', thread.field('To', subset=thread.field('messages')[-1]))
+
     def test_one_email_thread(self):
         #with postmortem_pudb():
         d = dict_from_fn('./test/thread_test_inputs/one_email_thread.txt')
@@ -73,11 +82,50 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(d, mock_service)
         self.assertEqual('kimaquinosmc@gmail.com', thread.get_new_application_email())
 
+    def test_last_ts(self):
+        d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
+        mock_service = Mock()
+        thread = Thread(d, mock_service)
+        self.assertEqual(1604097866, thread.last_ts())
+
+    def test_short_name(self):
+        d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
+        mock_service = Mock()
+        mock_service.get_label_name = MagicMock(return_value='Schools/USC')
+        thread = Thread(d, mock_service)
+        self.assertEqual('USC', thread.short_name())
+        mock_service.get_label_name = MagicMock(return_value='not a school label')
+        self.assertEqual('the campus', thread.short_name())
+
+    def test_short_name(self):
+        d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
+        mock_service = Mock()
+        mock_service.get_label_name = MagicMock(return_value='Schools/USC')
+        thread = Thread(d, mock_service)
+        self.assertEqual('USC', thread.short_name())
+        mock_service.get_label_name = MagicMock(return_value='not a school label')
+        self.assertEqual('the campus', thread.short_name())
+
     def test_make_them_say_no(self):
         d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
         mock_service = Mock()
-        #mock_service.get_label_id = MagicMock(return_value='mockid')
-        #mock_service.set_label = MagicMock(return_value={'messages' : [], 'labelIds' : ['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid']})
+        mock_service.get_label_name = MagicMock(return_value='Schools/USC')
+        mock_service.get_email = MagicMock(return_value='Application Team <apply@cleanfloorslockingdoors.com>')
         thread = Thread(d, mock_service)
-        self.assertEqual("1604097866000", thread.last_ts())
+        # Evening of 20201030
+        self.assertEqual(1604097866, thread.last_ts())
+        one_day_in_future = thread.last_ts() + 86400
+        two_days_in_future = thread.last_ts() + 86400 * 2
+
+        # check out timestamp boolean expression
+        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: thread.last_ts()))
+        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: one_day_in_future))
+        self.assertTrue(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: two_days_in_future))
+
+        # check it out when our email isn't the last in the thread
+        mock_service.get_email = MagicMock(return_value='Tenant name <tenant@gmail.com>')
+        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: thread.last_ts()))
+        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: one_day_in_future))
+        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: two_days_in_future))
+
 

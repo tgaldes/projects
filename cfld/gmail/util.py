@@ -33,8 +33,17 @@ def update_thread(thread, new_messages):
         if item != 'messages':
             thread[item] = new_messages[item]
 
+def short_name(key):
+    return lookup_info('short_name', key.strip())
+
 def lookup_info(k1, k2):
-    names = {'short_name' : {'2715 Portland Street' : 'USC'}} # TODO: read from sheets
+    names = {'short_name' : 
+        {'2715 Portland St' : 'USC',
+         '123 S 11th St' : 'SJSU',
+         '649 Gayley Ave' : 'UCLA',
+         '165 4th St NW' : 'Georgia Tech',
+         '165 4th Street Northwest' : 'Georgia Tech',
+         '1000 5th St SE' : 'UMN'}} # TODO: read from sheets
     return names[k1][k2]
 
 
