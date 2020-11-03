@@ -75,6 +75,11 @@ class GMailService(Logger):
         msg = self.service.users().messages().get(userId='me', id=indiv_thread['messages'][0]['id']).execute()
         self.thread_index += 1
         self.li('Returning raw thread with id: {}'.format(indiv_thread['id']))
+        # This is used when we want to grab a thread for a unit test
+        '''pdb.set_trace()
+        with open('./test/thread_test_inputs/message_from_tenant_then_back_and_forth_last_message_from_tenant.txt', 'w') as f:
+            import json
+            json.dump(indiv_thread, f, indent=4)'''
         return indiv_thread
 
 

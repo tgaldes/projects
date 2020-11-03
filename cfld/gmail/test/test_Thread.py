@@ -128,4 +128,7 @@ class ThreadTest(unittest.TestCase):
         self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: one_day_in_future))
         self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: two_days_in_future))
 
-
+    def test_append_creates_response_to_last_message_in_thread(self):
+        # TODO: if tenant sent last email we should reply to that one
+        # TODO: if we sent last email we should reply to that email but send it to the tenant
+        pass

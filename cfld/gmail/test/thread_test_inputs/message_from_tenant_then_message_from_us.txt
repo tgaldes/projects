@@ -1,0 +1,227 @@
+{
+    "messages": [
+        {
+            "historyId": "800925",
+            "payload": {
+                "mimeType": "text/html",
+                "partId": "",
+                "headers": [
+                    {
+                        "name": "Delivered-To",
+                        "value": "apply@cleanfloorslockingdoors.com"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by 2002:a19:a0f:0:0:0:0:0 with SMTP id 15csp1064986lfk;        Sun, 1 Nov 2020 21:50:37 -0800 (PST)"
+                    },
+                    {
+                        "name": "X-Google-Smtp-Source",
+                        "value": "ABdhPJzLOQml6JHa7/Vnga8JE05cYPebD73lQOskCr3lOFbSuvoZDbsCAlL//FjGDNli99t96Ptu"
+                    },
+                    {
+                        "name": "X-Received",
+                        "value": "by 2002:aa7:cdd3:: with SMTP id h19mr15086992edw.330.1604296237342;        Sun, 01 Nov 2020 21:50:37 -0800 (PST)"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=1; a=rsa-sha256; t=1604296237; cv=none;        d=google.com; s=arc-20160816;        b=kNbjFscXdXnzDFD74O+U3p+iYbPwpaYmV9ibuONa370MPSvx7OiOdVbvpf7nemmhEF         k8e7SeU1Z/UEB4o7DKO1+xeQ8m14EQ6kIpKVKk43UFSrwoGeCWPa9eF3g2L48KRa/hu3         HAa7xI7fGKNtaQWPUqs58sC1KOdnLKeIU0p6WB3l3bNv05khLAAfXjPRabjQ0UaUmS3T         1i+/7CTDj4Eh4Hiij05A2TLDbqXOQjtMbWVtJXOC/gl4Mn7FFSCWsECKHkl8X/6hWAB+ G+EVQnp0jG5UUW4AaUK37Iuml0nJTP24zypYlcjvDYLDuVD/CGJsjG+RuP8i9AzZcuyn         8nBQ=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=subject:message-id:to:reply-to:mime-version:from:date         :content-transfer-encoding:dkim-signature;        bh=AwTVK5lvjsoQr+VK6CfMeZsWpCtJl5R/WAialH1AK2c=;        b=j0jDlCVW1wn+/0sEAq9/6NWvYChiYL6Q3g6FCsXCOl5TNFg9j5eVanY6hWnzG6WXuT Yugd4BNqKEFQtMSUYMQDdNrxAlNjd16QVh8qCYtuNU+OBspfrLi7llMN+SuRbm3LtU07         C70bYWd1lF2yYO233aeQbIPlAk1XP6w3bpqj85dyXEB6/6f242ArbGI/+AaAqlaoW55M         XqZu9pantGPpRSPNfCcRtou+d67WYlSgcYwTOGmrOqFkbKAVRO4l6qEVI6OyYQwEE0x8         LMOoqWs5QT0QbM+5m64O4Jd2bzcwUcW2Qp8iO3PDpMc3IrmR+b311wePBVZ2v8YAG+Z6         M0Lg=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=1; mx.google.com;       dkim=fail header.i=@trulia.com header.s=m1 header.b=bBDVDFoW;       spf=pass (google.com: domain of 26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com designates 149.72.139.67 as permitted sender) smtp.mailfrom=26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com;       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=trulia.com"
+                    },
+                    {
+                        "name": "Return-Path",
+                        "value": "<26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com>"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from o13.convo.trulia.com (o13.convo.trulia.com. [149.72.139.67])        by mx.google.com with ESMTPS id b20si9502106ejb.424.2020.11.01.21.50.36        for <apply@cleanfloorslockingdoors.com>        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);        Sun, 01 Nov 2020 21:50:37 -0800 (PST)"
+                    },
+                    {
+                        "name": "Received-SPF",
+                        "value": "pass (google.com: domain of 26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com designates 149.72.139.67 as permitted sender) client-ip=149.72.139.67;"
+                    },
+                    {
+                        "name": "Authentication-Results",
+                        "value": "mx.google.com;       dkim=fail header.i=@trulia.com header.s=m1 header.b=bBDVDFoW;       spf=pass (google.com: domain of 26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com designates 149.72.139.67 as permitted sender) smtp.mailfrom=26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com;       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=trulia.com"
+                    },
+                    {
+                        "name": "DKIM-Signature",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=trulia.com; h=content-transfer-encoding:content-type:from:mime-version:reply-to:to:subject; s=m1; bh=AwTVK5lvjsoQr+VK6CfMeZsWpCtJl5R/WAialH1AK2c=; b=bBDVDFo WNcFxGGq28hoQ8JNNgmCDUe0kZwrhADsqrTdx75ZoNnU0tlGpRYNtsABF7kmRgDB yYcM6xN6n+zhozSCMDgydw9JqJF6Ziw2Zc9DV1L65GOcxHehgxlRJTyoc50Y1EdX NYV+uRhz6VvvGV0Wlu2FLWZK7oZhAasyI0Ig="
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by filter1733p1las1.sendgrid.net with SMTP id filter1733p1las1-31171-5F9F9E2B-7        2020-11-02 05:50:35.310156349 +0000 UTC m=+60835.119442757"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from ODgxOTI (unknown) by ismtpd0011p1iad2.sendgrid.net (SG) with HTTP id Cz-J2hnDSY-5PqrQYsVPFw Mon, 02 Nov 2020 05:50:35.214 +0000 (UTC)"
+                    },
+                    {
+                        "name": "Content-Transfer-Encoding",
+                        "value": "quoted-printable"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "text/html; charset=UTF-8"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Mon, 02 Nov 2020 05:50:35 +0000 (UTC)"
+                    },
+                    {
+                        "name": "From",
+                        "value": "\"rawaa ;\" <26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com>"
+                    },
+                    {
+                        "name": "Mime-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Reply-to",
+                        "value": "\"rawaa ;\" <26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<Cz-J2hnDSY-5PqrQYsVPFw@ismtpd0011p1iad2.sendgrid.net>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Re: Early Termination"
+                    },
+                    {
+                        "name": "X-SG-EID",
+                        "value": "DLO3MbVfVNGhqTX4lNwC1CknSm/sZL1Jim7mYcg7VJOCIWlMZ+jiEp7NZdXeyJV5MiJIfi7AXdrILG zRB08ps6IEf5XzJNuNU1i4kbn7MSVsoQVByeWL5Oh5BN3LztektaeGpltnm1uJ0SO4c5r6WbejPli+ /3q3uSWH7EEYo0jI9kYISOyGzxJoKk/ovPGrBj9INQr4VJ7GhRhp4cs/SW2T9jfimYeC3UIWq9nNYp 0Bi7mS/WqQLqowMitRIqzC6oRLC1Z9mpY6Jea2FLGLeg=="
+                    },
+                    {
+                        "name": "X-SG-ID",
+                        "value": "NMHL7tc+AxXN/stbBh9h7Pc1eYIKoK5O/h27z/SJj5Fy7Tu1Ki2097QvLgYRDBYgE/DlBlJ1XxsEDQ Msd+Wkvr76dL+XSkAIvue0XZB84CfuSxjGZXz+UUOrRp3PWFqh6fQROPSqReszM8QX5gKJ4NDp7DPD yrubTOETxV8EtV4="
+                    },
+                    {
+                        "name": "X-Entity-ID",
+                        "value": "vrbnq7qDp99DyffWf+cV0Q=="
+                    }
+                ],
+                "body": {
+                    "data": "PGRpdj48ZGl2IGRpcj0iYXV0byI-SGV5ISBTb3BoaWEgbGV0IG1lIGtub3cgc2hlcyBleHRlbmRpbmcgaGVyIGxlYXNlIGJ1dCBJIHdhcyBob3BpbmcgdG8gbW92ZSBpbiBKYW51YXJ5LiBDYW4gSSBqdXN0IHNpZ24gYW5vdGhlciBsZWFzZT_CoDwvZGl2PjwvZGl2PjxkaXY-PGRpdj48YnI-PGRpdiBjbGFzcz0iZ21haWxfcXVvdGUiPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJnbWFpbF9hdHRyIj5PbiBTYXQsIE9jdCAyNCwgMjAyMCBhdCAxMDozNSBQTSBBcHBsaWNhdGlvbiBUZWFtICZsdDs8YSBocmVmPSJtYWlsdG86MjZ0Z3NkbngwZTNhZGk1YnJ1NXh1NnZlYWQ1QGNvbnZvLnRydWxpYS5jb20iIHRhcmdldD0iX2JsYW5rIj4yNnRnc2RueDBlM2FkaTVicnU1eHU2dmVhZDVAY29udm8udHJ1bGlhLmNvbTwvYT4mZ3Q7IHdyb3RlOjxicj48L2Rpdj48YmxvY2txdW90ZSBjbGFzcz0iZ21haWxfcXVvdGUiIHN0eWxlPSJtYXJnaW46MHB4IDBweCAwcHggMC44ZXg7Ym9yZGVyLWxlZnQtd2lkdGg6MXB4O2JvcmRlci1sZWZ0LXN0eWxlOnNvbGlkO3BhZGRpbmctbGVmdDoxZXg7Ym9yZGVyLWxlZnQtY29sb3I6cmdiKDIwNCwyMDQsMjA0KSI-PGRpdiBkaXI9Imx0ciI-SGkgUmF3YWEsPGRpdj48YnI-PC9kaXY-PGRpdj5BcyBvZiB0b2RheSBpdCBsb29rcyBsaWtlIHdlJiMzOTtsbCBiZSBhYmxlIHRvIGZpbGwgeW91ciBzcG90IHNvIHlvdSYjMzk7cmUgZ29vZCB0byBnby48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2PlR5bGVyPC9kaXY-PC9kaXY-DQo8L2Jsb2NrcXVvdGU-PC9kaXY-PC9kaXY-DQo8L2Rpdj4NCg==",
+                    "size": 799
+                },
+                "filename": ""
+            },
+            "snippet": "Hey! Sophia let me know shes extending her lease but I was hoping to move in January. Can I just sign another lease? On Sat, Oct 24, 2020 at 10:35 PM Application Team &lt;26tgsdnx0e3adi5bru5xu6vead5@",
+            "internalDate": "1604296235000",
+            "labelIds": [
+                "IMPORTANT",
+                "CATEGORY_PERSONAL",
+                "INBOX"
+            ],
+            "threadId": "1758781e00bf2e6e",
+            "id": "1758781e00bf2e6e",
+            "sizeEstimate": 5400
+        },
+        {
+            "historyId": "800925",
+            "payload": {
+                "headers": [
+                    {
+                        "name": "MIME-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Mon, 2 Nov 2020 05:48:51 -0800"
+                    },
+                    {
+                        "name": "References",
+                        "value": "<Cz-J2hnDSY-5PqrQYsVPFw@ismtpd0011p1iad2.sendgrid.net>"
+                    },
+                    {
+                        "name": "In-Reply-To",
+                        "value": "<Cz-J2hnDSY-5PqrQYsVPFw@ismtpd0011p1iad2.sendgrid.net>"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<CAAD9TVXaBk=FFHjn-Ah3Px8XG+yrca9EiP1Y+DUYBq6YC5s0Lg@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Re: Early Termination"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "\"rawaa ;\" <26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com>"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "multipart/alternative; boundary=\"000000000000aa644d05b3200140\""
+                    }
+                ],
+                "body": {
+                    "size": 0
+                },
+                "mimeType": "multipart/alternative",
+                "partId": "",
+                "parts": [
+                    {
+                        "mimeType": "text/plain",
+                        "partId": "0",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"UTF-8\""
+                            }
+                        ],
+                        "body": {
+                            "data": "SGkgUmF3YWEsDQoNCkhvdyBsb25nIHdvdWxkIHlvdSB3YW50IHRvIHN0YXkgZm9yPyBXZSBjb3VsZCBzaWduIHVudGlsIE1pZCBNYXkgcmlnaHQgbm93Lg0KJDY1MCBhIG1vbnRoLCBtb3ZlIGluIDEvNC8yMSwgNC41IG1vbnRocyBvZiByZW50Lg0KDQpUeWxlcg0KDQpPbiBTdW4sIE5vdiAxLCAyMDIwIGF0IDk6NTAgUE0gcmF3YWEgOyA8DQoyNnRnc2RueDBlM2FkaTJ0OGp4M2dqZ2phajFAY29udm8udHJ1bGlhLmNvbT4gd3JvdGU6DQoNCj4gSGV5ISBTb3BoaWEgbGV0IG1lIGtub3cgc2hlcyBleHRlbmRpbmcgaGVyIGxlYXNlIGJ1dCBJIHdhcyBob3BpbmcgdG8gbW92ZQ0KPiBpbiBKYW51YXJ5LiBDYW4gSSBqdXN0IHNpZ24gYW5vdGhlciBsZWFzZT8NCj4NCj4gT24gU2F0LCBPY3QgMjQsIDIwMjAgYXQgMTA6MzUgUE0gQXBwbGljYXRpb24gVGVhbSA8DQo-IDI2dGdzZG54MGUzYWRpNWJydTV4dTZ2ZWFkNUBjb252by50cnVsaWEuY29tPiB3cm90ZToNCj4NCj4-IEhpIFJhd2FhLA0KPj4NCj4-IEFzIG9mIHRvZGF5IGl0IGxvb2tzIGxpa2Ugd2UnbGwgYmUgYWJsZSB0byBmaWxsIHlvdXIgc3BvdCBzbyB5b3UncmUgZ29vZA0KPj4gdG8gZ28uDQo-Pg0KPj4gVHlsZXINCj4-DQo-Pg0KPj4NCj4NCj4NCj4NCj4gLS0NCkJlc3QsDQoNClR5bGVyIEdhbGRlcw0KQ2xlYW4gRmxvb3JzICYgTG9ja2luZyBEb29ycw0K",
+                            "size": 690
+                        },
+                        "filename": ""
+                    },
+                    {
+                        "mimeType": "text/html",
+                        "partId": "1",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"UTF-8\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "body": {
+                            "data": "PGRpdiBkaXI9ImF1dG8iPkhpIFJhd2FhLDwvZGl2PjxkaXYgZGlyPSJhdXRvIj48YnI-PC9kaXY-PGRpdiBkaXI9ImF1dG8iPkhvdyBsb25nIHdvdWxkIHlvdSB3YW50IHRvIHN0YXkgZm9yPyBXZSBjb3VsZCBzaWduIHVudGlsIE1pZCBNYXkgcmlnaHQgbm93LiAkNjUwIGEgbW9udGgsIG1vdmUgaW4gMS80LzIxLCA0LjUgbW9udGhzIG9mIHJlbnQuPC9kaXY-PGRpdiBkaXI9ImF1dG8iPjxicj48L2Rpdj48ZGl2IGRpcj0iYXV0byI-VHlsZXI8L2Rpdj48ZGl2Pjxicj48ZGl2IGNsYXNzPSJnbWFpbF9xdW90ZSI-PGRpdiBkaXI9Imx0ciIgY2xhc3M9ImdtYWlsX2F0dHIiPk9uIFN1biwgTm92IDEsIDIwMjAgYXQgOTo1MCBQTSByYXdhYSA7ICZsdDs8YSBocmVmPSJtYWlsdG86MjZ0Z3NkbngwZTNhZGkydDhqeDNnamdqYWoxQGNvbnZvLnRydWxpYS5jb20iPjI2dGdzZG54MGUzYWRpMnQ4angzZ2pnamFqMUBjb252by50cnVsaWEuY29tPC9hPiZndDsgd3JvdGU6PGJyPjwvZGl2PjxibG9ja3F1b3RlIGNsYXNzPSJnbWFpbF9xdW90ZSIgc3R5bGU9Im1hcmdpbjowIDAgMCAuOGV4O2JvcmRlci1sZWZ0OjFweCAjY2NjIHNvbGlkO3BhZGRpbmctbGVmdDoxZXgiPjxkaXY-PGRpdiBkaXI9ImF1dG8iPkhleSEgU29waGlhIGxldCBtZSBrbm93IHNoZXMgZXh0ZW5kaW5nIGhlciBsZWFzZSBidXQgSSB3YXMgaG9waW5nIHRvIG1vdmUgaW4gSmFudWFyeS4gQ2FuIEkganVzdCBzaWduIGFub3RoZXIgbGVhc2U_wqA8L2Rpdj48L2Rpdj48ZGl2PjxkaXY-PGJyPjxkaXYgY2xhc3M9ImdtYWlsX3F1b3RlIj48ZGl2IGRpcj0ibHRyIiBjbGFzcz0iZ21haWxfYXR0ciI-T24gU2F0LCBPY3QgMjQsIDIwMjAgYXQgMTA6MzUgUE0gQXBwbGljYXRpb24gVGVhbSAmbHQ7PGEgaHJlZj0ibWFpbHRvOjI2dGdzZG54MGUzYWRpNWJydTV4dTZ2ZWFkNUBjb252by50cnVsaWEuY29tIiB0YXJnZXQ9Il9ibGFuayI-MjZ0Z3NkbngwZTNhZGk1YnJ1NXh1NnZlYWQ1QGNvbnZvLnRydWxpYS5jb208L2E-Jmd0OyB3cm90ZTo8YnI-PC9kaXY-PGJsb2NrcXVvdGUgY2xhc3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0ibWFyZ2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRlci1sZWZ0LXdpZHRoOjFweDtib3JkZXItbGVmdC1zdHlsZTpzb2xpZDtwYWRkaW5nLWxlZnQ6MWV4O2JvcmRlci1sZWZ0LWNvbG9yOnJnYigyMDQsMjA0LDIwNCkiPjxkaXYgZGlyPSJsdHIiPkhpIFJhd2FhLDxkaXY-PGJyPjwvZGl2PjxkaXY-QXMgb2YgdG9kYXkgaXQgbG9va3MgbGlrZSB3ZSYjMzk7bGwgYmUgYWJsZSB0byBmaWxsIHlvdXIgc3BvdCBzbyB5b3UmIzM5O3JlIGdvb2QgdG8gZ28uPC9kaXY-PGRpdj48YnI-PC9kaXY-PGRpdj5UeWxlcjwvZGl2PjwvZGl2Pjxicj48YnI-PC9ibG9ja3F1b3RlPjwvZGl2PjwvZGl2Pjxicj48YnI-PC9kaXY-PGJyPjxicj48L2Jsb2NrcXVvdGU-PC9kaXY-PC9kaXY-LS0gPGJyPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJnbWFpbF9zaWduYXR1cmUiIGRhdGEtc21hcnRtYWlsPSJnbWFpbF9zaWduYXR1cmUiPkJlc3QsPGJyPjxicj5UeWxlciBHYWxkZXM8YnI-Q2xlYW4gRmxvb3JzICZhbXA7IExvY2tpbmcgRG9vcnM8L2Rpdj4NCg==",
+                            "size": 1591
+                        },
+                        "filename": ""
+                    }
+                ],
+                "filename": ""
+            },
+            "snippet": "Hi Rawaa, How long would you want to stay for? We could sign until Mid May right now. $650 a month, move in 1/4/21, 4.5 months of rent. Tyler On Sun, Nov 1, 2020 at 9:50 PM rawaa ; &lt;",
+            "internalDate": "1604324931000",
+            "labelIds": [
+                "SENT"
+            ],
+            "threadId": "1758781e00bf2e6e",
+            "id": "1758937b8bc65219",
+            "sizeEstimate": 3138
+        }
+    ],
+    "historyId": "800925",
+    "id": "1758781e00bf2e6e"
+}
