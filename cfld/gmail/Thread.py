@@ -10,7 +10,7 @@ from util import list_of_emails_to_string_of_emails, update_thread
 from Logger import Logger
 import base64
 
-
+domains = ['cleanfloorslockingdoors.com', 'cf-ld.com']
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
 class Thread(Logger):
     def __init__(self, thread, service):
@@ -111,7 +111,7 @@ class Thread(Logger):
         # last message is from userId=me 
         # AND we have sent that message (as opposed to a draft)
         last_msg_true = \
-            self.service.get_email() in self.field('From', subset=self.last_message()) \
+            self.__is_my_email(self.__extract_email(self.field('From', subset=self.last_message()))) \
             and 'labelIds' in self.thread['messages'][-1] \
             and 'SENT' in self.thread['messages'][-1]['labelIds']
         return ts_true and last_msg_true
@@ -125,18 +125,34 @@ class Thread(Logger):
     def get_email_from_new_submission(self): # TODO: maybe we leave looking in the dictionary to the caller of the above func
         pass
         
-    def default_reply(self): # TODO: reply all?
+    # For reply all, get everything in the from, to, and cc fields that isn't our email
+    def default_reply(self, reply_all=True):
         counter = -1
         while True:
             message = self.thread['messages'][counter]
             counter -= 1
             if 'DRAFT' in message['labelIds']:
                 continue
-            from_email = self.field('From', subset=message).split(' ')[-1].strip('<').strip('>')
-            if from_email != self.service.get_email():
-                return [from_email]
-            else:
-                return [self.field('To', subset=message).split(' ')[-1].strip('<').strip('>')]
+            emails = []
+            from_email = self.__extract_email(self.field('From', subset=message))
+            if not self.__is_my_email(from_email):
+                emails.append(from_email)
+            to_emails = self.field('To', subset=message).split(',')
+            for i, to_email in enumerate(to_emails):
+                to_emails[i] = self.__extract_email(to_email)
+                if not self.__is_my_email(to_emails[i]):
+                    emails.append(to_emails[i])
+            if reply_all:
+                cc_emails = self.field('Cc', subset=message)
+                if cc_emails: # Not every message has cc field
+                    cc_emails = cc_emails.split(',')
+                    for i, cc_email in enumerate(cc_emails):
+                        cc_emails[i] = self.__extract_email(cc_email)
+                        if not self.__is_my_email(cc_emails[i]):
+                            emails.append(cc_emails[i])
+            return emails
+
+                
         raise Exception('Couldn\'t find email that didn\'t match our own')
 
     # Return a list of all the people in the from, to, and cc fields
@@ -196,6 +212,16 @@ class Thread(Logger):
         if index > 0:
             return ret[:index]
         return ret
+
+    def __is_my_email(self, test_email):
+        my_email = self.service.get_email()
+        if test_email.split('@')[1] in domains \
+                and test_email.split('@')[0] == my_email.split('@')[0]:
+            return True
+        return False
+
+    def __extract_email(self, email_string):
+        return email_string.split(' ')[-1].strip('<').strip('>')
 
         
     # return the last non draft message

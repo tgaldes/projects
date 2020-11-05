@@ -42,10 +42,12 @@ class ThreadTest(unittest.TestCase):
         mock_service = Mock()
         mock_service.get_label_id = MagicMock(return_value='mockid')
         mock_service.set_label = MagicMock(return_value={'messages' : [], 'labelIds' : ['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid']})
-        mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
         thread = Thread(d, mock_service)
         id = thread.field('id')
         self.assertEqual('test subject', thread.subject())
+        mock_service.get_email = MagicMock(return_value='tyler@cf-ld.com')
+        self.assertEqual(['tgaldes@gmail.com'], thread.default_reply())
+        mock_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
         self.assertEqual(['tgaldes@gmail.com'], thread.default_reply())
         self.assertEqual('', thread.existing_draft_text())
         self.assertEqual(None, thread.existing_draft_id())
@@ -242,8 +244,39 @@ class ThreadTest(unittest.TestCase):
         self.assertEqual(expected_decoded_payload, thread.existing_draft_text())
 
 
-# TODO: if we sent last email we should reply to that email but send it to the t 
 # TODO: ut for special characters returned by service in message body? some are translating & and ' like unicode
 
+    def test_reply_all(self):
+        # Last message in thread is tyler -> George, cc Tim and Micah
+        d = dict_from_fn('./test/thread_test_inputs/reply_all.txt')
+        mock_service = Mock()
+        thread = Thread(d, mock_service)
+        mock_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
+        # george is the to, mharrel and tim are both cced
+        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
+        self.assertEqual(['gbremer@yahoo.com'], thread.default_reply(reply_all=False))
+        # Now we'll have sent the last message To all three (not cced)
+        headers = thread.thread['messages'][-1]['payload']['headers']
+        for i, pair in enumerate(headers):
+            if pair['name'] == 'Cc':
+                del headers[i]
+            elif pair['name'] == 'To':
+                pair['value'] += ',Micah Harrel <mharrel@jhtechnologies.com>, Tim Simmons <tim@overdrivenotes.com>'
 
+        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
+        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply(reply_all=False))
+
+        # Now we'll remove the last message in the thread
+        thread.thread['messages'].pop()
+        headers = thread.thread['messages'][-1]['payload']['headers']
+        # Last message is from George -> Tyler, Tim, Micah
+        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
+        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply(reply_all=False))
+        for i, pair in enumerate(headers):
+            if pair['name'] == 'To':
+                pair['value'] = 'Tyler Galdes <tyler@cleanfloorslockingdoors.com>'
+        headers.append({'name' : 'Cc' , 'value' : 'Micah Harrel <mharrel@jhtechnologies.com>, Tim Simmons <tim@overdrivenotes.com>'})
+        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
+        # Now that tim and micah are ccs we will skip them if we don't want to reply all
+        self.assertEqual(['gbremer@yahoo.com'], thread.default_reply(reply_all=False))
 
