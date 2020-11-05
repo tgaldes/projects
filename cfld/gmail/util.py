@@ -3,6 +3,8 @@ import inspect
 from flatten_dict import flatten 
 from flatten_dict import unflatten 
 def list_of_emails_to_string_of_emails(l):
+    if type(l) == str:
+        return l
     ret = ''
     for item in l:
         ret = ret + item + ', '

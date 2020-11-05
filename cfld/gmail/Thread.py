@@ -33,6 +33,8 @@ class Thread(Logger):
             return search_dict[field_name]
         message = search_dict
         if 'payload' not in search_dict or 'headers' not in search_dict['payload']:
+            if 'messages' not in search_dict:
+                return None
             message = search_dict['messages'][0]
         if field_name in message:
             return message[field_name]
@@ -58,7 +60,7 @@ class Thread(Logger):
 
     def existing_draft_text(self):
         if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
-            return self.thread['messages'][-1]['snippet']
+            return self.__decode_message(-1)
         return ''
 
     def existing_draft_id(self):
@@ -77,18 +79,19 @@ class Thread(Logger):
                 
     def append_to_draft(self, body, destinations):
 # TODO: what if destinations != existing draft destinations? maybe we should map the existing draft by who they are being sent to
-        message = MIMEText(self.existing_draft_text() + body)
+        new_body = self.existing_draft_text() + body
+        self.ld('New draft will have body: {}'.format(new_body))
+        message = MIMEText(new_body)
         draft_id = self.existing_draft_id()
 
         message['to'] = list_of_emails_to_string_of_emails(destinations)
-        message['from'] = 'tyler@cleanfloorslockingdoors.com'
+        message['from'] = self.service.get_email()
         message['subject'] = self.field('Subject')
-        message['In-Reply-To'] = self.field('Message-ID')
-        message['References'] = self.field('Message-ID')# + ',' + self.get('References')
+        message['In-Reply-To'] = self.field('Message-ID', subset=self.last_message())
+        message['References'] = self.field('Message-ID', subset=self.last_message())
         payload = {'message' : {'threadId' : self.thread['id'], 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         message = self.service.append_or_create_draft(payload, draft_id)
         self.add_or_update_message(message)
-
 
     # Get the greeting we want to use for messages sent to the thread
     # If we are sending to multiple people, something like 'Hi all,\n\n'
@@ -108,7 +111,7 @@ class Thread(Logger):
         # last message is from userId=me 
         # AND we have sent that message (as opposed to a draft)
         last_msg_true = \
-            self.service.get_email() in self.field('From', subset=self.thread['messages'][-1]) \
+            self.service.get_email() in self.field('From', subset=self.last_message()) \
             and 'labelIds' in self.thread['messages'][-1] \
             and 'SENT' in self.thread['messages'][-1]['labelIds']
         return ts_true and last_msg_true
@@ -122,8 +125,19 @@ class Thread(Logger):
     def get_email_from_new_submission(self): # TODO: maybe we leave looking in the dictionary to the caller of the above func
         pass
         
-    def default_reply(self): # TODO: reply all? # TODO: test getting the reply when we aren't replying to the first email in the thread
-        return [self.field('From').split(' ')[-1].strip('<').strip('>')]
+    def default_reply(self): # TODO: reply all?
+        counter = -1
+        while True:
+            message = self.thread['messages'][counter]
+            counter -= 1
+            if 'DRAFT' in message['labelIds']:
+                continue
+            from_email = self.field('From', subset=message).split(' ')[-1].strip('<').strip('>')
+            if from_email != self.service.get_email():
+                return [from_email]
+            else:
+                return [self.field('To', subset=message).split(' ')[-1].strip('<').strip('>')]
+        raise Exception('Couldn\'t find email that didn\'t match our own')
 
     # Return a list of all the people in the from, to, and cc fields
     # Filter out the email of userId='me'
@@ -165,6 +179,31 @@ class Thread(Logger):
 
     # Decode the payload of the message, useful when getting emails that contain a lot
     # of html formatting
-    def __decode_message(self, index):
-        return base64.urlsafe_b64decode(self.thread['messages'][index]['payload']['body']['data'].encode('UTF8')).decode('UTF8')
+    def __decode_message(self, index, ignore_old_messages=True):
+        payload = self.thread['messages'][index]['payload']
+        data = ''
+        if 'parts' in payload:
+            for part in payload['parts']:
+                data += part['body']['data']
+        else:
+            data = payload['body']['data']
+        ret = base64.urlsafe_b64decode(data.encode('UTF8')).decode('UTF8')
+        if not ignore_old_messages:
+            return ret
+        # Here we'll filter out all the b.s. that we get in gmail when we hit 'reply'
+        delimiter = '\r\n\r\nOn '
+        index = ret.find(delimiter)
+        if index > 0:
+            return ret[:index]
+        return ret
+
         
+    # return the last non draft message
+    def last_message(self):
+        for message in reversed(self.thread['messages']):
+            if 'DRAFT' not in message['labelIds']:
+                return message
+
+
+
+

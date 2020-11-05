@@ -2,7 +2,6 @@ import logging
 from NewLogger import getLogger
 import pdb
 
-# TODO: redirect to console as well
 class Logger:
     def __init__(self, parent_name):
         self.logger = getLogger('example', parent_name, root=True, stdout=True)

@@ -3,8 +3,8 @@ import logging.config
 import datetime
 import os.path
 import sys
-
-def getLogger(file_name, module_name, level='INFO', path='./log/', root=True, stdout=True):
+global_log_level = 'INFO'
+def getLogger(file_name, module_name, path='./log/', root=True, stdout=True):
     file_name = path + '/' + file_name + '.log'
     if not os.path.isdir(path): os.makedirs(path)
     dict_config = {
@@ -16,13 +16,13 @@ def getLogger(file_name, module_name, level='INFO', path='./log/', root=True, st
         },
         'handlers': {
             'default': {
-                'level': 'INFO',
+                'level': global_log_level,
                 'formatter': 'standard',
                 'class': 'logging.StreamHandler',
                 'stream' : sys.stdout
             },
             'file_handler': {
-                'level': level,
+                'level': global_log_level,
                 'filename': file_name,
                 'class': 'logging.FileHandler',
                 'formatter': 'standard',
