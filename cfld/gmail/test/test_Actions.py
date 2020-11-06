@@ -42,8 +42,33 @@ class LabelActionTest(unittest.TestCase):
         thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=True)
 
 class DraftActionTest(unittest.TestCase):
-    def test_set_label_no_matches(self):
-        pass
-    def test_set_label_with_match(self):
-        pass
+    def test_add_draft_no_matches(self):
+        mock_thread = Mock()
+        email = ['destination@abc.com']
+        mock_thread.append_to_draft = MagicMock()
+        mock_thread.default_reply = MagicMock(return_value=email)
+        mock_thread.short_name = MagicMock(return_value='school')
+        mock_thread.set_label = MagicMock()
+        da = DraftAction('thread.default_reply()', '"Formatting a message with the short name: {}".format(thread.short_name())')
+        da.process(mock_thread, [])
+        mock_thread.default_reply.assert_called_once_with()
+        mock_thread.short_name.assert_called_once_with()
+        mock_thread.append_to_draft.assert_called_once_with(email, 'Formatting a message with the short name: school')
+
+        # Make sure we've added the automation label
+        mock_thread.set_label.assert_called_once_with('automation', unset=False)
+        
+    def test_add_draft_with_matches(self):
+        mock_thread = Mock()
+        email = ['destination@abc.com']
+        mock_thread.append_to_draft = MagicMock()
+        mock_thread.default_reply = MagicMock(return_value=email)
+        mock_thread.set_label = MagicMock()
+        da = DraftAction('thread.default_reply()', '"Formatting a message with the short name: {}".format(match(1))')
+        da.process(mock_thread, ['match a', 'match b'])
+        mock_thread.default_reply.assert_called_once_with()
+        mock_thread.append_to_draft.assert_called_once_with(email, 'Formatting a message with the short name: match b')
+
+        # Make sure we've added the automation label
+        mock_thread.set_label.assert_called_once_with('automation', unset=False)
 

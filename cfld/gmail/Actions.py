@@ -25,14 +25,14 @@ class DraftAction(implements(IAction), Logger):
         super(DraftAction, self).__init__(__name__)
         self.value = value
         self.destinations = destinations
-        self.label_action = LabelAction('automation')
+        self.label_action = LabelAction('"automation"')
         self.ld('Created {}, destinations={}, value={}'.format(self.__class__, self.destinations, self.value))
     def process(self, thread, matches):
         self.ld('{} is processing a thread'.format(self.__class__))
         draft_content = evaluate_expression(self.value, **locals())
         destinations = evaluate_expression(self.destinations, **locals())
         thread.append_to_draft(draft_content, destinations)
-        self.label_action.process()
+        self.label_action.process(thread, matches)
 
 # There are two differences between a redirect and a draft action
 # 1 - the redirect can create a draft on a different thread than the input thread
