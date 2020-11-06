@@ -2,6 +2,8 @@ from unittest.mock import MagicMock, Mock
 import unittest
 from Matchers import SubjectMatcher, ExpressionMatcher
 from Thread import Thread
+import NewLogger
+NewLogger.global_log_level = 'DEBUG'
 
 class SubjectMatcherTest(unittest.TestCase):
     def test_no_match(self):

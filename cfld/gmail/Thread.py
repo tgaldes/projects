@@ -51,42 +51,14 @@ class Thread(Logger):
                         'removeLabelIds' : []
                       }
             if unset:
-                payload['removeLabelIds'] = [label_string]
+                payload['removeLabelIds'] = [label_id]
             else:
-                payload['addLabelIds'] = [label_string]
+                payload['addLabelIds'] = [label_id]
             resp = self.service.set_label(self.thread['id'], payload)
             update_thread(self.thread, resp)
         else:
             raise Exception('Service cannot find a label id for label: {}'.format(label_string))
 
-    def existing_draft_text(self):
-        if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
-            return self.__decode_message(-1)
-        return ''
-
-    def existing_draft_id(self):
-        if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
-# We finish with a draft message, now get the DRAFT ID (which is different than a message id)
-            for draft in self.service.get_drafts():
-                if draft['message']['id'] == self.thread['messages'][-1]['id']:
-                    return draft['id']
-        return None
-
-    def __check_destinations_match(self, new_destinations):
-        if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
-            for email in new_destinations:
-                if not email in self.field('to', subset=self.thread['messages'][-1], default=[email]):
-                    raise Exception('{} not in list of recipients for existing draft. Existing recipients are: {}'.format(email, self.field('to', subset=self.thread['messages'][-1])))
-        return
-        
-        
-    def add_or_update_message(self, message):
-        for i, old_message in enumerate(self.thread['messages']):
-            if old_message['id'] == message['id']:
-                self.thread['messages'][i] = message
-                return
-        self.thread['messages'].append(message)
-                
     def append_to_draft(self, body, destinations):
         self.__check_destinations_match(destinations)
         new_body = self.existing_draft_text() + body
@@ -97,11 +69,11 @@ class Thread(Logger):
         message['to'] = list_of_emails_to_string_of_emails(destinations)
         message['from'] = self.service.get_email()
         message['subject'] = self.field('Subject')
-        message['In-Reply-To'] = self.field('Message-ID', subset=self.last_message())
-        message['References'] = self.field('Message-ID', subset=self.last_message())
+        message['In-Reply-To'] = self.field('Message-ID', subset=self.__last_message())
+        message['References'] = self.field('Message-ID', subset=self.__last_message())
         payload = {'message' : {'threadId' : self.thread['id'], 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         message = self.service.append_or_create_draft(payload, draft_id)
-        self.add_or_update_message(message)
+        self.__add_or_update_message(message)
 
     # Get the greeting we want to use for messages sent to the thread
     # If we are sending to multiple people, something like 'Hi all,\n\n'
@@ -121,7 +93,7 @@ class Thread(Logger):
         # last message is from userId=me 
         # AND we have sent that message (as opposed to a draft)
         last_msg_true = \
-            self.__is_my_email(self.__extract_email(self.field('From', subset=self.last_message()))) \
+            self.__is_my_email(self.__extract_email(self.field('From', subset=self.__last_message()))) \
             and 'labelIds' in self.thread['messages'][-1] \
             and 'SENT' in self.thread['messages'][-1]['labelIds']
         return ts_true and last_msg_true
@@ -172,6 +144,9 @@ class Thread(Logger):
     # We'll need this one so that we can do matching against the contents of the mesasges we get from zillow/zumper/rentpath
     # We want to be able to populate the draft response that answers their questions they might type
     # in the site dialouge before sending it to us
+    # This is going to be useful when implementing the body regex matcher
+    # actually, if we are just doing a regex we don't give a shit if there's html
+    # around it :)
     def generic_decode(self):
         pass
     
@@ -197,6 +172,11 @@ class Thread(Logger):
             raise Exception('Could not find the substring: {} in the first message of the thread.'.format(substring))
         end_index = decoded_html[start_index:].index('<') + start_index
         return decoded_html[start_index:end_index]
+
+    def has_existing_draft(self):
+        if self.existing_draft_text():
+            return True
+        return False
 
     # Decode the payload of the message, useful when getting emails that contain a lot
     # of html formatting
@@ -230,11 +210,37 @@ class Thread(Logger):
 
         
     # return the last non draft message
-    def last_message(self):
+    def __last_message(self):
         for message in reversed(self.thread['messages']):
             if 'DRAFT' not in message['labelIds']:
                 return message
+    def existing_draft_text(self):
+        if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
+            return self.__decode_message(-1)
+        return ''
 
+    def existing_draft_id(self):
+        if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
+# We finish with a draft message, now get the DRAFT ID (which is different than a message id)
+            for draft in self.service.get_drafts():
+                if draft['message']['id'] == self.thread['messages'][-1]['id']:
+                    return draft['id']
+        return None
+
+    def __check_destinations_match(self, new_destinations):
+        if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
+            for email in new_destinations:
+                if not email in self.field('to', subset=self.thread['messages'][-1], default=[email]):
+                    raise Exception('{} not in list of recipients for existing draft. Existing recipients are: {}'.format(email, self.field('to', subset=self.thread['messages'][-1])))
+        return
+
+    def __add_or_update_message(self, message):
+        for i, old_message in enumerate(self.thread['messages']):
+            if old_message['id'] == message['id']:
+                self.thread['messages'][i] = message
+                return
+        self.thread['messages'].append(message)
+                
 
 
 

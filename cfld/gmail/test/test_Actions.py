@@ -2,6 +2,8 @@ from unittest.mock import MagicMock, Mock
 import unittest
 from Actions import *
 from Thread import Thread
+import NewLogger
+NewLogger.global_log_level = 'DEBUG'
 
 class LabelActionTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -41,9 +43,7 @@ class LabelActionTest(unittest.TestCase):
 
 class DraftActionTest(unittest.TestCase):
     def test_set_label_no_matches(self):
-        print('TODO')
         pass
     def test_set_label_with_match(self):
-        print('TODO')
         pass
 

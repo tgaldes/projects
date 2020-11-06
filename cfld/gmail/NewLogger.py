@@ -11,7 +11,7 @@ def getLogger(file_name, module_name, path='./log/', root=True, stdout=True):
         'version': 1,
         'formatters': {
             'standard': {
-                'format': '%(asctime)s [%(levelname)s] %(name)s: %(funcName)s:- %(message)s'
+                'format': '%(asctime)s [%(levelname)7s] %(name)12s:- %(message)s'
             },
         },
         'handlers': {
@@ -46,8 +46,5 @@ def getLogger(file_name, module_name, path='./log/', root=True, stdout=True):
         dict_config['handlers']['default']['level'] = 'ERROR'
     logging.config.dictConfig(dict_config)
     logger = logging.getLogger(module_name)
-    for h in logger.handlers:
-        if type(h) == logging.handlers.TimedRotatingFileHandler:
-            h.suffix = '_%Y%m%d.log'
     return logger
 

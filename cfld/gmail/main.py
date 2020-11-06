@@ -28,11 +28,11 @@ if __name__=='__main__':
         
     sheet_service = SheetService('tyler@cleanfloorslockingdoors.com', mode)
     inboxes = {}
-    if False:
+    if True:
         service = GMailService('tyler@cleanfloorslockingdoors.com')
         inbox_tyler = Inbox(service)
         inboxes['tyler'] = inbox_tyler
-    if True:
+    if False:
         service_apply = GMailService('apply@cleanfloorslockingdoors.com')
         inbox_apply = Inbox(service_apply)
         inboxes['apply'] = inbox_apply
@@ -47,6 +47,9 @@ if __name__=='__main__':
             for rule in factory.get_rules_for_user(user):
                 rule.process(thread)
 
+# We can have hardcoded actions available via command line such as:
+# remove all drafts
+# remove all of X label
 
 
 

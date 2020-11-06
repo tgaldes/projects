@@ -10,6 +10,7 @@ class SubjectMatcher(implements(IMatcher), Logger):
         super(SubjectMatcher, self).__init__(__name__)
         self.re_string = re_string
         self.re = re.compile(self.re_string)
+        self.ld('Created {}, re_string={}'.format(self.__class__, self.re_string))
 
     def matches(self, thread):
         if self.re.match(thread.subject()):
@@ -20,14 +21,17 @@ class SubjectMatcher(implements(IMatcher), Logger):
     def get_matching_groups(self, thread):
         g = self.re.match(thread.subject())
         if g:
-            self.li('SubjectMatcher: returning groups: {}'.format(g.groups()))
+            self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
             return g.groups()
         raise Exception('Asked for matching groups when no match. SubjectMatcher re: {} thread subject: {}'.format(self.re_string, thread.subject))
+
+
 
 class ExpressionMatcher(implements(IMatcher), Logger):
     def __init__(self, expression):
         super(ExpressionMatcher, self).__init__(__name__)
         self.expression = expression
+        self.ld('Created {}, expression={}'.format(self.__class__, self.expression))
 
     def matches(self, thread):
         return evaluate_expression(self.expression, **locals())

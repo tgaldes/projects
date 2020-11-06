@@ -51,12 +51,19 @@ class ThreadTest(unittest.TestCase):
         self.assertEqual(['tgaldes@gmail.com'], thread.default_reply())
         self.assertEqual('', thread.existing_draft_text())
         self.assertEqual(None, thread.existing_draft_id())
+        self.assertEqual(False, thread.has_existing_draft())
 
         # setting a label and updating threads internal state with new label ids
         thread.set_label('test label string')
         mock_service.set_label.assert_called_once_with(id, mock.ANY)
         mock_service.get_label_id.assert_called_once_with('test label string')
         self.assertTrue('mockid' in thread.field('labelIds'))
+
+        # unset a label
+        thread.set_label('test label string', unset=True)
+        mock_service.set_label.assert_called_with(id, {'addLabelIds' : [], 'removeLabelIds' : ['mockid']})
+        mock_service.get_label_id.assert_called_with('test label string')
+
 
         # getting some fields from various depths of the json 
         self.assertEqual('690981', thread.field('historyId'))
@@ -78,6 +85,7 @@ class ThreadTest(unittest.TestCase):
         thread.append_to_draft(second_msg, ['tgaldes@gmail.com'])
         self.assertEqual(first_msg + second_msg, thread.existing_draft_text())
         self.assertEqual(draft_id, thread.existing_draft_id())
+        self.assertEqual(True, thread.has_existing_draft())
 
         # try to set a label that doesn't exist, we want an exception
         with self.assertRaises(Exception):

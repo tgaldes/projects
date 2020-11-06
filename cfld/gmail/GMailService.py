@@ -46,14 +46,13 @@ class GMailService(Logger):
         self.label_string_2_id = {}
         self.label_id_2_string = {}
         if not labels:
-            print('No labels found.')
+            self.lw('No labels found for user: {}'.format(self.email))
         else:
-            print('Labels:')
             for label in labels:
                 self.label_string_2_id[label['name']] = label['id']
                 self.label_id_2_string[label['id']] = label['name']
-                print(label['name'], label['id'])
         self.thread_index = 0
+        self.ld('Loaded labels: {}'.format(self.label_string_2_id.keys()))
 
     def get_label_id(self, label_string): # TODO: create label on demand? Or force an exception when the desired label doesn't match somehting I've already created
         if label_string in self.label_string_2_id:
@@ -101,9 +100,11 @@ class GMailService(Logger):
         if draft_id:
             draft = self.service.users().drafts().update(userId=userId, id=draft_id, body=payload).execute()
 # create a new draft!
+            self.li('Appended to existing draft with id: {}'.format(draft_id))
         else:
             draft = self.service.users().drafts().create(userId=userId, body=payload).execute()
             self.drafts.append(draft)
+            self.li('Created new existing draft with id: {}'.format(draft['id']))
 
         message = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
         return message
