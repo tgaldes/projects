@@ -12,8 +12,8 @@ class RuleFactory(Logger):
         super(RuleFactory, self).__init__(__name__)
         if not sheet_data:
             sheet_data = \
-                [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'body'], \
-                 ['label by school', 'apply', '', '', 'New Submission for (.*)', '', '', 'label', '"Schools/" + matches(0)', '', '', '']]
+                [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations'], \
+                 ['label by school', 'apply', '', '', 'New Submission for (.*)', '', '', 'label', '"Schools/" + matches(0)', '', '']]
         RuleTuple = collections.namedtuple('RuleTuple', sheet_data[0])
         self.rules_by_user = {}
         header_size = len(sheet_data[0])

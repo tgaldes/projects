@@ -6,6 +6,11 @@ import NewLogger
 NewLogger.global_log_level = 'DEBUG'
 
 class SubjectMatcherTest(unittest.TestCase):
+
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            sm = SubjectMatcher('')
+
     def test_no_match(self):
         sm = SubjectMatcher('test subject')
         thread = Thread({}, None)
@@ -27,6 +32,10 @@ class SubjectMatcherTest(unittest.TestCase):
         
 
 class ExpressionMatcherTest(unittest.TestCase):
+
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            em = ExpressionMatcher('')
 
     def test_all(self):
         thread = Thread({}, None)
@@ -53,6 +62,11 @@ class ExpressionMatcherTest(unittest.TestCase):
         self.assertFalse(em.matches(thread))
 
 class LabelMatcherTest(unittest.TestCase):
+
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            lm = LabelMatcher('')
+
     def test_match(self):
         lm = LabelMatcher('automation')
         thread = Thread({}, None)

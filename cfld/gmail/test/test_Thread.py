@@ -113,6 +113,10 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(d, mock_service)
         self.assertEqual([ln for x in range(4)], thread.labels())
 
+    # Not currently part of public interface
+    def test_no_last_message(self):
+        pass
+
     def test_short_name(self):
         d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
         mock_service = Mock()

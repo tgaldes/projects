@@ -3,7 +3,7 @@ import logging.config
 import datetime
 import os.path
 import sys
-global_log_level = 'INFO'
+global_log_level = 'DEBUG'
 def getLogger(file_name, module_name, path='./log/', root=True, stdout=True):
     file_name = path + '/' + file_name + '.log'
     if not os.path.isdir(path): os.makedirs(path)

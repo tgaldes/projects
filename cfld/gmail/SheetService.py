@@ -32,7 +32,7 @@ class SheetService(Logger):
             with open(pickle_path, 'wb') as token:
                 pickle.dump(creds, token)
         self.service = build('sheets', 'v4', credentials=creds)
-        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId='1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI', range='{}_rules!A1:L100'.format(sheet_name)).execute().get('values', [])
+        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId='1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI', range='{}_rules!A1:K100'.format(sheet_name)).execute().get('values', [])
         if not self.rule_construction_data:
             self.lf('No info loaded for rule construction data. Aborting.')
             exit(1)

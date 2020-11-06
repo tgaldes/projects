@@ -17,7 +17,7 @@ class Thread(Logger):
         super(Thread, self).__init__(__name__)
         self.service = service
         self.thread = thread
-        self.li('initialized thread with id {}'.format(self.field('id')))
+        self.li('Initialized thread with id: {} subject: {}'.format(self.field('id'), self.subject()))
 
     def subject(self):
         return self.field('Subject')
@@ -220,8 +220,9 @@ class Thread(Logger):
     # return the last non draft message
     def __last_message(self):
         for message in reversed(self.thread['messages']):
-            if 'DRAFT' not in message['labelIds']:
+            if 'labelIds' not in message or 'DRAFT' not in message['labelIds']:
                 return message
+        raise Exception('No non draft messages in thread of length {}'.format(len(self.thread['messages'])))
     def existing_draft_text(self):
         if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
             return self.__decode_message(-1)

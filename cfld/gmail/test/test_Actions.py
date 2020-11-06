@@ -14,6 +14,10 @@ class LabelActionTest(unittest.TestCase):
         self.label_three = '"label three " + match(1)'
         self.matches = ['first match', 'second match']
 
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            la = LabelAction('')
+
     def test_set_label_no_matches(self):
         la = LabelAction(self.label_one)
         thread = Thread({}, None)
@@ -42,6 +46,12 @@ class LabelActionTest(unittest.TestCase):
         thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=True)
 
 class DraftActionTest(unittest.TestCase):
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            da = DraftAction('', 'exp')
+        with self.assertRaises(Exception):
+            da = DraftAction('exp', '')
+
     def test_add_draft_no_matches(self):
         mock_thread = Mock()
         email = ['destination@abc.com']
@@ -87,6 +97,16 @@ class MockThread(unittest.TestCase):
         self.get_short_name.assert_called_once_with()
 
 class RedirectActionTest(unittest.TestCase):
+
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            ra = RedirectAction('', 'exp', 'exp')
+        with self.assertRaises(Exception):
+            ra = RedirectAction('exp', '', 'exp')
+        with self.assertRaises(Exception):
+            ra = RedirectAction('exp', 'exp', '')
+        with self.assertRaises(Exception):
+            ra = RedirectAction('exp', 'exp', 'exp', None)
 
     # This tests the flow the RedirectAction sees when we get a new rental application
     # 1 The application goes to tyler@ inbox

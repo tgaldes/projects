@@ -9,6 +9,8 @@ class SubjectMatcher(implements(IMatcher), Logger):
     def __init__(self, re_string):
         super(SubjectMatcher, self).__init__(__name__)
         self.re_string = re_string
+        if not self.re_string:
+            raise Exception('Cannot create {} with empty re_string: {}'.format(self.__class__, self.re_string))
         self.re = re.compile(self.re_string)
         self.ld('Created {}, re_string={}'.format(self.__class__, self.re_string))
 
@@ -31,6 +33,8 @@ class ExpressionMatcher(implements(IMatcher), Logger):
     def __init__(self, expression):
         super(ExpressionMatcher, self).__init__(__name__)
         self.expression = expression
+        if not self.expression:
+            raise Exception('Cannot create {} with empty expression: {}'.format(self.__class__, self.expression))
         self.ld('Created {}, expression={}'.format(self.__class__, self.expression))
 
     def matches(self, thread):
@@ -45,6 +49,8 @@ class LabelMatcher(implements(IMatcher), Logger):
     def __init__(self, label):
         super(LabelMatcher, self).__init__(__name__)
         self.label = label
+        if not self.label:
+            raise Exception('Cannot create {} with empty label: {}'.format(self.__class__, self.label))
         self.ld('Created {}, label={}'.format(self.__class__, self.label))
         self.re = re.compile(self.label)
 

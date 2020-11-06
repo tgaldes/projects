@@ -28,11 +28,11 @@ if __name__=='__main__':
         
     sheet_service = SheetService('tyler@cleanfloorslockingdoors.com', mode)
     inboxes = {}
-    if True:
+    if False:
         service = GMailService('tyler@cleanfloorslockingdoors.com')
         inbox_tyler = Inbox(service)
         inboxes['tyler'] = inbox_tyler
-    if False:
+    if True:
         service_apply = GMailService('apply@cleanfloorslockingdoors.com')
         inbox_apply = Inbox(service_apply)
         inboxes['apply'] = inbox_apply
@@ -46,6 +46,7 @@ if __name__=='__main__':
                 break
             for rule in factory.get_rules_for_user(user):
                 rule.process(thread)
+            pdb.set_trace()
 
 # We can have hardcoded actions available via command line such as:
 # remove all drafts
