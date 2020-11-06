@@ -1,10 +1,12 @@
 from GMailService import GMailService
 from Thread import Thread
+from Logger import Logger
 
 
 
-class Inbox:
+class Inbox(Logger):
     def __init__(self, service):
+        super(Inbox, self).__init__(__name__)
         self.service = service
 
     def get_service(self):
@@ -25,5 +27,6 @@ class Inbox:
         raw_thread = self.service.get_next_thread()  # TODO
         if not raw_thread:
             return None
-        return Thread(raw_thread, self.service)
+        t = Thread(raw_thread, self.service)
+        return t
         

@@ -38,7 +38,7 @@ class GMailService(Logger):
         results = self.service.users().messages().list(userId='me', maxResults = 10, labelIds=('INBOX')).execute() # TODO: unread query in a refresh function
         results = self.service.users().messages().list(userId='me', maxResults = 10).execute()
         self.mails = results.get('messages', [])
-        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX')).execute().get('threads', [])
+        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20).execute().get('threads', [])
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()
@@ -73,7 +73,6 @@ class GMailService(Logger):
         indiv_thread = self.service.users().threads().get(userId='me', id=self.threads[self.thread_index]['id'], format='full').execute()
         msg = self.service.users().messages().get(userId='me', id=indiv_thread['messages'][0]['id']).execute()
         self.thread_index += 1
-        self.li('Returning raw thread with id: {}'.format(indiv_thread['id']))
         # This is used when we want to grab a thread for a unit test
         '''pdb.set_trace()
         with open('./test/thread_test_inputs/message_from_tenant_then_back_and_forth_last_message_from_tenant.txt', 'w') as f:

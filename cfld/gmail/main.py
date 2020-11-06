@@ -46,7 +46,6 @@ if __name__=='__main__':
                 break
             for rule in factory.get_rules_for_user(user):
                 rule.process(thread)
-            pdb.set_trace()
 
 # We can have hardcoded actions available via command line such as:
 # remove all drafts
