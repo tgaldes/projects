@@ -69,10 +69,10 @@ class ThreadTest(unittest.TestCase):
         second_msg = 'draft line two'
         draft_id = '1234'
         draft_msg_id = '2345'
-        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg)}}})
+        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg), 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}})
         thread.append_to_draft(first_msg, ['tgaldes@gmail.com'])
         # now when we want to add text to the draft we should append to it
-        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg + second_msg)}}})
+        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg + second_msg), 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}})
         # Remember that the draft object is a different object than the message with a different id
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         thread.append_to_draft(second_msg, ['tgaldes@gmail.com'])
@@ -116,16 +116,27 @@ class ThreadTest(unittest.TestCase):
         mock_service.get_label_name = MagicMock(return_value='not a school label')
         self.assertEqual('the campus', thread.short_name())
 
+    def test_new_desintations_match_existing_draft(self):
+        d = dict_from_fn('./test/thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt')
+        mock_service = Mock()
+        thread = Thread(d, mock_service)
+        first_msg = 'draft line one'
+        with self.assertRaises(Exception):
+            thread.append_to_draft('draft msg', ['nottheexistingdraftemail@asdf.com'])
+
     def test_make_them_say_no(self):
         d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
         mock_service = Mock()
-        mock_service.get_label_name = MagicMock(return_value='Schools/USC')
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
+        mock_service.get_label_name = MagicMock(return_value='Schools/USC')
         thread = Thread(d, mock_service)
         # Evening of 20201030
         self.assertEqual(1604097866, thread.last_ts())
         one_day_in_future = thread.last_ts() + 86400
         two_days_in_future = thread.last_ts() + 86400 * 2
+        self.assertEqual('USC', thread.short_name())
+        mock_service.get_label_name = MagicMock(return_value='not a school label')
+        self.assertEqual('the campus', thread.short_name())
 
         # check out timestamp boolean expression
         self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: thread.last_ts()))
@@ -146,7 +157,7 @@ class ThreadTest(unittest.TestCase):
         second_msg = 'draft line two'
         draft_id = '1234'
         draft_msg_id = '2345'
-        mock_service.append_or_create_draft = MagicMock(return_value={'snippet': first_msg, 'internalDate': '1604543785000', 'payload': {'mimeType': 'text/plain', 'body': {'size': 143, 'data': encode_for_payload(first_msg)}, 'partId': '', 'filename': '', 'headers': [{'name': 'Received', 'value': 'from 1055564699329 named unknown by gmailapi.google.com with HTTPREST; Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Content-Type', 'value':'text/plain; charset="us-ascii"'}, {'name': 'MIME-Version', 'value': '1.0'}, {'name': 'Content-Transfer-Encoding', 'value': '7bit'}, {'name': 'to', 'value': 'pulkitagarwalcs@gmail.com'}, {'name': 'from', 'value': 'apply@cleanfloorslockingdoors.com'}, {'name': 'subject', 'value': 'New submission for SJSU'}, {'name': 'In-Reply-To', 'value': '<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'References', 'value':'<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'Date', 'value': 'Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Message-Id', 'value': '<CAAD9TVXpvrS66uVpWOSwYogxA6cYb6_+Z2wYybh8HkqYcC0Ryw@mail.gmail.com>'}]}, 'id': draft_msg_id, 'labelIds': ['DRAFT'], 'threadId': '175704c1f999408f', 'historyId': '803631', 'sizeEstimate': 755})
+        mock_service.append_or_create_draft = MagicMock(return_value={'snippet': first_msg, 'internalDate': '1604543785000', 'payload': {'mimeType': 'text/plain', 'body': {'size': 143, 'data': encode_for_payload(first_msg)}, 'partId': '', 'filename': '', 'headers': [{'name': 'Received', 'value': 'from 1055564699329 named unknown by gmailapi.google.com with HTTPREST; Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Content-Type', 'value':'text/plain; charset="us-ascii"'}, {'name': 'MIME-Version', 'value': '1.0'}, {'name': 'Content-Transfer-Encoding', 'value': '7bit'}, {'name': 'to', 'value': '26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com'}, {'name': 'from', 'value': 'apply@cleanfloorslockingdoors.com'}, {'name': 'subject', 'value': 'New submission for SJSU'}, {'name': 'In-Reply-To', 'value': '<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'References', 'value':'<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'Date', 'value': 'Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Message-Id', 'value': '<CAAD9TVXpvrS66uVpWOSwYogxA6cYb6_+Z2wYybh8HkqYcC0Ryw@mail.gmail.com>'}]}, 'id': draft_msg_id, 'labelIds': ['DRAFT'], 'threadId': '175704c1f999408f', 'historyId': '803631', 'sizeEstimate': 755})
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
 
         # append the draft
@@ -168,7 +179,7 @@ class ThreadTest(unittest.TestCase):
 
 
         # now when we want to add text to the draft we should append to it
-        mock_service.append_or_create_draft = MagicMock(return_value={'snippet': first_msg, 'internalDate': '1604543785000', 'payload': {'mimeType': 'text/plain', 'body': {'size': 143, 'data': encode_for_payload(first_msg + second_msg)}, 'partId': '', 'filename': '', 'headers': [{'name': 'Received', 'value': 'from 1055564699329 named unknown by gmailapi.google.com with HTTPREST; Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Content-Type', 'value':'text/plain; charset="us-ascii"'}, {'name': 'MIME-Version', 'value': '1.0'}, {'name': 'Content-Transfer-Encoding', 'value': '7bit'}, {'name': 'to', 'value': 'pulkitagarwalcs@gmail.com'}, {'name': 'from', 'value': 'apply@cleanfloorslockingdoors.com'}, {'name': 'subject', 'value': 'New submission for SJSU'}, {'name': 'In-Reply-To', 'value': '<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'References', 'value':'<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'Date', 'value': 'Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Message-Id', 'value': '<CAAD9TVXpvrS66uVpWOSwYogxA6cYb6_+Z2wYybh8HkqYcC0Ryw@mail.gmail.com>'}]}, 'id': draft_msg_id, 'labelIds': ['DRAFT'], 'threadId': '175704c1f999408f', 'historyId': '803631', 'sizeEstimate': 755})
+        mock_service.append_or_create_draft = MagicMock(return_value={'snippet': first_msg, 'internalDate': '1604543785000', 'payload': {'mimeType': 'text/plain', 'body': {'size': 143, 'data': encode_for_payload(first_msg + second_msg)}, 'partId': '', 'filename': '', 'headers': [{'name': 'Received', 'value': 'from 1055564699329 named unknown by gmailapi.google.com with HTTPREST; Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Content-Type', 'value':'text/plain; charset="us-ascii"'}, {'name':'MIME-Version', 'value': '1.0'}, {'name': 'Content-Transfer-Encoding', 'value': '7bit'}, {'name': 'to', 'value': '26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com'}, {'name': 'from', 'value': 'apply@cleanfloorslockingdoors.com'}, {'name': 'subject', 'value': 'New submission for SJSU'}, {'name': 'In-Reply-To', 'value': '<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'References', 'value':'<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'Date', 'value': 'Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Message-Id', 'value': '<CAAD9TVXpvrS66uVpWOSwYogxA6cYb6_+Z2wYybh8HkqYcC0Ryw@mail.gmail.com>'}]}, 'id': draft_msg_id, 'labelIds': ['DRAFT'], 'threadId': '175704c1f999408f', 'historyId': '803631', 'sizeEstimate': 755})
         # Remember that the draft object is a different object than the message with a different id
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         thread.append_to_draft(second_msg, thread.default_reply())
