@@ -41,20 +41,21 @@ class DraftAction(implements(IAction), Logger):
 # - inbox he'll be sending to
 # - how to find the thread he'll be drafting on
 class RedirectAction(implements(IAction), Logger):
-    def __init__(self, inbox, finder_expression, value, destinations):
+    def __init__(self, inbox, finder_expression, value, destinations, found_class=Thread):
         super(RedirectAction, self).__init__(__name__)
         self.inbox = inbox # set up by factory
         self.thread_finder_expression = finder_expression
         self.value = value
         self.destinations = destinations
-        self.ld('Created {}, destinations={}, value={}, finder_expression={}'.format(self.__class__, self.destinations, self.value, self.finder_expression))
+        self.found_class = found_class
+        self.ld('Created {}, destinations={}, value={}, finder_expression={}'.format(self.__class__, self.destinations, self.value, self.thread_finder_expression))
         
     def process(self, thread, matches):
         
         self.ld('{} is processing a thread'.format(self.__class__))
         local_request = 'found_thread = ' + self.thread_finder_expression
         exec(local_request)
-        thread = Thread(locals()['found_thread'], self.inbox.get_service())
+        thread = self.found_class(locals()['found_thread'], self.inbox.get_service())
         # TODO : can call super class here
         draft_content = evaluate_expression(self.value, **locals())
         destinations = evaluate_expression(self.destinations, **locals())

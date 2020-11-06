@@ -59,6 +59,14 @@ class Thread(Logger):
         else:
             raise Exception('Service cannot find a label id for label: {}'.format(label_string))
 
+    def labels(self):
+        message = self.thread['messages'][0]
+        labels = []
+        for labelid in message['labelIds']:
+            labels.append(self.service.get_label_name(labelid))
+
+        return labels
+
     def append_to_draft(self, body, destinations):
         self.__check_destinations_match(destinations)
         new_body = self.existing_draft_text() + body

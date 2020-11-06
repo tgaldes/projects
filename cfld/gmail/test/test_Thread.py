@@ -37,7 +37,6 @@ class ThreadTest(unittest.TestCase):
         self.assertEqual('tonyma@uchicago.edu', thread.field('To', subset=thread.field('messages')[-1]))
 
     def test_one_email_thread(self):
-        #with postmortem_pudb():
         d = dict_from_fn('./test/thread_test_inputs/one_email_thread.txt')
         mock_service = Mock()
         mock_service.get_label_id = MagicMock(return_value='mockid')
@@ -105,6 +104,14 @@ class ThreadTest(unittest.TestCase):
         mock_service = Mock()
         thread = Thread(d, mock_service)
         self.assertEqual(1604097866, thread.last_ts())
+
+    def test_labels(self):
+        d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')
+        mock_service = Mock()
+        ln = 'label_name'
+        mock_service.get_label_name = MagicMock(return_value=ln)
+        thread = Thread(d, mock_service)
+        self.assertEqual([ln for x in range(4)], thread.labels())
 
     def test_short_name(self):
         d = dict_from_fn('./test/thread_test_inputs/make_them_say_no.txt')

@@ -24,15 +24,19 @@ class RuleFactory(Logger):
             rule_row.extend(['' for x in range(header_size - len(rule_row))])
 
             tup = RuleTuple(*rule_row)
+            matchers = []
             # create matcher
             if tup.subject_regex:
-                matcher = SubjectMatcher(tup.subject_regex)
+                matchers.append(SubjectMatcher(tup.subject_regex))
                 log_msg += 'SubjectMatcher, '
-            elif tup.expression_match:
-                matcher = ExpressionMatcher(tup.expression_match)
+            if tup.expression_match:
+                matchers.append(ExpressionMatcher(tup.expression_match))
                 log_msg += 'ExpressionMatcher, '
-            else:
-                self.lw('Only subject regexes and expression matchers are supported for matchers. No rule will be created.')
+            if tup.label_regex:
+                matchers.append(LabelMatcher(tup.label_regex))
+                log_msg += 'LabelMatcher, '
+            if not matchers:
+                self.lw('Only subject regexes, label regexes, and expression matchers are supported for matchers. No rule will be created.')
                 continue
             # create action
             if tup.action == 'draft':
@@ -53,9 +57,14 @@ class RuleFactory(Logger):
             else:
                 self.lw('Only draft, label, and redirects are supported for actions. No rule will be created for {}.'.format(tup.action))
                 continue
+
             if tup.email not in self.rules_by_user:
                 self.rules_by_user[tup.email] = []
-            self.rules_by_user[tup.email].append(RuleHolder(action, matcher))
+            if len(matchers) == 1:
+                self.rules_by_user[tup.email].append(RuleHolder(action, matchers[0]))
+            else:
+                self.rules_by_user[tup.email].append(RuleHolder(action, ComboMatcher(matchers)))
+
             self.li(log_msg)
 
     def get_rules_for_user(self, user):
