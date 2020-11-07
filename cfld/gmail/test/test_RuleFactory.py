@@ -33,7 +33,6 @@ class RuleFactoryTest(unittest.TestCase):
         self.assertTrue(isinstance(rh.action, DraftAction))
         self.assertEqual('value expression', rh.action.value)
 
-
     def test_need_inboxes_for_redirect(self):
         sheet_data = \
             [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group'], \
@@ -43,7 +42,6 @@ class RuleFactoryTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             # no rules created for the redirect since we didn't specify inbox objects
             rules = rf.get_rule_groups_for_user('apply')
-
 
         inboxes = {'apply' : 'apply_inbox', 'tyler' : 'tyler_inbox'}
         rf = RuleFactory(sheet_data, inboxes)
@@ -78,3 +76,19 @@ class RuleFactoryTest(unittest.TestCase):
         self.assertEqual(2, len(rule_groups[1]))
         self.assertEqual(1, len(rule_groups[2]))
         self.assertEqual(2, len(rule_groups[3]))
+
+    def test_body_regex_matcher(self):
+        sheet_data = \
+            [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group'], \
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'unlabel', '"automation"', '', '', '0']]
+
+        rf = RuleFactory(sheet_data)
+
+        rule_groups = rf.get_rule_groups_for_user('apply')
+        self.assertEqual(1, len(rule_groups))
+        group = rule_groups[0]
+        self.assertEqual(1, len(group))
+        rh = group[0]
+        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.action, LabelAction))
+        self.assertTrue(rh.action.unset)

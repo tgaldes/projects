@@ -1,9 +1,10 @@
 from unittest.mock import MagicMock, Mock
 import unittest
+import os
 from Matchers import *
 from Thread import Thread
-import NewLogger
-NewLogger.global_log_level = 'DEBUG'
+import TestConfig
+
 
 class SubjectMatcherTest(unittest.TestCase):
 
@@ -92,6 +93,15 @@ class BodyMatcherTest(unittest.TestCase):
         self.assertFalse(bm.matches(thread))
         with self.assertRaises(Exception):
             bm.get_matching_groups({})
+
+    def test_match_really_big_haystack(self):
+        bm = BodyMatcher('.*additional details.*')
+        thread = Thread({}, None)
+        with open(os.path.join(TestConfig.parent_path, 'matcher_test_inputs/big_haystack.txt'), 'r') as f:
+            haystack = str(f.read())
+        thread.last_message_text = MagicMock(return_value=haystack)
+        self.assertTrue(bm.matches(thread))
+        self.assertEqual((), bm.get_matching_groups(thread))
 
 
 class ExpressionMatcherTest(unittest.TestCase):

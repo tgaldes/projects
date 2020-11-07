@@ -16,11 +16,25 @@ class RegexMatcher(Logger):
         self.re = re.compile(self.re_string)
         self.ld('Created {}, re_string={}'.format(self._name, self.re_string))
 
+    # re struggles with really large haystacks and greedy matching
+    # since the BodyMatcher will be using a lot of .*text.* regexes
+    # and won't usually care about groups, we can use a simpler method
+    def __try_non_re_match(self, text): # TODO: ut
+        trimmed_re_string = self.re_string
+        if self.re_string[:2] == '.*':
+            trimmed_re_string = trimmed_re_string[2:]
+        if self.re_string[-2:] == '.*':
+            trimmed_re_string = trimmed_re_string[:-2]
+
+        if text.find(trimmed_re_string) >= 0:
+            return True
+        return False
+
     def matches(self, text):
         if self.re.match(text):
             self.ld('{}: \'{}\' matches regex:\'{}\''.format(self._name, text, self.re_string))
             return True
-        return False
+        return self.__try_non_re_match(text)
 
     def _name(self):
         raise Exception('_name is not implemented in RegexMatcher.')
@@ -30,6 +44,8 @@ class RegexMatcher(Logger):
         if g:
             self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
             return g.groups()
+        elif self.__try_non_re_match(text):
+            return ()
         raise Exception('Asked for matching groups when no match. {} re: {} thread subject: {}'.format(self._name, self.re_string, text))
     
 

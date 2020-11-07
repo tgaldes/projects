@@ -30,17 +30,20 @@ class RuleFactory(Logger):
                 continue
             matchers = []
             # create matcher
-            if tup.subject_regex:
-                matchers.append(SubjectMatcher(tup.subject_regex))
-                log_msg += 'SubjectMatcher, '
-            if tup.expression_match:
-                matchers.append(ExpressionMatcher(tup.expression_match))
-                log_msg += 'ExpressionMatcher, '
             if tup.label_regex:
                 matchers.append(LabelMatcher(tup.label_regex))
                 log_msg += 'LabelMatcher, '
+            if tup.subject_regex:
+                matchers.append(SubjectMatcher(tup.subject_regex))
+                log_msg += 'SubjectMatcher, '
+            if tup.body_regex:
+                matchers.append(BodyMatcher(tup.body_regex))
+                log_msg += 'BodyMatcher, '
+            if tup.expression_match:
+                matchers.append(ExpressionMatcher(tup.expression_match))
+                log_msg += 'ExpressionMatcher, '
             if not matchers:
-                self.lw('Only subject regexes, label regexes, and expression matchers are supported for matchers. No rule will be created.')
+                self.lw('Only label regexes, subject regexes, body regexes, and expression matchers are supported for matchers. No rule will be created.')
                 continue
             # create action
             if tup.action == 'draft':

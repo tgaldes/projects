@@ -15,6 +15,11 @@ def match(index):
     kw = frame.f_back.f_locals['kwargs']
     return kw['matches'][index]
 
+def link(link_dest, link_text=None):
+    if not link_text:
+        link_text = link_dest
+    return '<a href="{}">{}</a>'.format(link_dest, link_text)
+
 def evaluate_expression(expression, **kwargs):
     local_request = 'local_result = ' + expression.replace('thread.', 'kwargs["thread"].')
     exec(local_request)

@@ -69,9 +69,10 @@ class Thread(Logger):
 
     def append_to_draft(self, body, destinations):
         self.__check_destinations_match(destinations)
+        #new_body = '<font="Arial">' + self.existing_draft_text() + body + '</font>'
         new_body = self.existing_draft_text() + body
         self.ld('New draft will have body: {}'.format(new_body))
-        message = MIMEText(new_body)
+        message = MIMEText(new_body, 'html')
         draft_id = self.existing_draft_id()
 
         message['to'] = list_of_emails_to_string_of_emails(destinations)
@@ -188,12 +189,12 @@ class Thread(Logger):
         return False
 
     # Return true if the last non draft message is from our user, false otherwise
-    def is_last_message_from_us(self): # TODO ut
+    def is_last_message_from_us(self):
         last_message = self.__last_message()
         return self.__is_my_email(self.__extract_email(self.field('From', subset=self.__last_message())))
 
     # return the decoded body of the last non draft message
-    def last_message_text(self):  # TODO ut
+    def last_message_text(self):
         return self.__decode_message(self.__last_message())
 
     # Decode the payload of the message, useful when getting emails that contain a lot

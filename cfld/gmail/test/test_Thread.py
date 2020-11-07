@@ -15,7 +15,7 @@ import NewLogger
 
 
 # global config
-NewLogger.global_log_level = 'DEBUG'
+NewLogger.global_log_level = 'DEBUG' # TODO: use the TestConfig module
 parent_path = str(pathlib.Path(__file__).parent.absolute())
 
 def dict_from_fn(fn):
@@ -192,7 +192,7 @@ class ThreadTest(unittest.TestCase):
         # append the draft
         thread.append_to_draft(first_msg, thread.default_reply())
         # expected payload we pass to GMail service is harcoded here
-        message = MIMEText(first_msg)
+        message = MIMEText(first_msg, 'html')
         message['to'] = '26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com'
         message['from'] = 'apply@cleanfloorslockingdoors.com'
         message['subject'] = 'Re: Early Termination'
@@ -213,7 +213,7 @@ class ThreadTest(unittest.TestCase):
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         thread.append_to_draft(second_msg, thread.default_reply())
         # expected payload we pass to GMail service is harcoded here
-        message = MIMEText(first_msg + second_msg)
+        message = MIMEText(first_msg + second_msg, 'html')
         message['to'] = '26tgsdnx0e3adi2t8jx3gjgjaj1@convo.trulia.com'
         message['from'] = 'apply@cleanfloorslockingdoors.com'
         message['subject'] = 'Re: Early Termination'
@@ -242,7 +242,7 @@ class ThreadTest(unittest.TestCase):
         # append the draft
         thread.append_to_draft(first_msg, thread.default_reply())
         # expected payload we pass to GMail service is harcoded here
-        message = MIMEText(existing_text + first_msg)
+        message = MIMEText(existing_text + first_msg, 'html')
         message['to'] = 'pulkitagarwalcs@gmail.com'
         message['from'] = 'apply@cleanfloorslockingdoors.com'
         message['subject'] = 'New submission for SJSU'
@@ -262,7 +262,7 @@ class ThreadTest(unittest.TestCase):
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         thread.append_to_draft(second_msg, thread.default_reply())
         # expected payload we pass to GMail service is harcoded here
-        message = MIMEText(existing_text + first_msg + second_msg)
+        message = MIMEText(existing_text + first_msg + second_msg, 'html')
         message['to'] = 'pulkitagarwalcs@gmail.com'
         message['from'] = 'apply@cleanfloorslockingdoors.com'
         message['subject'] = 'New submission for SJSU'
