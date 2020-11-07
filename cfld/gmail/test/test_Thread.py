@@ -254,6 +254,7 @@ class ThreadTest(unittest.TestCase):
         self.assertEqual(existing_text + first_msg, thread.existing_draft_text())
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         self.assertEqual(draft_id, thread.existing_draft_id())
+        self.assertEqual('Hi Pulkit,', thread.salutation()) 
 
 
         # when we want to add text to the draft we should still be appending to it
@@ -320,4 +321,22 @@ class ThreadTest(unittest.TestCase):
         self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
         # Now that tim and micah are ccs we will skip them if we don't want to reply all
         self.assertEqual(['gbremer@yahoo.com'], thread.default_reply(reply_all=False))
+
+    def test_salutation(self):
+        # get from email we sent
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/html_encoded_message_from_us.txt'))
+        mock_service = Mock()
+        mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
+        thread = Thread(d, mock_service)
+        self.assertEqual('Hi Samah,', thread.salutation())
+        # get from reply-to field
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to.txt'))
+        thread = Thread(d, mock_service)
+        self.assertEqual('Hi Kimberly,', thread.salutation())
+        # default
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/new_application.txt'))
+        mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
+        thread = Thread(d, mock_service)
+        self.assertEqual('Hi,', thread.salutation())
+        
 

@@ -1,0 +1,133 @@
+{
+    "messages": [
+        {
+            "historyId": "800948",
+            "payload": {
+                "mimeType": "text/html",
+                "partId": "",
+                "headers": [
+                    {
+                        "name": "Delivered-To",
+                        "value": "apply+canned.response@cleanfloorslockingdoors.com"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by 2002:a19:7719:0:0:0:0:0 with SMTP id s25csp640519lfc;        Thu, 29 Oct 2020 08:39:23 -0700 (PDT)"
+                    },
+                    {
+                        "name": "X-Google-Smtp-Source",
+                        "value": "ABdhPJzA4uaGeb9Tpq/RowFn7I/tFRVZUmHHIV79jGwqcAjQ0kPvgJWtknZtTGoVqjdS4o10z/BH"
+                    },
+                    {
+                        "name": "X-Received",
+                        "value": "by 2002:aa7:d495:: with SMTP id b21mr4410512edr.231.1603985963665;        Thu, 29 Oct 2020 08:39:23 -0700 (PDT)"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=1; a=rsa-sha256; t=1603985963; cv=none;        d=google.com; s=arc-20160816;        b=nNg6yUDWb0ovKs4BQrxqGiCb9IgXsbgq+/hK9bmdy8rsnkYNakjUszP3tFiWdU+TR6         OFk93/aDQowpIdQHXQwmotiLpxZUf6ZFM0cX2GXgLDI6/lroCJL1Hne2gx3gldFRLE3x         i6xK1II2x5R3p4/51DpO8PKA8TK5plN9yr/iUXIt+92ODDLUjsj428q8ZhH5AqQ37WdB         oH7M6Y6/zHYUJjcqhsFg2soH4t5oMFrlNMvJYf1+8IBcG/J9CTX2rE3k/ttMc4Cd2HL2         KXpz7loTpMBMpqUYMq+zX691C4HXe7Yjd8PN7W9DY7z0n9WZR2c9wh1CyQRvIeGLC/TT         ABEQ=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=subject:message-id:to:reply-to:mime-version:from:date         :content-transfer-encoding:dkim-signature;        bh=yPfDJtcZyNUolSqewNM/9iW7HEuQsuW9CcWkjVjSLNE=;        b=YxcllcWdCKOMfPpSgTyQVxWC4SE1yENKHlBZ3+GzWqHDQIvHgx0I8VxFpWiEpElNaP         S4HaF8B9iMKS3nw1460GkwWVzYjwZARHkvimrsuT91C1TISdfxRA3Id5Ih1H8jcZPBox         W4MNEL8Jjptz/epHNmTd4fW9BkiuDaO7e94mYen2hjDSNUdZTw3CoWt0LQET2E1Qj19R         cVSz2XeGZVA5CVlfW75dlfk8/Of6QjUmvt97259i/Gw2eSJvBc5dmx4gXef6k6rJ0dzV         Deks5DRb25ekCk0r0Qh7IxMuLK+d4wr+9MGnkXDsdpkCTre5NJ2btcx1hj9QpkvJh0SS         +WaQ=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=1; mx.google.com;       dkim=pass header.i=@hotpads.com header.s=m1 header.b=TbwSo+1W;       spf=pass (google.com: domain of 1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com designates 149.72.131.7 as permitted sender) smtp.mailfrom=1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=convo.hotpads.com"
+                    },
+                    {
+                        "name": "Return-Path",
+                        "value": "<1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com>"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from o11.convo.hotpads.com (o11.convo.hotpads.com. [149.72.131.7])        by mx.google.com with ESMTPS id n11si1875282ejb.664.2020.10.29.08.39.23        for <apply+canned.response@cleanfloorslockingdoors.com>        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);        Thu, 29 Oct 2020 08:39:23 -0700 (PDT)"
+                    },
+                    {
+                        "name": "Received-SPF",
+                        "value": "pass (google.com: domain of 1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com designates 149.72.131.7 as permitted sender) client-ip=149.72.131.7;"
+                    },
+                    {
+                        "name": "Authentication-Results",
+                        "value": "mx.google.com;       dkim=pass header.i=@hotpads.com header.s=m1 header.b=TbwSo+1W;       spf=pass (google.com: domain of 1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com designates 149.72.131.7 as permitted sender) smtp.mailfrom=1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com;       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=convo.hotpads.com"
+                    },
+                    {
+                        "name": "DKIM-Signature",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotpads.com; h=content-transfer-encoding:content-type:from:mime-version:reply-to:to:subject; s=m1; bh=yPfDJtcZyNUolSqewNM/9iW7HEuQsuW9CcWkjVjSLNE=; b=TbwSo+1 WeED++PNGnEt38ijluDg4mAcz9skC+7CAaxu4QjxtWrGU+ytHVCCmZHvEQwEgpXX nI7y6PTnxwvdJGJXvSMzZaXb0tegP57dTyNiLPrNbauFThqSGdZAhq0Y/UmSxr9k 5soOjtI9InlMBwfMPHgYn4a7/T/Pjaiq9naA="
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by filter1200p1iad2.sendgrid.net with SMTP id filter1200p1iad2-28493-5F9AE22A-22        2020-10-29 15:39:22.617540403 +0000 UTC m=+55194.086124910"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from ODgxOTI (unknown) by ismtpd0026p1iad2.sendgrid.net (SG) with HTTP id lNditkAaSnGy90yk1aATOw Thu, 29 Oct 2020 15:39:22.588 +0000 (UTC)"
+                    },
+                    {
+                        "name": "Content-Transfer-Encoding",
+                        "value": "quoted-printable"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "text/html; charset=UTF-8"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Thu, 29 Oct 2020 15:39:22 +0000 (UTC)"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Kimberly Aquino <1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com>"
+                    },
+                    {
+                        "name": "Mime-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Reply-To",
+                        "value": "Kimberly Aquino <1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "apply+canned.response@cleanfloorslockingdoors.com"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<lNditkAaSnGy90yk1aATOw@ismtpd0026p1iad2.sendgrid.net>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Student housing"
+                    },
+                    {
+                        "name": "X-SG-EID",
+                        "value": "Vwa6n1MXQgz8tCkEkSeIqFEStkEfboKNp5PI7q0AHg89HBgtETFUpy4/CmTa7pFqRVEAAhmXfXk7kC hdLVjklUr1UW7qFHalDGz4ja6ZdC9z1EQgrUrF5rH0j9PXgPrOXBkvg/T3j66LMkLYcSb4psHMLnVf i5kdwFMYlHFzi1cmtwd/WgOu+GKoD03zz4gE+rgDCTQ5P7TM3C22Xk7WCnyc/gEIkROVuA6GGtewTA SN3tUkmaCWk12WO6/J9oBILQ3WdwX721n6WGqfPXFKybv8koWI6S7NrCMNm+qafII="
+                    },
+                    {
+                        "name": "X-SG-ID",
+                        "value": "NMHL7tc+AxXN/stbBh9h7KWTH8uzrY1IzCffnFdYDpM82Wb9HgsOEX8m50vSkJIMfyzoJmXv8sV5ur U17gJ0FarVnVhAklemLfW3YrB1tCaAEQX0TOewl/ppQpeTRlW0j+LUd4FcWGJmCBFEmEsk5QCraAsZ G/egprFdF8WX0MA="
+                    },
+                    {
+                        "name": "X-Entity-ID",
+                        "value": "vrbnq7qDp99DyffWf+cV0Q=="
+                    }
+                ],
+                "body": {
+                    "data": "PGRpdiBzdHlsZT0iZm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7d29yZC1zcGFjaW5nOjFweDtmb250LXNpemU6MC44MTI1cmVtO2NvbG9yOnJnYig0OSw0OSw0OSkiIGRpcj0iYXV0byI-SGVsbG8swqA8L2Rpdj48ZGl2IHN0eWxlPSJmb250LWZhbWlseTpBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZjt3b3JkLXNwYWNpbmc6MXB4O2NvbG9yOnJnYig0OSw0OSw0OSkiIGRpcj0iYXV0byI-PGJyPjwvZGl2PjxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO3dvcmQtc3BhY2luZzoxcHg7Zm9udC1zaXplOjAuODEyNXJlbTtjb2xvcjpyZ2IoNDksNDksNDkpIiBkaXI9ImF1dG8iPkkgYW0gYSBnaXJsIGludGVyZXN0ZWQgaW4gaG91c2luZyBhdCBVU0MgZnJvbSAxMS8xNS8yMCBhbmQgY3VycmVudGx5IGRvbiYjMzk7dCBrbm93IGVuZCBkYXRlIGluIGEgc2luZ2xlIG9yIGRvdWJsZSByb29tLjwvZGl2PjxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO3dvcmQtc3BhY2luZzoxcHg7Y29sb3I6cmdiKDQ5LDQ5LDQ5KSIgZGlyPSJhdXRvIj48YnI-PC9kaXY-PGRpdiBzdHlsZT0iZm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7d29yZC1zcGFjaW5nOjFweDtmb250LXNpemU6MC44MTI1cmVtO2NvbG9yOnJnYig0OSw0OSw0OSkiIGRpcj0iYXV0byI-QmVzdCw8L2Rpdj48ZGl2IHN0eWxlPSJmb250LWZhbWlseTpBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZjt3b3JkLXNwYWNpbmc6MXB4O2ZvbnQtc2l6ZTowLjgxMjVyZW07Y29sb3I6cmdiKDQ5LDQ5LDQ5KSIgZGlyPSJhdXRvIj5LaW1iZXJseSBBcXVpbm88L2Rpdj4NCg==",
+                    "size": 874
+                },
+                "filename": ""
+            },
+            "snippet": "Hello, I am a girl interested in housing at USC from 11/15/20 and currently don&#39;t know end date in a single or double room. Best, Kimberly Aquino",
+            "internalDate": "1603985962000",
+            "labelIds": [
+                "IMPORTANT",
+                "CATEGORY_PERSONAL",
+                "INBOX"
+            ],
+            "threadId": "17575037b2fc0698",
+            "id": "17575037b2fc0698",
+            "sizeEstimate": 5589
+        }
+    ]
+}
+

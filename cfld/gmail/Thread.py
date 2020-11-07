@@ -32,13 +32,15 @@ class Thread(Logger):
         if field_name in search_dict:
             return search_dict[field_name]
         message = search_dict
+
         if 'payload' not in search_dict or 'headers' not in search_dict['payload']:
             if 'messages' not in search_dict:
                 return default
-            message = search_dict['messages'][0]
-        if field_name in message:
-            return message[field_name]
-        header = message['payload']['headers']
+            search_dict = search_dict['messages'][0]
+
+        if field_name in search_dict:
+            return search_dict[field_name]
+        header = search_dict['payload']['headers']
         for m in header:
             if m['name'] == field_name:
                 return m['value']
@@ -91,8 +93,20 @@ class Thread(Logger):
     # We would need to implement for each Zillow/RentPath/Zumper auto reach out
     # Once we have a message sent by us, we can grab the first line of the email and use that
     def salutation(self):
-        return 'Hi this method is not implemented'
-        pass
+        # If there is a message we sent in the thread, use that
+        base = 'Hi{},'
+        for message in reversed(self.thread['messages']):
+            if not self.__is_draft(message) and self.__is_my_email(self.__extract_email(self.field('From', subset=message, default=''))):
+                return self.__decode_message(message).split(',')[0] + ','
+        # Otherwise if we have a reply-to in the first message of the thread, pull the first name from that
+        reply_to = self.field('Reply-To', subset=self.thread['messages'][0], default='')
+        #if not reply_to:
+            #reply_to = self.field('Reply-To', subset=self.thread['messages'][0], default='')
+        if reply_to:
+            return base.format(' ' + reply_to.split()[0])
+        # Otherwise log a warning and return something generic
+        self.lw('Could not find salutation in thread with id: {} subject: {}'.format(self.field('id'), self.field('subject')))
+        return base.format('')
 
     # Return true if we want to send a follow up email to the thread confirming that the 
     # tenant is no longer interested in housing
@@ -218,6 +232,8 @@ class Thread(Logger):
         return ret
 
     def __is_my_email(self, test_email):
+        if not test_email:
+            return False
         my_email = self.service.get_email()
         if test_email.split('@')[1] in domains \
                 and test_email.split('@')[0] == my_email.split('@')[0]:
@@ -225,7 +241,14 @@ class Thread(Logger):
         return False
 
     def __extract_email(self, email_string):
+        if not email_string:
+            return email_string
         return email_string.split(' ')[-1].strip('<').strip('>')
+
+    def __is_draft(self, message):
+        if 'labelIds' not in message or 'DRAFT' not in message['labelIds']:
+            return False
+        return True
 
     # return the last non draft message
     def __last_message(self):
