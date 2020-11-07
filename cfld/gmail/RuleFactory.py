@@ -55,6 +55,9 @@ class RuleFactory(Logger):
             elif tup.action == 'unlabel':
                 action = LabelAction(tup.value, unset=True)
                 log_msg += 'UnlabelAction'
+            elif tup.action == 'remove_draft':
+                action = RemoveDraftAction()
+                log_msg += 'RemoveDraftAction'
             elif tup.action == 'redirect':
                 if tup.dest_email not in inboxes:
                     self.lw('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))
@@ -62,7 +65,7 @@ class RuleFactory(Logger):
                 action = RedirectAction(inboxes[tup.dest_email], tup.finder, tup.value, tup.destinations)
                 log_msg += 'RedirectAction'
             else:
-                self.lw('Only draft, label, and redirects are supported for actions. No rule will be created for {}.'.format(tup.action))
+                self.lw('Only draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}.'.format(tup.action))
                 continue
 
             # Create the rule holder

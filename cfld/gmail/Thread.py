@@ -69,6 +69,15 @@ class Thread(Logger):
 
         return labels
 
+    def remove_existing_draft(self):
+        draft_id = self.existing_draft_id()
+        if not draft_id:
+            self.lw('No existing draft to remove. Thread id: {} subject: {}'.format(self.field('id'), self.field('subject')))
+            return
+        self.service.delete_draft(draft_id)
+        # remove the draft from local copy
+        self.thread['messages'].pop()
+
     def append_to_draft(self, body, destinations):
         self.__check_destinations_match(destinations)
         #new_body = '<font="Arial">' + self.existing_draft_text() + body + '</font>'
@@ -131,7 +140,6 @@ class Thread(Logger):
         pass
         
     # For reply all, get everything in the from, to, and cc fields that isn't our email
-    # TODO: check the Reply-To field as well, if it is set I think it means we shouldn't take from and should take reply-to as well (set on automated email clients sending out form emails for tenant's interest)
     def default_reply(self, reply_all=True):
         counter = -1
         while True:
@@ -140,7 +148,13 @@ class Thread(Logger):
             if 'DRAFT' in message['labelIds']:
                 continue
             emails = []
-            from_email = self.__extract_email(self.field('From', subset=message))
+            # Automated mail from sites like zillow/zumper will have reply-to set
+            # when this is available use it, and skip everything else
+            reply_to = self.__extract_email(self.field('Reply-To', subset=message, default=''))
+            if reply_to:
+                emails.append(reply_to)
+                return emails
+            from_email = self.__extract_email(self.field('From', subset=message, default=''))
             if not self.__is_my_email(from_email):
                 emails.append(from_email)
             to_emails = self.field('To', subset=message).split(',')

@@ -60,7 +60,6 @@ class RedirectAction(implements(IAction), Logger):
         self.ld('Created {}, destinations={}, value={}, finder_expression={}'.format(self.__class__, self.destinations, self.value, self.thread_finder_expression))
         
     def process(self, thread, matches):
-        
         self.ld('{} is processing a thread'.format(self.__class__))
         local_request = 'found_thread = ' + self.thread_finder_expression
         exec(local_request)
@@ -69,6 +68,14 @@ class RedirectAction(implements(IAction), Logger):
         draft_content = evaluate_expression(self.value, **locals())
         destinations = evaluate_expression(self.destinations, **locals())
         thread.append_to_draft(draft_content, destinations)
+
+class RemoveDraftAction(implements(IAction), Logger):
+    def __init__(self):
+        super(RemoveDraftAction, self).__init__(__name__)
+    def process(self, thread, matches):
+        pdb.set_trace()
+        self.ld('{} is processing a thread'.format(self.__class__))
+        thread.remove_existing_draft()
 
 
         

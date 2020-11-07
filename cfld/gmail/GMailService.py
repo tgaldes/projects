@@ -38,7 +38,7 @@ class GMailService(Logger):
         results = self.service.users().messages().list(userId='me', maxResults = 10, labelIds=('INBOX')).execute() # TODO: unread query in a refresh function
         results = self.service.users().messages().list(userId='me', maxResults = 10).execute()
         self.mails = results.get('messages', [])
-        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20).execute().get('threads', [])
+        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), q='RentPath', maxResults = 10).execute().get('threads', [])
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()
@@ -91,6 +91,9 @@ class GMailService(Logger):
     def get_drafts(self):
         return self.drafts
 
+    def delete_draft(self, draft_id, userId='me'):
+        return self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
+
 # if id=None we will create a new draft, otherwise update draft with id = id
 # add the new draft to our internal state
 # return the MESSAGE object of the associated draft
@@ -103,7 +106,7 @@ class GMailService(Logger):
         else:
             draft = self.service.users().drafts().create(userId=userId, body=payload).execute()
             self.drafts.append(draft)
-            self.li('Created new existing draft with id: {}'.format(draft['id']))
+            self.li('Created new draft with id: {}'.format(draft['id']))
 
         message = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
         return message

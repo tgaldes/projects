@@ -128,3 +128,12 @@ class RedirectActionTest(unittest.TestCase):
         ra.process(mock_input_thread, ())
         mock_input_thread.get_new_application_email.assert_called_once_with()
         mock_inbox.get_threads_from_email_address.assert_called_once_with('tgaldes@gmail.com')
+
+class RemoveDraftActionTest(unittest.TestCase):
+
+    def test_basic(self):
+        rda = RemoveDraftAction()
+        thread = Mock()
+        thread.remove_existing_draft = MagicMock()
+        rda.process(thread, ())
+        thread.remove_existing_draft.assert_called_once_with()

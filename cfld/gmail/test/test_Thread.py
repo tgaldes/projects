@@ -322,6 +322,13 @@ class ThreadTest(unittest.TestCase):
         # Now that tim and micah are ccs we will skip them if we don't want to reply all
         self.assertEqual(['gbremer@yahoo.com'], thread.default_reply(reply_all=False))
 
+        # Now we load a thread that specifies a Reply-To header
+        # we want to pick up that and not use the from field
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to.txt'))
+        thread = Thread(d, mock_service)
+        self.assertEqual(['1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com'], thread.default_reply())
+        self.assertEqual(['1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com'], thread.default_reply(reply_all=False))
+
     def test_salutation(self):
         # get from email we sent
         d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/html_encoded_message_from_us.txt'))
@@ -339,4 +346,32 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(d, mock_service)
         self.assertEqual('Hi,', thread.salutation())
         
+    def test_remove_existing_draft(self):
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_email_thread.txt'))
+        mock_service = Mock()
+        thread = Thread(d, mock_service)
+
+        # With no draft, we shouldn't do anything on the service
+        thread.remove_existing_draft()
+
+        # Now we'll get a thread that has an existing draft
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
+        mock_service = Mock()
+        first_msg = 'draft line one'
+        second_msg = 'draft line two'
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
+        mock_service.delete_draft = MagicMock()
+
+        thread = Thread(d, mock_service)
+        thread.remove_existing_draft()
+        mock_service.delete_draft.assert_called_once_with(draft_id)
+        self.assertFalse(thread.has_existing_draft())
+
+
+
+
+
+
 
