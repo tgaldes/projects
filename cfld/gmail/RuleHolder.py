@@ -14,5 +14,7 @@ class RuleHolder(Logger):
             self.ld('{} #{} matches'.format(self.__class__, self.row_num))
             match_groups = self.matcher.get_matching_groups(thread)
             self.action.process(thread, match_groups)
+            return True
+        return False
 
 

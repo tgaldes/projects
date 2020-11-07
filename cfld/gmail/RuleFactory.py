@@ -12,11 +12,12 @@ class RuleFactory(Logger):
         super(RuleFactory, self).__init__(__name__)
         if not sheet_data:
             sheet_data = \
-                [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations'], \
-                 ['label by school', 'apply', '', '', 'New Submission for (.*)', '', '', 'label', '"Schools/" + matches(0)', '', '']]
+                [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group'], \
+                 ['label by school', 'apply', '', '', 'New Submission for (.*)', '', '', 'label', '"Schools/" + matches(0)', '', '', '']]
         RuleTuple = collections.namedtuple('RuleTuple', sheet_data[0])
-        self.rules_by_user = {}
+        self.rule_groups_by_user = {}
         header_size = len(sheet_data[0])
+        last_group_index = 0
         for rule_row in sheet_data[1:]:
             log_msg = 'Created: '
             # Google will trim rows when there isn't data in some of the last fields,
@@ -24,6 +25,9 @@ class RuleFactory(Logger):
             rule_row.extend(['' for x in range(header_size - len(rule_row))])
 
             tup = RuleTuple(*rule_row)
+            if not tup.group or not (int(tup.group) == last_group_index or last_group_index < int(tup.group)):
+                self.lw('Cannot specify a group index of {} when last group index was {}'.format(tup.group, last_group_index))
+                continue
             matchers = []
             # create matcher
             if tup.subject_regex:
@@ -58,15 +62,28 @@ class RuleFactory(Logger):
                 self.lw('Only draft, label, and redirects are supported for actions. No rule will be created for {}.'.format(tup.action))
                 continue
 
-            if tup.email not in self.rules_by_user:
-                self.rules_by_user[tup.email] = []
+            # Create the rule holder
             if len(matchers) == 1:
-                self.rules_by_user[tup.email].append(RuleHolder(action, matchers[0]))
+                rh = RuleHolder(action, matchers[0])
             else:
-                self.rules_by_user[tup.email].append(RuleHolder(action, ComboMatcher(matchers)))
+                rh = RuleHolder(action, ComboMatcher(matchers))
+
+            # Add the RuleHolder
+            if tup.email not in self.rule_groups_by_user:
+                self.rule_groups_by_user[tup.email] = []
+            if int(tup.group) == last_group_index:
+                if not self.rule_groups_by_user[tup.email]:
+                    self.rule_groups_by_user[tup.email].append([rh]) # Cover the case where first group index is 0
+                else:
+                    self.rule_groups_by_user[tup.email][-1].append(rh)
+            else: # group of one rule
+                self.rule_groups_by_user[tup.email].append([rh])
+            last_group_index = int(tup.group)
+
+            log_msg += ', Group #{}'.format(tup.group)
 
             self.li(log_msg)
 
-    def get_rules_for_user(self, user):
-        return self.rules_by_user[user]
+    def get_rule_groups_for_user(self, user):
+        return self.rule_groups_by_user[user]
     

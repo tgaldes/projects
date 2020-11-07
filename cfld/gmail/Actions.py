@@ -24,8 +24,8 @@ class LabelAction(implements(IAction), Logger):
             self.ld('{} adding label: {}'.format(self.__class__, label_string))
         thread.set_label(label_string, unset=self.unset)
 
+# TODO: how to insert link in draft we create?
 class DraftAction(implements(IAction), Logger):
-# TODO: add a need human to review label on all drafts we create
     def __init__(self, value, destinations):
         super(DraftAction, self).__init__(__name__)
         self.value = value

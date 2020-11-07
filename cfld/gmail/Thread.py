@@ -101,7 +101,7 @@ class Thread(Logger):
         # last message is from userId=me 
         # AND we have sent that message (as opposed to a draft)
         last_msg_true = \
-            self.__is_my_email(self.__extract_email(self.field('From', subset=self.__last_message()))) \
+            self.is_last_message_from_us() \
             and 'labelIds' in self.thread['messages'][-1] \
             and 'SENT' in self.thread['messages'][-1]['labelIds']
         return ts_true and last_msg_true
@@ -116,6 +116,7 @@ class Thread(Logger):
         pass
         
     # For reply all, get everything in the from, to, and cc fields that isn't our email
+    # TODO: check the Reply-To field as well, if it is set I think it means we shouldn't take from and should take reply-to as well (set on automated email clients sending out form emails for tenant's interest)
     def default_reply(self, reply_all=True):
         counter = -1
         while True:
@@ -174,7 +175,7 @@ class Thread(Logger):
         # REFACTOR: we might want to create a Message class similar to thread, in
         # which case we would have a .decode() function
         substring = '<tr><th>Email:</th><td>'
-        decoded_html = self.__decode_message(0)
+        decoded_html = self.__decode_message(self.thread['messages'][0])
         start_index = decoded_html.find(substring) + len(substring)
         if start_index == -1:
             raise Exception('Could not find the substring: {} in the first message of the thread.'.format(substring))
@@ -186,10 +187,19 @@ class Thread(Logger):
             return True
         return False
 
+    # Return true if the last non draft message is from our user, false otherwise
+    def is_last_message_from_us(self): # TODO ut
+        last_message = self.__last_message()
+        return self.__is_my_email(self.__extract_email(self.field('From', subset=self.__last_message())))
+
+    # return the decoded body of the last non draft message
+    def last_message_text(self):  # TODO ut
+        return self.__decode_message(self.__last_message())
+
     # Decode the payload of the message, useful when getting emails that contain a lot
     # of html formatting
-    def __decode_message(self, index, ignore_old_messages=True):
-        payload = self.thread['messages'][index]['payload']
+    def __decode_message(self, message, ignore_old_messages=True):
+        payload = message['payload']
         data = ''
         if 'parts' in payload:
             for part in payload['parts']:
@@ -216,7 +226,6 @@ class Thread(Logger):
     def __extract_email(self, email_string):
         return email_string.split(' ')[-1].strip('<').strip('>')
 
-        
     # return the last non draft message
     def __last_message(self):
         for message in reversed(self.thread['messages']):
@@ -225,7 +234,7 @@ class Thread(Logger):
         raise Exception('No non draft messages in thread of length {}'.format(len(self.thread['messages'])))
     def existing_draft_text(self):
         if 'labelIds' in self.thread['messages'][-1] and 'DRAFT' in self.thread['messages'][-1]['labelIds']:
-            return self.__decode_message(-1)
+            return self.__decode_message(self.thread['messages'][-1])
         return ''
 
     def existing_draft_id(self):

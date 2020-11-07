@@ -1,32 +1,86 @@
 import re
 import pdb
+from interface import implements
 
 from Interfaces import IMatcher
-from interface import implements
 from Logger import Logger
 from util import evaluate_expression
-class SubjectMatcher(implements(IMatcher), Logger):
+
+
+class RegexMatcher(Logger):
     def __init__(self, re_string):
-        super(SubjectMatcher, self).__init__(__name__)
+        super(RegexMatcher, self).__init__(self._name())
         self.re_string = re_string
         if not self.re_string:
-            raise Exception('Cannot create {} with empty re_string: {}'.format(self.__class__, self.re_string))
+            raise Exception('Cannot create {} with empty re_string: {}'.format(self._name, self.re_string))
         self.re = re.compile(self.re_string)
-        self.ld('Created {}, re_string={}'.format(self.__class__, self.re_string))
+        self.ld('Created {}, re_string={}'.format(self._name, self.re_string))
 
-    def matches(self, thread):
-        if self.re.match(thread.subject()):
-            self.ld('SubjectMatcher: \'{}\' matches regex:\'{}\''.format(thread.subject(), self.re_string))
+    def matches(self, text):
+        if self.re.match(text):
+            self.ld('{}: \'{}\' matches regex:\'{}\''.format(self._name, text, self.re_string))
             return True
         return False
 
-    def get_matching_groups(self, thread):
-        g = self.re.match(thread.subject())
+    def _name(self):
+        raise Exception('_name is not implemented in RegexMatcher.')
+
+    def get_matching_groups(self, text):
+        g = self.re.match(text)
         if g:
             self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
             return g.groups()
-        raise Exception('Asked for matching groups when no match. SubjectMatcher re: {} thread subject: {}'.format(self.re_string, thread.subject()))
+        raise Exception('Asked for matching groups when no match. {} re: {} thread subject: {}'.format(self._name, self.re_string, text))
+    
 
+class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
+
+    def __init__(self, regex):
+        super(SubjectMatcher, self).__init__(regex)
+
+    def matches(self, thread):
+        return super().matches(thread.subject())
+
+    def get_matching_groups(self, thread):
+        return super().get_matching_groups(thread.subject())
+
+    def _name(self):
+        return str(self.__class__)
+
+
+class BodyMatcher(implements(IMatcher), RegexMatcher, Logger):
+
+    def __init__(self, re_string):
+        super(BodyMatcher, self).__init__(re_string.lower())
+
+    def matches(self, thread):
+        return super().matches(thread.last_message_text().lower())
+
+    def get_matching_groups(self, thread):
+        return super().get_matching_groups(thread.last_message_text().lower())
+
+    def _name(self):
+        return str(self.__class__)
+
+class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
+
+    def __init__(self, re_string):
+        super(LabelMatcher, self).__init__(re_string)
+
+    def matches(self, thread):
+        for label in thread.labels():
+            if super().matches(label):
+                return True
+        return False
+
+    def get_matching_groups(self, thread):
+        for label in thread.labels():
+            if super().matches(label):
+                return super().get_matching_groups(label)
+        raise Exception('Asked for matching groups when no matches found for labels: {}'.format(thread.labels()))
+
+    def _name(self):
+        return str(self.__class__)
 
 
 class ExpressionMatcher(implements(IMatcher), Logger):
@@ -45,30 +99,7 @@ class ExpressionMatcher(implements(IMatcher), Logger):
         return []
 
 
-class LabelMatcher(implements(IMatcher), Logger):
-    def __init__(self, label):
-        super(LabelMatcher, self).__init__(__name__)
-        self.label = label
-        if not self.label:
-            raise Exception('Cannot create {} with empty label: {}'.format(self.__class__, self.label))
-        self.ld('Created {}, label={}'.format(self.__class__, self.label))
-        self.re = re.compile(self.label)
-
-    def matches(self, thread):
-        for label in thread.labels():
-            if self.re.match(label):
-                self.ld('LabelMatcher: \'{}\' matches regex:\'{}\''.format(label, self.label))
-                return True
-        return False
-
-    def get_matching_groups(self, thread):
-        for label in thread.labels():
-            g = self.re.match(label)
-            if g:
-                self.ld('LabelMatcher: returning groups: {}'.format(g.groups()))
-                return g.groups()
-        raise Exception('Asked for matching groups when no match. LabelMatcher re: {} thread subject: {}'.format(self.label, thread.labels()))
-       
+# AND behavior (later we can make it and/or)
 class ComboMatcher(implements(IMatcher), Logger):
     def __init__(self, matchers):
         super(ComboMatcher, self).__init__(__name__)

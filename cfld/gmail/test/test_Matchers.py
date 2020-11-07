@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-from Matchers import SubjectMatcher, ExpressionMatcher, LabelMatcher, ComboMatcher
+from Matchers import *
 from Thread import Thread
 import NewLogger
 NewLogger.global_log_level = 'DEBUG'
@@ -30,6 +30,69 @@ class SubjectMatcherTest(unittest.TestCase):
         with self.assertRaises(Exception):
             sm.get_matching_groups({})
         
+
+class LabelMatcherTest(unittest.TestCase):
+
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            lm = LabelMatcher('')
+
+    def test_match(self):
+        lm = LabelMatcher('automation')
+        thread = Thread({}, None)
+        thread.labels = MagicMock(return_value=['no match', 'automation'])
+        self.assertTrue(lm.matches(thread))
+        self.assertEqual((), lm.get_matching_groups(thread))
+
+        # Now with a regex in our LabelMatcher
+        lm = LabelMatcher('automatio(n*)')
+        thread.labels = MagicMock(return_value=['no match', 'automation'])
+        self.assertTrue(lm.matches(thread))
+        self.assertEqual(('n',), lm.get_matching_groups(thread))
+
+    def test_raise_on_no_matching_groups(self):
+        lm = LabelMatcher('label')
+        thread = Thread({}, None)
+        thread.labels = MagicMock(return_value=['no match', 'still no match'])
+        self.assertFalse(lm.matches(thread))
+        with self.assertRaises(Exception):
+            lm.get_matching_groups({})
+
+
+class BodyMatcherTest(unittest.TestCase):
+
+    def test_throw_on_empty_init(self):
+        with self.assertRaises(Exception):
+            bm = BodyMatcher('')
+
+    def test_match(self):
+        bm = BodyMatcher('.*automation.*')
+        thread = Thread({}, None)
+        thread.last_message_text = MagicMock(return_value='this message has automation in it')
+        self.assertTrue(bm.matches(thread))
+        self.assertEqual((), bm.get_matching_groups(thread))
+
+        # Now with a regex in our BodyMatcher
+        bm = BodyMatcher('.*automatio(n*).*')
+        thread.last_message_text = MagicMock(return_value='this message also has automation in it')
+        self.assertTrue(bm.matches(thread))
+        self.assertEqual(('n',), bm.get_matching_groups(thread))
+
+        # Now with a different case than our regex
+        # Right now we are treating body matches as case insensitive
+        bm = BodyMatcher('.*automatio(n*).*')
+        thread.last_message_text = MagicMock(return_value='this message also has AuTomation in it')
+        self.assertTrue(bm.matches(thread))
+        self.assertEqual(('n',), bm.get_matching_groups(thread))
+
+    def test_raise_on_no_matching_groups(self):
+        bm = BodyMatcher('.*automation.*')
+        thread = Thread({}, None)
+        thread.last_message_text = MagicMock(return_value='this is not the phrase you are looking for')
+        self.assertFalse(bm.matches(thread))
+        with self.assertRaises(Exception):
+            bm.get_matching_groups({})
+
 
 class ExpressionMatcherTest(unittest.TestCase):
 
@@ -61,34 +124,6 @@ class ExpressionMatcherTest(unittest.TestCase):
         thread.last_ts = MagicMock(return_value='1000')
         self.assertFalse(em.matches(thread))
 
-class LabelMatcherTest(unittest.TestCase):
-
-    def test_throw_on_empty_init(self):
-        with self.assertRaises(Exception):
-            lm = LabelMatcher('')
-
-    def test_match(self):
-        lm = LabelMatcher('automation')
-        thread = Thread({}, None)
-        thread.labels = MagicMock(return_value=['no match', 'automation'])
-        self.assertTrue(lm.matches(thread))
-        self.assertEqual((), lm.get_matching_groups(thread))
-
-        # Now with a regex in our LabelMatcher
-        lm = LabelMatcher('automatio(n*)')
-        thread.labels = MagicMock(return_value=['no match', 'automation'])
-        self.assertTrue(lm.matches(thread))
-        self.assertEqual(('n',), lm.get_matching_groups(thread))
-
-    def test_no_match(self):
-        pass
-
-    def test_raise_on_no_matching_groups(self):
-        lm = LabelMatcher('label')
-        thread = Thread({}, None)
-        thread.labels = MagicMock(return_value=['no match', 'still no match'])
-        with self.assertRaises(Exception):
-            lm.get_matching_groups({})
 
 class ComboMatcherTest(unittest.TestCase):
     def test_no_creation_with_empty_list(self):
@@ -150,3 +185,5 @@ class ComboMatcherTest(unittest.TestCase):
         self.assertEqual(mock_m_1.get_matching_groups.call_count, 0)
         self.assertEqual(mock_m_2.matches.call_count, 0)
         self.assertEqual(mock_m_2.get_matching_groups.call_count, 0)
+
+

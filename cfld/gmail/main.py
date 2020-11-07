@@ -44,8 +44,10 @@ if __name__=='__main__':
             thread = inbox.get_next_thread()
             if not thread:
                 break
-            for rule in factory.get_rules_for_user(user):
-                rule.process(thread)
+            for rule_group in factory.get_rule_groups_for_user(user):
+                for rule in rule_group:
+                    if rule.process(thread):
+                        break
 
 # We can have hardcoded actions available via command line such as:
 # remove all drafts
