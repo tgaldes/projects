@@ -92,3 +92,19 @@ class RuleFactoryTest(unittest.TestCase):
         self.assertTrue(isinstance(rh.matcher, BodyMatcher))
         self.assertTrue(isinstance(rh.action, LabelAction))
         self.assertTrue(rh.action.unset)
+
+    def test_prepend_draft_action(self):
+        sheet_data = \
+            [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group'], \
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '0']]
+
+        rf = RuleFactory(sheet_data)
+
+        rule_groups = rf.get_rule_groups_for_user('apply')
+        self.assertEqual(1, len(rule_groups))
+        group = rule_groups[0]
+        self.assertEqual(1, len(group))
+        rh = group[0]
+        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.action, DraftAction))
+        self.assertTrue(rh.action.prepend)

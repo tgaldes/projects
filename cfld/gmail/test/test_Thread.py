@@ -18,6 +18,8 @@ import NewLogger
 NewLogger.global_log_level = 'DEBUG' # TODO: use the TestConfig module
 parent_path = str(pathlib.Path(__file__).parent.absolute())
 
+# REFACTOR: we can extract a lot of this code into functions- suffering from copy/paste blight currently
+
 def dict_from_fn(fn):
     with open(fn, 'r') as f:
         return json.load(f)
@@ -345,6 +347,34 @@ class ThreadTest(unittest.TestCase):
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
         thread = Thread(d, mock_service)
         self.assertEqual('Hi,', thread.salutation())
+
+    def test_prepend_to_draft(self):
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
+        mock_service = Mock()
+        thread = Thread(d, mock_service)
+        first_msg = 'draft line one'
+        second_msg = 'draft line two'
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        existing_text = 'this is a draft used for testing purposes'
+        mock_service.append_or_create_draft = MagicMock(return_value={'snippet': existing_text + first_msg, 'payload': {'mimeType': 'text/plain', 'body': {'size': 143, 'data': encode_for_payload(first_msg + existing_text)}, 'partId': '', 'filename': '', 'headers': [{'name': 'Received', 'value': 'from 1055564699329 named unknown by gmailapi.google.com with HTTPREST; Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Content-Type', 'value':'text/plain; charset="us-ascii"'}, {'name': 'MIME-Version', 'value': '1.0'}, {'name': 'Content-Transfer-Encoding', 'value': '7bit'}, {'name': 'to', 'value': 'pulkitagarwalcs@gmail.com'}, {'name': 'from', 'value': 'apply@cleanfloorslockingdoors.com'}, {'name': 'subject', 'value': 'New submission for SJSU'}, {'name': 'In-Reply-To', 'value': '<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'References', 'value':'<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>'}, {'name': 'Date', 'value': 'Wed, 4 Nov 2020 23:36:25 -0300'}, {'name': 'Message-Id', 'value': '<CAAD9TVXpvrS66uVpWOSwYogxA6cYb6_+Z2wYybh8HkqYcC0Ryw@mail.gmail.com>'}]}, 'id': draft_msg_id, 'labelIds': ['DRAFT'], 'threadId': '175704c1f999408f'})
+        mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
+        mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
+
+        # append the draft
+        thread.prepend_to_draft(first_msg, thread.default_reply())
+        # expected payload we pass to GMail service is harcoded here
+        message = MIMEText(first_msg + existing_text, 'html')
+        message['to'] = 'pulkitagarwalcs@gmail.com'
+        message['from'] = 'apply@cleanfloorslockingdoors.com'
+        message['subject'] = 'New submission for SJSU'
+        message['In-Reply-To'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
+        message['References'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
+        payload = {'message' : {'threadId' : thread.field('id'), 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
+        # do the asserts
+        mock_service.append_or_create_draft.assert_called_once_with(payload, draft_id)
+        self.assertEqual(first_msg + existing_text, thread.existing_draft_text())
+        mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         
     def test_remove_existing_draft(self):
         d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_email_thread.txt'))

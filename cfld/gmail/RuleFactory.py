@@ -49,6 +49,9 @@ class RuleFactory(Logger):
             if tup.action == 'draft':
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
+            elif tup.action == 'prepend_draft':
+                action = DraftAction(tup.value, tup.destinations, prepend=True)
+                log_msg += 'DraftAction'
             elif tup.action == 'label':
                 action = LabelAction(tup.value)
                 log_msg += 'LabelAction'
@@ -65,7 +68,7 @@ class RuleFactory(Logger):
                 action = RedirectAction(inboxes[tup.dest_email], tup.finder, tup.value, tup.destinations)
                 log_msg += 'RedirectAction'
             else:
-                self.lw('Only draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}.'.format(tup.action))
+                self.lw('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}.'.format(tup.action))
                 continue
 
             # Create the rule holder

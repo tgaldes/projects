@@ -82,6 +82,18 @@ class DraftActionTest(unittest.TestCase):
         # Make sure we've added the automation label
         mock_thread.set_label.assert_called_once_with('automation', unset=False)
 
+    def test_preprend_mode(self):
+        mock_thread = Mock()
+        email = ['destination@abc.com']
+        mock_thread.prepend_to_draft = MagicMock()
+        mock_thread.default_reply = MagicMock(return_value=email)
+        mock_thread.set_label = MagicMock()
+        da = DraftAction('thread.default_reply()', '"Formatting a message with the short name: {}".format(match(1))', prepend=True)
+        da.process(mock_thread, ['match a', 'match b'])
+        mock_thread.default_reply.assert_called_once_with()
+        mock_thread.prepend_to_draft.assert_called_once_with(email, 'Formatting a message with the short name: match b')
+
+
 class MockThread(unittest.TestCase):
     def __init__(self, d, service, *args, **kwargs):
         super(MockThread, self).__init__(*args, **kwargs)

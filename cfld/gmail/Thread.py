@@ -78,12 +78,10 @@ class Thread(Logger):
         # remove the draft from local copy
         self.thread['messages'].pop()
 
-    def append_to_draft(self, body, destinations):
+    def __add_or_update_draft(self, body, destinations):
         self.__check_destinations_match(destinations)
-        #new_body = '<font="Arial">' + self.existing_draft_text() + body + '</font>'
-        new_body = self.existing_draft_text() + body
-        self.ld('New draft will have body: {}'.format(new_body))
-        message = MIMEText(new_body, 'html')
+        self.ld('Draft will have body: {}'.format(body))
+        message = MIMEText(body, 'html')
         draft_id = self.existing_draft_id()
 
         message['to'] = list_of_emails_to_string_of_emails(destinations)
@@ -94,6 +92,14 @@ class Thread(Logger):
         payload = {'message' : {'threadId' : self.thread['id'], 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         message = self.service.append_or_create_draft(payload, draft_id)
         self.__add_or_update_message(message)
+
+    def prepend_to_draft(self, body, destinations):
+        new_body = body + self.existing_draft_text() # TODO ut
+        self.__add_or_update_draft(new_body, destinations)
+
+    def append_to_draft(self, body, destinations):
+        new_body = self.existing_draft_text() + body
+        self.__add_or_update_draft(new_body, destinations)
 
     # Get the greeting we want to use for messages sent to the thread
     # If we are sending to multiple people, something like 'Hi all,\n\n'

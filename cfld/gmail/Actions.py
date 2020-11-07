@@ -26,7 +26,7 @@ class LabelAction(implements(IAction), Logger):
 
 # TODO: how to insert link in draft we create?
 class DraftAction(implements(IAction), Logger):
-    def __init__(self, value, destinations):
+    def __init__(self, value, destinations, prepend=False):
         super(DraftAction, self).__init__(__name__)
         self.value = value
         self.destinations = destinations
@@ -34,11 +34,15 @@ class DraftAction(implements(IAction), Logger):
             raise Exception('Cannot create {} with empty value: {} or destinations: {}'.format(self.__class__, self.value, self.destinations))
         self.label_action = LabelAction('"automation"')
         self.ld('Created {}, destinations={}, value={}'.format(self.__class__, self.destinations, self.value))
+        self.prepend = prepend
     def process(self, thread, matches):
         self.ld('{} is processing a thread'.format(self.__class__))
         draft_content = evaluate_expression(self.value, **locals())
         destinations = evaluate_expression(self.destinations, **locals())
-        thread.append_to_draft(draft_content, destinations)
+        if self.prepend:
+            thread.prepend_to_draft(draft_content, destinations)
+        else:
+            thread.append_to_draft(draft_content, destinations)
         self.label_action.process(thread, matches)
 
 # There are two differences between a redirect and a draft action
@@ -73,7 +77,6 @@ class RemoveDraftAction(implements(IAction), Logger):
     def __init__(self):
         super(RemoveDraftAction, self).__init__(__name__)
     def process(self, thread, matches):
-        pdb.set_trace()
         self.ld('{} is processing a thread'.format(self.__class__))
         thread.remove_existing_draft()
 
