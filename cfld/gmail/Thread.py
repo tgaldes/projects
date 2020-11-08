@@ -133,8 +133,8 @@ class Thread(Logger):
                 return self.__decode_message(message).split(',')[0] + ','
         # Otherwise if we have a reply-to in the first message of the thread, pull the first name from that
         reply_to = self.field('Reply-To', subset=self.thread['messages'][0], default='')
-        #if not reply_to:
-            #reply_to = self.field('Reply-To', subset=self.thread['messages'][0], default='')
+        if not reply_to:
+            reply_to = self.field('Reply-to', subset=self.thread['messages'][0], default='')
         if reply_to:
             return base.format(' ' + reply_to.split()[0])
         # Otherwise log a warning and return something generic

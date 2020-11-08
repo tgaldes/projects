@@ -357,6 +357,14 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(d, mock_service)
         self.assertEqual('Hi,', thread.salutation())
 
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to_lowercase.txt'))
+        thread = Thread(d, mock_service)
+        self.assertEqual('Hi Kimberly,', thread.salutation())
+        # Our first email
+        self.assertEqual('Best,<br>Tyler Galdes<br>Clean Floors & Locking Doors Team<br>', thread.signature())
+
+        # some services send the field like 'Reply-to' (to is lowercase)
+
     def test_prepend_to_draft(self):
         d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
         mock_service = Mock()

@@ -5,6 +5,12 @@ from Logger import Logger
 from RuleHolder import RuleHolder
 from RuleGroup import IfAnyRuleGroup, IfElseRuleGroup, SingleRuleGroup
 
+def row_is_empty(row):
+    for item in row:
+        if item:
+            return False
+    return True
+
 class RuleFactory(Logger):
     # sheet data is a list of lists
     # first list is the header which we'll use to create a named tuple
@@ -18,6 +24,8 @@ class RuleFactory(Logger):
         header_size = len(sheet_data[0])
         last_group_index = 0
         for rule_row in sheet_data[1:]:
+            if row_is_empty(rule_row):
+                continue
             log_msg = 'Created: '
             # Google will trim rows when there isn't data in some of the last fields,
             # so insert empty strings here to keep our named tuple happy
@@ -26,6 +34,9 @@ class RuleFactory(Logger):
             tup = RuleTuple(*rule_row)
             if not tup.group or not (int(tup.group) == last_group_index or last_group_index < int(tup.group)):
                 self.lw('Cannot specify a group index of {} when last group index was {}'.format(tup.group, last_group_index))
+                continue
+            if not tup.email:
+                self.lw('Cannot create a rule without a user specified.')
                 continue
             matchers = []
             # create matcher

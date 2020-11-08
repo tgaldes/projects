@@ -35,10 +35,7 @@ class GMailService(Logger):
                 pickle.dump(creds, token)
 
         self.service = build('gmail', 'v1', credentials=creds)
-        results = self.service.users().messages().list(userId='me', maxResults = 10, labelIds=('INBOX')).execute() # TODO: unread query in a refresh function
-        results = self.service.users().messages().list(userId='me', maxResults = 10).execute()
-        self.mails = results.get('messages', [])
-        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 10).execute().get('threads', [])
+        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 100, q='label:unread').execute().get('threads', [])
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()

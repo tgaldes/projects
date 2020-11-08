@@ -38,6 +38,7 @@ if __name__=='__main__':
         inboxes['apply'] = inbox_apply
     factory = RuleFactory(sheet_service.rule_construction_info(), inboxes)
 
+    count = 0
     for user in inboxes:
         inbox = inboxes[user]
         while True:
@@ -46,7 +47,10 @@ if __name__=='__main__':
                 break
             for rule_group in factory.get_rule_groups_for_user(user):
                 rule_group.process(thread)
-            pdb.set_trace()
+            count += 1
+    logger.li('Processed {} emails'.format(count))
+    logger.li('Shutting down after successful run. Goodbye!')
+    exit(0)
 
 # We can have hardcoded actions available via command line such as:
 # remove all drafts
