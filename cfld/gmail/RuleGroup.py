@@ -50,6 +50,8 @@ class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
         return ['', 'ifelse']
 
 
+# Do the if actions until one returns true
+# If any if actions returned true, do all the then actions
 class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
     def __init__(self, rules_tup):
         super(IfAnyRuleGroup, self).__init__(rules_tup, __name__)
@@ -81,6 +83,7 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
         for irule in self.if_rules:
             if irule.process(thread):
                 match = True
+                break
 
         if match:
             for i, irule in enumerate(self.any_rules):

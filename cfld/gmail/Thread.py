@@ -79,6 +79,12 @@ class Thread(Logger):
 
         return labels
 
+    def __len__(self):
+        draft_id = self.existing_draft_id()
+        if draft_id:
+            return len(self.thread['messages']) - 1
+        return len(self.thread['messages'])
+
     def remove_existing_draft(self):
         draft_id = self.existing_draft_id()
         if not draft_id:
@@ -106,7 +112,7 @@ class Thread(Logger):
         self.__add_or_update_message(message)
 
     def prepend_to_draft(self, body, destinations):
-        new_body = body + self.existing_draft_text() # TODO ut
+        new_body = body + self.existing_draft_text()
         self.__add_or_update_draft(new_body, destinations)
 
     def append_to_draft(self, body, destinations):

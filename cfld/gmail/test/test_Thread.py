@@ -415,6 +415,20 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(d, mock_service)
         self.assertEqual('Best,<br>Tyler<br>', thread.signature())
 
+    def test_len(self):
+        # With a draft
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
+        mock_service = Mock()
+        mock_service.get_drafts = MagicMock(return_value=[{'id' : '5678', 'message' : {'id' : '2345'}}])
+        thread = Thread(d, mock_service)
+        self.assertEqual(2, len(thread))
+
+        # Without a draft
+        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to.txt'))
+        mock_service = Mock()
+        thread = Thread(d, mock_service)
+        self.assertEqual(1, len(thread))
+
 
 
 

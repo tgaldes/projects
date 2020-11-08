@@ -42,7 +42,7 @@ if __name__=='__main__':
         inbox = inboxes[user]
         while True:
             thread = inbox.get_next_thread()
-            if not thread:
+            if thread is None:
                 break
             for rule_group in factory.get_rule_groups_for_user(user):
                 rule_group.process(thread)

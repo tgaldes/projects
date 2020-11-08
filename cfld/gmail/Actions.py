@@ -80,5 +80,11 @@ class RemoveDraftAction(implements(IAction), Logger):
         self.ld('{} is processing a thread'.format(self.__class__))
         thread.remove_existing_draft()
 
+class EmptyAction(implements(IAction), Logger):
+    def __init__(self):
+        super(EmptyAction, self).__init__(__name__)
+    def process(self, thread, matches):
+        pass
+
 
         

@@ -149,3 +149,13 @@ class RemoveDraftActionTest(unittest.TestCase):
         thread.remove_existing_draft = MagicMock()
         rda.process(thread, ())
         thread.remove_existing_draft.assert_called_once_with()
+
+
+class EmptyActionTest(unittest.TestCase):
+
+    def test_basic(self):
+        ea = EmptyAction()
+        # Do nothing!
+        ea.process(None, None)
+        
+

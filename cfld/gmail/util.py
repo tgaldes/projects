@@ -21,7 +21,7 @@ def link(link_dest, link_text=None):
     return '<a href="{}">{}</a>'.format(link_dest, link_text)
 
 def evaluate_expression(expression, **kwargs):
-    local_request = 'local_result = ' + expression.replace('thread.', 'kwargs["thread"].')
+    local_request = 'local_result = ' + expression.replace('thread', 'kwargs["thread"]')
     exec(local_request)
     return locals()['local_result']
 

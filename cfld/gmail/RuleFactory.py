@@ -66,6 +66,9 @@ class RuleFactory(Logger):
                     continue
                 action = RedirectAction(inboxes[tup.dest_email], tup.finder, tup.value, tup.destinations)
                 log_msg += 'RedirectAction'
+            elif tup.action == 'empty':
+                action = EmptyAction()
+                log_msg += 'EmptyAction'
             else:
                 self.lw('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}.'.format(tup.action))
                 continue

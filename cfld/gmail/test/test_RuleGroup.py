@@ -79,7 +79,7 @@ class IfAnyRuleGroupTest(unittest.TestCase):
         iag.process(t)
         mock_irule_1.process.assert_called_once_with(t)
         mock_irule_2.process.assert_called_once_with(t)
-        mock_irule_3.process.assert_called_once_with(t)
+        self.assertEqual(0, mock_irule_3.process.call_count, 0)
         mock_irule_4.process.assert_called_once_with(t)
         mock_irule_5.process.assert_called_once_with(t)
 
