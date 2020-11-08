@@ -46,6 +46,16 @@ class Thread(Logger):
                 return m['value']
         return default
 
+    def signature(self): # TODO: how should we template this for tyler/wyatt both having signatures in the apply inbox?
+        my_email_count = 0
+        for message in self.thread['messages']:
+            if self.__is_my_email(self.__extract_email(self.field('From', subset=message, default=''))) and not self.__is_draft(message):
+                my_email_count += 1
+        if my_email_count == 0:
+            return 'Best,<br>Tyler Galdes<br>Clean Floors & Locking Doors Team<br>'
+        elif my_email_count == 1:
+            return 'Best,<br>Tyler<br>CF&LD Team<br>'
+        return 'Best,<br>Tyler<br>'
     def set_label(self, label_string, unset=False):
         label_id = self.service.get_label_id(label_string)
         if label_id:
@@ -83,6 +93,8 @@ class Thread(Logger):
         self.ld('Draft will have body: {}'.format(body))
         message = MIMEText(body, 'html')
         draft_id = self.existing_draft_id()
+        if draft_id:
+            self.thread['messages'].pop() # we'll get a new message id when we do a modify of a draft
 
         message['to'] = list_of_emails_to_string_of_emails(destinations)
         message['from'] = self.service.get_email()

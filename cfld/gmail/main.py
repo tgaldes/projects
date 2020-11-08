@@ -45,9 +45,8 @@ if __name__=='__main__':
             if not thread:
                 break
             for rule_group in factory.get_rule_groups_for_user(user):
-                for rule in rule_group:
-                    if rule.process(thread):
-                        break
+                rule_group.process(thread)
+            pdb.set_trace()
 
 # We can have hardcoded actions available via command line such as:
 # remove all drafts

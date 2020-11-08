@@ -138,3 +138,16 @@ class ComboMatcher(implements(IMatcher), Logger):
             else: 
                 raise Exception('Asked for matching groups when not all match. ComboMatcher with {} sub-matchers'.format(len(self.matchers)))
         return matches
+
+# Always match the thread! Created to use as the matcher for the any rules
+# in the IfAnyRuleGroup, that way we don't have to specify .* for one of our
+# regex matchers for all of these rules
+class AllMatcher(Logger): # TODO ut
+    def __init__(self):
+        super(AllMatcher, self).__init__(__name__)
+    
+    def matches(self, thread):
+        return True
+
+    def get_matching_groups(self, thread):
+        return ()

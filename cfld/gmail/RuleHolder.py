@@ -1,6 +1,8 @@
+from interface import implements
 from Logger import Logger
+from Interfaces import IRule
 
-class RuleHolder(Logger):
+class RuleHolder(implements(IRule), Logger):
     row_num = 2
     def __init__(self, action, matcher):
         super(RuleHolder, self).__init__(__name__)

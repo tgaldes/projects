@@ -3,6 +3,7 @@ from Actions import *
 import collections
 from Logger import Logger
 from RuleHolder import RuleHolder
+from RuleGroup import IfAnyRuleGroup, IfElseRuleGroup, SingleRuleGroup
 
 class RuleFactory(Logger):
     # sheet data is a list of lists
@@ -10,12 +11,10 @@ class RuleFactory(Logger):
     # then for each row we'll create an instance of the desired RuleHolder
     def __init__(self, sheet_data=[], inboxes={}):
         super(RuleFactory, self).__init__(__name__)
-        if not sheet_data:
-            sheet_data = \
-                [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group'], \
-                 ['label by school', 'apply', '', '', 'New Submission for (.*)', '', '', 'label', '"Schools/" + matches(0)', '', '', '']]
+        if len(sheet_data) < 2:
+            raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
         RuleTuple = collections.namedtuple('RuleTuple', sheet_data[0])
-        self.rule_groups_by_user = {}
+        raw_rule_group_tuples_by_user = {}
         header_size = len(sheet_data[0])
         last_group_index = 0
         for rule_row in sheet_data[1:]:
@@ -43,8 +42,8 @@ class RuleFactory(Logger):
                 matchers.append(ExpressionMatcher(tup.expression_match))
                 log_msg += 'ExpressionMatcher, '
             if not matchers:
-                self.lw('Only label regexes, subject regexes, body regexes, and expression matchers are supported for matchers. No rule will be created.')
-                continue
+                matchers.append(AllMatcher())
+                log_msg += 'AllMatcher, '
             # create action
             if tup.action == 'draft':
                 action = DraftAction(tup.value, tup.destinations)
@@ -77,22 +76,44 @@ class RuleFactory(Logger):
             else:
                 rh = RuleHolder(action, ComboMatcher(matchers))
 
-            # Add the RuleHolder
-            if tup.email not in self.rule_groups_by_user:
-                self.rule_groups_by_user[tup.email] = []
+            # Add the (RuleHolder, type, rule_type) tuple # TODO
+            if tup.email not in raw_rule_group_tuples_by_user:
+                raw_rule_group_tuples_by_user[tup.email] = []
             if int(tup.group) == last_group_index:
-                if not self.rule_groups_by_user[tup.email]:
-                    self.rule_groups_by_user[tup.email].append([rh]) # Cover the case where first group index is 0
+                if not raw_rule_group_tuples_by_user[tup.email]:
+                    raw_rule_group_tuples_by_user[tup.email].append([(rh, tup.group_type, tup.rule_type)]) # Cover the case where first group index is 0
                 else:
-                    self.rule_groups_by_user[tup.email][-1].append(rh)
+                    raw_rule_group_tuples_by_user[tup.email][-1].append((rh, tup.group_type, tup.rule_type))
             else: # group of one rule
-                self.rule_groups_by_user[tup.email].append([rh])
+                raw_rule_group_tuples_by_user[tup.email].append([(rh, tup.group_type, tup.rule_type)])
             last_group_index = int(tup.group)
 
             log_msg += ', Group #{}'.format(tup.group)
 
             self.li(log_msg)
 
+        # Now we've created all the rule holders and are holding them by groups
+        # We'll go back through that list and create the proper RuleGroup classes
+        # The RuleGroup classes handle the type of each rule in their own constructors
+        self.rule_groups_by_user = {}
+
+        for user in raw_rule_group_tuples_by_user:
+            self.rule_groups_by_user[user] = []
+            for raw_rule_group in raw_rule_group_tuples_by_user[user]:
+                if not raw_rule_group:
+                    raise Exception('raw_rule_group of size 0')
+                if len(raw_rule_group) == 1:
+                    self.rule_groups_by_user[user].append(SingleRuleGroup(raw_rule_group))
+                # Default multi rule group is ifelse
+                elif raw_rule_group[0][1] == '' \
+                        or raw_rule_group[0][1].lower() == 'ifelse': # REFACTOR these enums should live in one spot, we also reference then in RuleGroup.py
+                    self.rule_groups_by_user[user].append(IfElseRuleGroup(raw_rule_group))
+                elif raw_rule_group[0][1].lower() == 'ifany':
+                    self.rule_groups_by_user[user].append(IfAnyRuleGroup(raw_rule_group))
+                else:
+                    self.le('Not processing rule group with type: {}'.format(raw_rule_group[0][1]))
+                    
+        
     def get_rule_groups_for_user(self, user):
         return self.rule_groups_by_user[user]
     

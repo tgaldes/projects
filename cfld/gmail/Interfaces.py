@@ -1,7 +1,6 @@
 from interface import Interface
 # TODO: GMail service interface, thread interface
 
-# ----------------- Interfaces -------------------
 class IAction(Interface):
     def process(self, thread, matches):
         pass
@@ -11,4 +10,7 @@ class IMatcher(Interface):
     def get_matching_groups(self, thread):
         pass
 
-# ----------------- End Interfaces -------------------
+class IRule(Interface):
+    def process(self, thread):
+        pass
+

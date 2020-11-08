@@ -98,7 +98,7 @@
                     },
                     {
                         "name": "From",
-                        "value": "WordPress <apply@cleanfloorslockingdoors.com>"
+                        "value": "WordPress <wordpress@cleanfloorslockingdoors.com>"
                     },
                     {
                         "name": "Subject",

@@ -38,7 +38,7 @@ class GMailService(Logger):
         results = self.service.users().messages().list(userId='me', maxResults = 10, labelIds=('INBOX')).execute() # TODO: unread query in a refresh function
         results = self.service.users().messages().list(userId='me', maxResults = 10).execute()
         self.mails = results.get('messages', [])
-        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), q='RentPath', maxResults = 10).execute().get('threads', [])
+        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 10).execute().get('threads', [])
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()
@@ -93,6 +93,12 @@ class GMailService(Logger):
 
     def delete_draft(self, draft_id, userId='me'):
         return self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
+    def __update_drafts(self, new_draft):
+        for i, old_draft in enumerate(self.drafts):
+            if new_draft['id'] == old_draft['id']:
+                self.drafts[i] = new_draft # update with the new message id
+                return
+        self.drafts.append(new_draft)
 
 # if id=None we will create a new draft, otherwise update draft with id = id
 # add the new draft to our internal state
@@ -101,12 +107,11 @@ class GMailService(Logger):
 # update an existing draft
         if draft_id:
             draft = self.service.users().drafts().update(userId=userId, id=draft_id, body=payload).execute()
-# create a new draft!
             self.li('Appended to existing draft with id: {}'.format(draft_id))
+# create a new draft!
         else:
             draft = self.service.users().drafts().create(userId=userId, body=payload).execute()
-            self.drafts.append(draft)
             self.li('Created new draft with id: {}'.format(draft['id']))
-
+        self.__update_drafts(draft)
         message = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
         return message
