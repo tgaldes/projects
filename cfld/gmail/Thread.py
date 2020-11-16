@@ -94,6 +94,9 @@ class Thread(Logger):
         # remove the draft from local copy
         self.thread['messages'].pop()
 
+    '''def message(self, index):
+        return self.thread['messages'][index]'''
+
     def __add_or_update_draft(self, body, destinations):
         self.__check_destinations_match(destinations)
         self.ld('Draft will have body: {}'.format(body))
@@ -153,12 +156,6 @@ class Thread(Logger):
             and 'labelIds' in self.thread['messages'][-1] \
             and 'SENT' in self.thread['messages'][-1]['labelIds']
         return ts_true and last_msg_true
-
-    # return a dictionary of all the fields in the New Submission for short_name message
-    # dictionary will look like {'name' : 'Tony K', 'email' : 'tony@ucla.edu' .....}
-    # return {} when this is not a New Submission thread
-    def parse_new_submission(self):
-        pass
 
     def get_email_from_new_submission(self): # TODO: maybe we leave looking in the dictionary to the caller of the above func
         pass

@@ -46,11 +46,13 @@ def short_name(key):
 def lookup_info(k1, k2):
     names = {'short_name' : 
         {'2715 Portland St' : 'USC',
+         '2715 Portland Street' : 'USC',
          '123 S 11th St' : 'SJSU',
          '649 Gayley Ave' : 'UCLA',
          '165 4th St NW' : 'Georgia Tech',
          '165 4th Street Northwest' : 'Georgia Tech',
-         '1000 5th St SE' : 'UMN'}} # TODO: read from sheets
+         '1000 5th St SE' : 'UMN',
+         '1000 5th Street Southeast': 'UMN'}} # TODO: read from sheets
     return names[k1][k2]
 
 

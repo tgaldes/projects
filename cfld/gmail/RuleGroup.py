@@ -22,6 +22,7 @@ class RuleGroup(Logger):
 
     def _enums(self):
         raise Exception('Implement _enums in child RuleGroup')
+        # REFACTOR: overriding functions should be returning enum values
 
 # When the first irule matches the thread, we break
 class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):

@@ -3,9 +3,10 @@ import unittest
 import os
 from Matchers import *
 from Thread import Thread
-import TestConfig
 
 
+import pathlib
+parent_path = str(pathlib.Path(__file__).parent.absolute())
 class SubjectMatcherTest(unittest.TestCase):
 
     def test_throw_on_empty_init(self):
@@ -97,7 +98,7 @@ class BodyMatcherTest(unittest.TestCase):
     def test_match_really_big_haystack(self):
         bm = BodyMatcher('.*additional details.*')
         thread = Thread({}, None)
-        with open(os.path.join(TestConfig.parent_path, 'matcher_test_inputs/big_haystack.txt'), 'r') as f:
+        with open(os.path.join(parent_path, 'matcher_test_inputs/big_haystack.txt'), 'r') as f:
             haystack = str(f.read())
         thread.last_message_text = MagicMock(return_value=haystack)
         self.assertTrue(bm.matches(thread))
