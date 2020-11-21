@@ -2,6 +2,11 @@ import pdb
 import inspect
 from flatten_dict import flatten 
 from flatten_dict import unflatten 
+import globals
+
+def lookup_info(k1, k2):
+    return globals.g_li.lookup_info(k1, k2)
+
 def list_of_emails_to_string_of_emails(l):
     if type(l) == str:
         return l
@@ -43,17 +48,6 @@ def update_thread(thread, new_messages):
 def short_name(key):
     return lookup_info('short_name', key.strip())
 
-def lookup_info(k1, k2):
-    names = {'short_name' : 
-        {'2715 Portland St' : 'USC',
-         '2715 Portland Street' : 'USC',
-         '123 S 11th St' : 'SJSU',
-         '649 Gayley Ave' : 'UCLA',
-         '165 4th St NW' : 'Georgia Tech',
-         '165 4th Street Northwest' : 'Georgia Tech',
-         '1000 5th St SE' : 'UMN',
-         '1000 5th Street Southeast': 'UMN'}} # TODO: read from sheets
-    return names[k1][k2]
 
 
 

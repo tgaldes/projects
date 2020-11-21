@@ -2,6 +2,7 @@ import pdb
 import sys
 
 
+import globals
 from Logger import Logger
 from GMailService import GMailService
 from Actions import *
@@ -13,8 +14,6 @@ from RuleFactory import RuleFactory
 from SheetService import SheetService
 
 if __name__=='__main__':
-    #sheet_data = [['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'body'], \
-    #             ['label by school', 'apply', '', '', 'New submission for (.*)', '', '', 'label', '"Schools/" + match(0)', '', '', '']]
     logger = Logger('main')
     if len(sys.argv) < 2:
         logger.li('No mode specified, defaulting to using test rules.')
@@ -27,6 +26,8 @@ if __name__=='__main__':
         exit(1)
         
     sheet_service = SheetService('tyler@cleanfloorslockingdoors.com', mode)
+    globals.init(sheet_service.get_lookup_info_data())
+
     inboxes = {}
     if False:
         service = GMailService('tyler@cleanfloorslockingdoors.com')
@@ -36,7 +37,7 @@ if __name__=='__main__':
         service_apply = GMailService('apply@cleanfloorslockingdoors.com')
         inbox_apply = Inbox(service_apply)
         inboxes['apply'] = inbox_apply
-    factory = RuleFactory(sheet_service.rule_construction_info(), inboxes)
+    factory = RuleFactory(sheet_service.get_rule_construction_data(), inboxes)
 
     count = 0
     for user in inboxes:
@@ -47,6 +48,7 @@ if __name__=='__main__':
                 break
             for rule_group in factory.get_rule_groups_for_user(user):
                 rule_group.process(thread)
+
             count += 1
     logger.li('Processed {} emails'.format(count))
     logger.li('Shutting down after successful run. Goodbye!')

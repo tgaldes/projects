@@ -14,6 +14,10 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 class SheetService(Logger):
     def __init__(self, email, sheet_name):
         super(SheetService, self).__init__(__name__)
+
+        self.spreadsheet_id = '1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI'
+
+
         self.user = email.split('@')[0]
         creds = None
         pickle_path = 'token.sheets.{}.pickle'.format(self.user)
@@ -32,16 +36,21 @@ class SheetService(Logger):
             with open(pickle_path, 'wb') as token:
                 pickle.dump(creds, token)
         self.service = build('sheets', 'v4', credentials=creds)
-        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId='1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI', range='{}_rules!A1:N100'.format(sheet_name)).execute().get('values', [])
+        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='{}_rules!A1:N100'.format(sheet_name)).execute().get('values', [])
         if not self.rule_construction_data:
             self.lf('No info loaded for rule construction data. Aborting.')
             exit(1)
         else:
             self.li('Loaded info to construct {} rules.'.format(len(self.rule_construction_data) - 1))
 
-    def rule_construction_info(self):
+        self.lookup_info_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='lookup_info!A1:C100'.format(sheet_name)).execute().get('values', [])
+
+    def get_rule_construction_data(self):
         return self.rule_construction_data
+
+    def get_lookup_info_data(self):
+        return self.lookup_info_data
 
 if __name__=='__main__':
     ss = SheetService('apply@cleanfloorslockingdoors.com')
-    print(ss.rule_construction_info())
+    print(ss.get_rule_construction_data())

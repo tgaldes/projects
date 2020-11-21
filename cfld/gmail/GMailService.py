@@ -72,7 +72,8 @@ class GMailService(Logger):
         self.thread_index += 1
         # This is used when we want to grab a thread for a unit test
         '''pdb.set_trace()
-        with open('./test/thread_test_inputs/message_from_tenant_then_back_and_forth_last_message_from_tenant.txt', 'w') as f:
+        fn = './test/thread_test_inputs/message_from_tenant_then_back_and_forth_last_message_from_tenant.txt'
+        with open(fn, 'w') as f:
             import json
             json.dump(indiv_thread, f, indent=4)'''
         return indiv_thread
@@ -112,3 +113,9 @@ class GMailService(Logger):
         self.__update_drafts(draft)
         message = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
         return message
+
+if __name__=='__main__':
+    gs = GMailService('apply@cleanfloorslockingdoors.com')
+    while True:
+        gs.get_next_thread()
+
