@@ -1,0 +1,10 @@
+6 integration test for subject match -> draft action -> automation label -> send -> automation unlabel
+
+
+
+
+Medium value
+- test all matchers / rules at runtime with empty thread, good check of syntax from google sheet
+Long term low priority and low value tickets:
+- set the 'automation' label at the message level so our automation won't touch user created drafts, but will instead create it's own drafts in the threads
+- we shouldn't force the user to specify rules in a monotonically increasing sequence, nor should they need to specify a group for every rule

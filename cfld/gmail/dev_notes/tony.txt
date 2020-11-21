@@ -1,0 +1,24 @@
+projects-
+
+1) testing refactor
+    - pull out locals that are reused to instance vars
+    - TestConfig:
+        - sets up logger to level DEBUG
+        - defines parent_path var
+    - hold any functions shared by tests in the same TestConfig.py file
+    - Mocks.py:
+        - create an IService interface, implemented by GMail service class
+        - create a MockService class that also implements this interface, and comes with default return values (use the ones you find common in a few test cases)
+            - individual tests can still override these return values if they want to 
+
+2) enum values for rulegrouptype
+    - Enums.py will have enum values for rule group type
+        - value can be 'ifelse' 'ifany' or '', the empty string will be the default and map to ifany
+    - reference - https://stackoverflow.com/questions/41407414/convert-string-to-enum-in-python
+    - we can use the enum value instead of hardcoding the strings in RuleFactory and RuleGroup.py
+
+3) new test cases: 
+    - use ./run_coverage.sh to see a report of which lines we don't hit in our unit tests 
+    - write test cases to hit those lines in each file
+
+4) group numbers in rulefactory- enforce a blank line in the sheet to separate rule groups instead of forcing the user to specify a monotonically increasing list of numbers
