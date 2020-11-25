@@ -103,6 +103,8 @@ class BodyMatcherTest(unittest.TestCase):
         thread.last_message_text = MagicMock(return_value=haystack)
         self.assertTrue(bm.matches(thread))
         self.assertEqual((), bm.get_matching_groups(thread))
+    # TODO: generic rent path message shouldn't math the condidtions we're using in prod to talk about getting in touch with on site manager
+    # TODO: generic zillow includes the phrase 'application', so we should be able to not match that when we're adding a link to our application
 
 
 class ExpressionMatcherTest(unittest.TestCase):

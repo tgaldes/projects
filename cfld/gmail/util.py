@@ -48,6 +48,11 @@ def update_thread(thread, new_messages):
 def short_name(key):
     return lookup_info('short_name', key.strip())
 
-
-
+def room_types_to_string(types, joiner='and'):
+    if len(types) == 1:
+        return types[0] + 's'
+    ret = '{}s {} {}s'.format(types[-2], joiner, types[-1])
+    for i in range(-3, -1 * len(types) - 1, -1):
+        ret = '{}s, '.format(types[i]) + ret
+    return ret
 

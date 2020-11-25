@@ -437,6 +437,7 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(d, mock_service)
         self.assertEqual(1, len(thread))
 
+# TODO: if the draft text ends with \n\n don't append it to the text a second time
 
 
 
