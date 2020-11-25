@@ -45,11 +45,20 @@ class SheetService(Logger):
 
         self.lookup_info_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='lookup_info!A1:C100'.format(sheet_name)).execute().get('values', [])
 
+        self.availability = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='availability!A1:E100'.format(sheet_name)).execute().get('values', [])
+        self.availability_blurbs = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='availability!I1:N3'.format(sheet_name)).execute().get('values', [])
+
     def get_rule_construction_data(self):
         return self.rule_construction_data
 
     def get_lookup_info_data(self):
         return self.lookup_info_data
+
+    def get_availability(self):
+        return self.availability
+
+    def get_availability_blurbs(self):
+        return self.availability_blurbs
 
 if __name__=='__main__':
     ss = SheetService('apply@cleanfloorslockingdoors.com')

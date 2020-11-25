@@ -26,7 +26,9 @@ if __name__=='__main__':
         exit(1)
         
     sheet_service = SheetService('tyler@cleanfloorslockingdoors.com', mode)
-    globals.init(sheet_service.get_lookup_info_data())
+    globals.init(sheet_service.get_lookup_info_data(), \
+                 sheet_service.get_availability(), \
+                 sheet_service.get_availability_blurbs())
 
     inboxes = {}
     if False:
@@ -50,6 +52,7 @@ if __name__=='__main__':
                 rule_group.process(thread)
 
             count += 1
+            #pdb.set_trace()
     logger.li('Processed {} emails'.format(count))
     logger.li('Shutting down after successful run. Goodbye!')
     exit(0)

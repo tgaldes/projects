@@ -1,5 +1,7 @@
 projects-
 
+0) update paths of .pickle files to ./tokens
+
 1) testing refactor
     - pull out locals that are reused to instance vars
     - TestConfig:

@@ -2,11 +2,17 @@ from datetime import datetime, date, timedelta
 import pdb
 
 from Logger import Logger
-from util import room_types_to_string
 
+def room_types_to_string(types, joiner='and'):
+    if len(types) == 1:
+        return types[0] + 's'
+    ret = '{}s {} {}s'.format(types[-2], joiner, types[-1])
+    for i in range(-3, -1 * len(types) - 1, -1):
+        ret = '{}s, '.format(types[i]) + ret
+    return ret
 
 class NewSubmissionHandler(Logger):
-    def __init__(self, raw_availability, raw_availability_blurbs={}, max_availability_index=365):
+    def __init__(self, raw_availability, raw_availability_blurbs, max_availability_index=100):
         super(NewSubmissionHandler, self).__init__(__name__)
         self.suite_bathroom_ending = 'wb'
         self.availability = {}
@@ -35,13 +41,6 @@ class NewSubmissionHandler(Logger):
         # key will represent result of 'desired move in date' - 'date available'
         # raw will specify the lowest result of above subtraction for which the blurb is used
         # we'll populate a map with the ranges so we can do a lookup later on when answering the threads
-        if not raw_availability_blurbs:
-            raw_availability_blurbs = [
-                (None , 'We don\'t have {room_type}s available for your gender'), \
-                (-1000 , 'We don\'t have {room_type}s open until {available}, if you are ok moving in then instead of {move_in} we would love to have you!', 'two', 'three', 'four', 'five'), \
-                (0, 'There is a {room_type} open for move in on {move_in}'), \
-                # TODO etc etc etc
-            ]
         if len(raw_availability_blurbs) != 3:
             raise Exception('only length 3 raw_availability_blurbs is supported.')
         if len(raw_availability_blurbs[1]) != 6:
@@ -49,26 +48,26 @@ class NewSubmissionHandler(Logger):
         max_availability_index = 365
         self.availability_blurbs = {}
         for i, tup in enumerate(raw_availability_blurbs):
-            if tup[0] is None:
+            if tup[0] is None or tup[0] is '':
                 self.availability_blurbs[None] = tup[1]
                 continue
             if i + 1 < len(raw_availability_blurbs): # not the last item
-                for x in range(tup[0], raw_availability_blurbs[i + 1][0]):
+                for x in range(int(tup[0]), int(raw_availability_blurbs[i + 1][0])):
                     if len(tup) > 2:
                         self.availability_blurbs[timedelta(days=x)] = tup[1:]
                     else:
                         self.availability_blurbs[timedelta(days=x)] = tup[1]
             else: # last item
-                if max_availability_index <= tup[0]:
+                if max_availability_index <= int(tup[0]):
                     raise Exception('Cannot handle max_availability_index <= max entry in raw_availability blurbs. max_availability_index: {} max entry: {}'.format(max_availability_index, tup[0]))
-                for x in range(tup[0], max_availability_index):
+                for x in range(int(tup[0]), max_availability_index):
                     self.availability_blurbs[timedelta(days=x)] = tup[1]
 
 
     def handle_thread(self, thread):
         short_name = thread.short_name() # key into the response data
         if len(thread) == 1:
-            self.__handle_first_msg(thread)
+            return self.__handle_first_msg(thread)
         else:
             self.lw('{} not configured to respond to threads of more than length 1. Not doing anything'.format(__name__))
 
@@ -157,8 +156,7 @@ class NewSubmissionHandler(Logger):
             response += self.availability_blurbs[None].format(room_type=formatted_list_of_room_types, \
                                 desired=datetime.strftime(parsed_msg['move_in'], '%m-%d-%Y'), \
                                 short_name = thread.short_name())
-
-        thread.append_to_draft(response, thread.default_reply())
+        return response
 
     def __get_date_available(self, short_name, gender, room_type):
         school_by_gender = self.availability[short_name][gender]

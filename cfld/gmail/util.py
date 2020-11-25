@@ -7,6 +7,9 @@ import globals
 def lookup_info(k1, k2):
     return globals.g_li.lookup_info(k1, k2)
 
+def run_new_submission_handler(t):
+    return globals.g_nsh.handle_thread(t)
+
 def list_of_emails_to_string_of_emails(l):
     if type(l) == str:
         return l
@@ -48,11 +51,4 @@ def update_thread(thread, new_messages):
 def short_name(key):
     return lookup_info('short_name', key.strip())
 
-def room_types_to_string(types, joiner='and'):
-    if len(types) == 1:
-        return types[0] + 's'
-    ret = '{}s {} {}s'.format(types[-2], joiner, types[-1])
-    for i in range(-3, -1 * len(types) - 1, -1):
-        ret = '{}s, '.format(types[i]) + ret
-    return ret
 
