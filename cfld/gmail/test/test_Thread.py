@@ -294,9 +294,6 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(d, mock_service)
         self.assertEqual(expected_decoded_payload, thread.existing_draft_text())
 
-
-# TODO: ut for special characters returned by service in message body? some are translating & and ' like unicode
-
     def test_reply_all(self):
         # Last message in thread is tyler -> George, cc Tim and Micah
         d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/reply_all.txt'))

@@ -31,7 +31,7 @@ if __name__=='__main__':
                  sheet_service.get_availability_blurbs())
 
     inboxes = {}
-    if False:
+    if True:
         service = GMailService('tyler@cleanfloorslockingdoors.com')
         inbox_tyler = Inbox(service)
         inboxes['tyler'] = inbox_tyler
@@ -42,16 +42,12 @@ if __name__=='__main__':
     factory = RuleFactory(sheet_service.get_rule_construction_data(), inboxes)
 
     count = 0
-    for user in inboxes:
+    for rule_group, user in factory.get_rule_groups():
         inbox = inboxes[user]
-        while True:
-            thread = inbox.get_next_thread()
-            if thread is None:
-                break
-            for rule_group in factory.get_rule_groups_for_user(user):
-                rule_group.process(thread)
-
+        for thread in inbox.get_all_threads():
+            rule_group.process(thread)
             count += 1
+
             #pdb.set_trace()
     logger.li('Processed {} emails'.format(count))
     logger.li('Shutting down after successful run. Goodbye!')

@@ -26,8 +26,8 @@ class LabelAction(implements(IAction), Logger):
 
 # TODO: how to insert link in draft we create?
 class DraftAction(implements(IAction), Logger):
-    def __init__(self, value, destinations, prepend=False):
-        super(DraftAction, self).__init__(__name__)
+    def __init__(self, value, destinations, prepend=False, name=__name__):
+        super(DraftAction, self).__init__(name)
         self.value = value
         self.destinations = destinations
         if not self.value or not self.destinations:
@@ -51,27 +51,25 @@ class DraftAction(implements(IAction), Logger):
 # The redirect thread needs to know
 # - inbox he'll be sending to
 # - how to find the thread he'll be drafting on
-class RedirectAction(implements(IAction), Logger):
-    def __init__(self, inbox, finder_expression, value, destinations, found_class=Thread):
-        super(RedirectAction, self).__init__(__name__)
+class RedirectAction(DraftAction):
+    def __init__(self, inbox, finder_expression, value, destinations):
+        super(RedirectAction, self).__init__(value, destinations, name=__name__, prepend=False)
         self.inbox = inbox # set up by factory
         self.thread_finder_expression = finder_expression
-        self.value = value
-        self.destinations = destinations
-        self.found_class = found_class
-        if not self.value or not self.destinations or not self.thread_finder_expression or not self.found_class:
-            raise Exception('Cannot create {} with empty value: {} destinations: {} or thread_finder_expression: {} found_class: {}'.format(self.__class__, self.value, self.destinations, self.thread_finder_expression, self.found_class))
+        if  not self.thread_finder_expression:
+            raise Exception('Cannot create {} with empty or thread_finder_expression: {} '.format(self.__class__, self.thread_finder_expression))
         self.ld('Created {}, destinations={}, value={}, finder_expression={}'.format(self.__class__, self.destinations, self.value, self.thread_finder_expression))
         
     def process(self, thread, matches):
         self.ld('{} is processing a thread'.format(self.__class__))
-        local_request = 'found_thread = ' + self.thread_finder_expression
+        # Careful that the name we do the assignment on in exec doesn't exist in the rest of the current scope
+        local_request = 'res = ' + self.thread_finder_expression
         exec(local_request)
-        thread = self.found_class(locals()['found_thread'], self.inbox.get_service())
-        # TODO : can call super class here
-        draft_content = evaluate_expression(self.value, **locals())
-        destinations = evaluate_expression(self.destinations, **locals())
-        thread.append_to_draft(draft_content, destinations)
+        found_threads = locals()['res']
+        if not found_threads:
+            self.li('No found_threads matched the expression: {}'.format(self.thread_finder_expression))
+        for found_thread in found_threads:
+            super().process(found_thread, matches)
 
 class RemoveDraftAction(implements(IAction), Logger):
     def __init__(self):

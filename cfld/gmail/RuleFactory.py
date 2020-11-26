@@ -20,9 +20,10 @@ class RuleFactory(Logger):
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
         RuleTuple = collections.namedtuple('RuleTuple', sheet_data[0])
-        raw_rule_group_tuples_by_user = {}
         header_size = len(sheet_data[0])
-        last_group_index = 0
+        last_group_index = -1
+        # List of [(Group, user)..... so we can process in order of the rule groups
+        raw_rule_group_tuples = []
         for rule_row in sheet_data[1:]:
             if row_is_empty(rule_row):
                 continue
@@ -91,43 +92,44 @@ class RuleFactory(Logger):
                 rh = RuleHolder(action, ComboMatcher(matchers))
 
             # Add the (RuleHolder, type, rule_type) tuple # TODO
-            if tup.email not in raw_rule_group_tuples_by_user:
-                raw_rule_group_tuples_by_user[tup.email] = []
             if int(tup.group) == last_group_index:
-                if not raw_rule_group_tuples_by_user[tup.email]:
-                    raw_rule_group_tuples_by_user[tup.email].append([(rh, tup.group_type, tup.rule_type)]) # Cover the case where first group index is 0
-                else:
-                    raw_rule_group_tuples_by_user[tup.email][-1].append((rh, tup.group_type, tup.rule_type))
+                raw_rule_group_tuples[-1][0].append((rh, tup.group_type, tup.rule_type))
             else: # group of one rule
-                raw_rule_group_tuples_by_user[tup.email].append([(rh, tup.group_type, tup.rule_type)])
+                raw_rule_group_tuples.append(([(rh, tup.group_type, tup.rule_type)], tup.email))
             last_group_index = int(tup.group)
 
             log_msg += ', Group #{}'.format(tup.group)
 
             self.li(log_msg)
 
-        # Now we've created all the rule holders and are holding them by groups
-        # We'll go back through that list and create the proper RuleGroup classes
-        # The RuleGroup classes handle the type of each rule in their own constructors
-        self.rule_groups_by_user = {}
+        self.all_rule_groups = []
+        self.__create_rule_groups(raw_rule_group_tuples, self.all_rule_groups)
 
-        for user in raw_rule_group_tuples_by_user:
-            self.rule_groups_by_user[user] = []
-            for raw_rule_group in raw_rule_group_tuples_by_user[user]:
-                if not raw_rule_group:
-                    raise Exception('raw_rule_group of size 0')
-                if len(raw_rule_group) == 1:
-                    self.rule_groups_by_user[user].append(SingleRuleGroup(raw_rule_group))
-                # Default multi rule group is ifelse
-                elif raw_rule_group[0][1] == '' \
-                        or raw_rule_group[0][1].lower() == 'ifelse': # REFACTOR these enums should live in one spot, we also reference then in RuleGroup.py
-                    self.rule_groups_by_user[user].append(IfElseRuleGroup(raw_rule_group))
-                elif raw_rule_group[0][1].lower() == 'ifany':
-                    self.rule_groups_by_user[user].append(IfAnyRuleGroup(raw_rule_group))
-                else:
-                    self.le('Not processing rule group with type: {}'.format(raw_rule_group[0][1]))
-                    
-        
+    def __create_rule_groups(self, tups, target_list):         
+        for raw_rule_group, user in tups:
+            if not raw_rule_group:
+                raise Exception('raw_rule_group of size 0')
+            if len(raw_rule_group) == 1:
+                target_list.append((SingleRuleGroup(raw_rule_group), user))
+            # Default multi rule group is ifelse
+            elif raw_rule_group[0][1] == '' \
+                    or raw_rule_group[0][1].lower() == 'ifelse': # REFACTOR these enums should live in one spot, we also reference then in RuleGroup.py
+                target_list.append((IfElseRuleGroup(raw_rule_group), user))
+            elif raw_rule_group[0][1].lower() == 'ifany':
+                target_list.append((IfAnyRuleGroup(raw_rule_group), user))
+            else:
+                self.le('Not processing rule group with type: {}'.format(raw_rule_group[0][1]))
+   
+    # list of [(RuleGroup, user)...
+    def get_rule_groups(self):
+        return self.all_rule_groups
+
     def get_rule_groups_for_user(self, user):
-        return self.rule_groups_by_user[user]
-    
+        ret = []
+        for rule_group, rule_user in self.all_rule_groups:
+            if rule_user == user:
+                ret.append(rule_group)
+        return ret
+
+
+

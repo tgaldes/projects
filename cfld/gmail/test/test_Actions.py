@@ -131,15 +131,17 @@ class RedirectActionTest(unittest.TestCase):
         mock_input_thread.get_new_application_email = MagicMock(return_value='tgaldes@gmail.com')
         mock_inbox = Mock()
         mock_inbox.get_service = MagicMock(return_value='service')
-        mock_inbox.get_threads_from_email_address = MagicMock(return_value={})
+        mock_output_thread = Mock()
+        mock_inbox.get_threads_from_email_address = MagicMock(return_value=[mock_output_thread])
         finder_expression = 'self.inbox.get_threads_from_email_address(thread.get_new_application_email())'
         destinations = 'thread.default_reply()'
         expression = '"You\'ll need to approve the application for housing at {} on your end".format(thread.get_short_name())'
 
-        ra = RedirectAction(mock_inbox, finder_expression, expression, destinations, found_class=MockThread)
+        ra = RedirectAction(mock_inbox, finder_expression, expression, destinations)
         ra.process(mock_input_thread, ())
         mock_input_thread.get_new_application_email.assert_called_once_with()
         mock_inbox.get_threads_from_email_address.assert_called_once_with('tgaldes@gmail.com')
+        self.assertEqual(1, mock_output_thread.append_to_draft.call_count)
 
 class RemoveDraftActionTest(unittest.TestCase):
 

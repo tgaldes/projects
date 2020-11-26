@@ -29,9 +29,9 @@ class NewSubmissionHandler(Logger):
                     raise Exception('Duplicate key in availability data. \'{}\' specified twice.'.format(last_key_zero+ '.' + row[1]))
                 self.availability[last_key_zero][row[1]] = {}
             move_in, move_out = None, None
-            if row[3]:
-                move_in = datetime.strptime(row[3], '%Y%m%d').date()
-            if row[4]:
+            if len(row) > 3 and row[3]:
+                    move_in = datetime.strptime(row[3], '%Y%m%d').date()
+            if len(row) > 4 and row[4]:
                 move_out = datetime.strptime(row[4], '%Y%m%d').date()
             if row[2] in self.availability[last_key_zero][last_key_one]:
                     raise Exception('Duplicate key in availability data. \'{}\' specified twice.'.format(last_key_zero+ '.' + row[1] + '.' + row[2]))
@@ -65,6 +65,7 @@ class NewSubmissionHandler(Logger):
 
 
     def handle_thread(self, thread):
+        self.li('Handling thread with id {} subject {}'.format(thread.field('id'), thread.subject()))
         short_name = thread.short_name() # key into the response data
         if len(thread) == 1:
             return self.__handle_first_msg(thread)

@@ -1,3 +1,5 @@
+import pdb
+
 from GMailService import GMailService
 from Thread import Thread
 from Logger import Logger
@@ -5,9 +7,15 @@ from Logger import Logger
 
 
 class Inbox(Logger):
-    def __init__(self, service):
+    def __init__(self, service, thread_type_class=Thread):
         super(Inbox, self).__init__(__name__)
         self.service = service
+        self.unread_threads = []
+        self.all_threads = []
+        for d in self.service.get_unread_threads():
+            self.unread_threads.append(Thread(d, self.service))
+        for d in self.service.get_all_threads():
+            self.all_threads.append(thread_type_class(d, self.service))
 
     def get_service(self):
         return self.service
@@ -16,17 +24,16 @@ class Inbox(Logger):
     # this email address, ordered by most recent activity first
     # Right now the service get_one_thread isn't neccessarily retuning in order from the inbox
     def get_threads_from_email_address(self, email):
-        return self.service.get_next_thread() # TODO
-        pass
+        res = []
+        for thread in self.all_threads:
+            replies = [x.lower() for x in thread.default_reply()]
+            if email.lower() in replies:
+                res.append(thread)
+        return res
     
-    # return the next thread to process or None if we have gone through all the threads
-    # TODO: what logic are we using to determine what messages we'll read?
-    # we should always have a 'processed' label, and we'll go through all threads from
-    # most to least recent until we find one where the last message has a processed label
-    def get_next_thread(self):
-        raw_thread = self.service.get_next_thread()  # TODO
-        if not raw_thread:
-            return None
-        t = Thread(raw_thread, self.service)
-        return t
+    def get_unread_threads(self):
+        return self.unread_threads
+
+    def get_all_threads(self):
+        return self.all_threads
         

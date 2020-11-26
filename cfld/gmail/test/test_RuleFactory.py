@@ -47,9 +47,9 @@ class RuleFactoryTest(unittest.TestCase):
              ['redirect- wont be created since we dont specify inboxes', 'apply', 'tyler', 'automation', '', '', '', 'redirect', 'value_exp', 'finder_expr', 'dest_expr', '1']]
 
         rf = RuleFactory(sheet_data)
-        with self.assertRaises(KeyError):
-            # no rules created for the redirect since we didn't specify inbox objects
-            rules = rf.get_rule_groups_for_user('apply')
+        # no rules created for the redirect since we didn't specify inbox objects
+        rules = rf.get_rule_groups_for_user('apply')
+        self.assertEqual(0, len(rules))
 
         inboxes = {'apply' : 'apply_inbox', 'tyler' : 'tyler_inbox'}
         rf = RuleFactory(sheet_data, inboxes)

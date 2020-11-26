@@ -35,7 +35,17 @@ class GMailService(Logger):
                 pickle.dump(creds, token)
 
         self.service = build('gmail', 'v1', credentials=creds)
-        self.threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 100, q='label:unread').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 30, q='label:INBOX').execute().get('threads', [])
+        self.all_full_threads = []
+        for item in self.all_threads:
+            self.all_full_threads.append(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+
+        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 10, q='label:unread').execute().get('threads', [])
+        self.unread_full_threads = []
+        for item in self.unread_threads:
+            self.unread_full_threads.append(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+
+
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()
@@ -64,20 +74,10 @@ class GMailService(Logger):
     def get_email(self):
         return self.email
 
-    def get_next_thread(self):
-        if self.thread_index >= len(self.threads):
-            return None
-        indiv_thread = self.service.users().threads().get(userId='me', id=self.threads[self.thread_index]['id'], format='full').execute()
-        msg = self.service.users().messages().get(userId='me', id=indiv_thread['messages'][0]['id']).execute()
-        self.thread_index += 1
-        # This is used when we want to grab a thread for a unit test
-        '''pdb.set_trace()
-        fn = './test/thread_test_inputs/message_from_tenant_then_back_and_forth_last_message_from_tenant.txt'
-        with open(fn, 'w') as f:
-            import json
-            json.dump(indiv_thread, f, indent=4)'''
-        return indiv_thread
-
+    def get_unread_threads(self):
+        return self.unread_full_threads
+    def get_all_threads(self):
+        return self.all_full_threads
 
     def set_label(self, id, payload, userId='me'):
 # TODO: same expo backoff function as v1
