@@ -17,6 +17,7 @@ class GMailService(Logger):
         super(GMailService, self).__init__(__name__)
         self.email = email
         self.user = email.split('@')[0]
+        self.li('Creating {} for {}'.format(__name__, email))
         creds = None
         pickle_path = 'token.gmail.{}.pickle'.format(self.user)
         if os.path.exists(pickle_path):

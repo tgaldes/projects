@@ -14,6 +14,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 class SheetService(Logger):
     def __init__(self, email, sheet_name):
         super(SheetService, self).__init__(__name__)
+        self.li('Creating {} for {}'.format(__name__, email))
 
         self.spreadsheet_id = '1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI'
 
