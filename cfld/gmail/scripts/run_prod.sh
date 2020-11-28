@@ -1,1 +1,3 @@
-/cfld/projects/cfld/gmail/main.py prod
+DIR=/cfld/projects/cfld/gmail/
+cd ${DIR}
+python3 main.py prod
