@@ -20,27 +20,27 @@ class LabelActionTest(unittest.TestCase):
 
     def test_set_label_no_matches(self):
         la = LabelAction(self.label_one)
-        thread = Thread({}, None)
+        thread = Thread('testid', [], None)
         thread.set_label = MagicMock()
         la.process(thread, [])
         thread.set_label.assert_called_once_with(self.label_one_unwrapped, unset=False)
 
     def test_set_label_with_match(self):
         la = LabelAction(self.label_two)
-        thread = Thread({}, None)
+        thread = Thread('testid', [], None)
         thread.set_label = MagicMock()
         la.process(thread, self.matches)
         thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=False)
 
         la = LabelAction(self.label_three)
-        thread = Thread({}, None)
+        thread = Thread('testid', [], None)
         thread.set_label = MagicMock()
         la.process(thread, self.matches)
         thread.set_label.assert_called_once_with('label three ' + self.matches[1], unset=False)
 
     def test_unset_label(self):
         la = LabelAction(self.label_two, unset=True)
-        thread = Thread({}, None)
+        thread = Thread('testid', [], None)
         thread.set_label = MagicMock()
         la.process(thread, self.matches)
         thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=True)

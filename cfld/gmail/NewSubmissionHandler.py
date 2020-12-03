@@ -65,7 +65,7 @@ class NewSubmissionHandler(Logger):
 
 
     def handle_thread(self, thread):
-        self.li('Handling thread with id {} subject {}'.format(thread.field('id'), thread.subject()))
+        self.li('Handling thread with id {} subject {}'.format(thread.identifier, thread.subject()))
         short_name = thread.short_name() # key into the response data
         if len(thread) == 1:
             return self.__handle_first_msg(thread)

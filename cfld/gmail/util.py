@@ -33,21 +33,6 @@ def evaluate_expression(expression, **kwargs):
     exec(local_request)
     return locals()['local_result']
 
-def update_thread(thread, new_messages):
-    if 'messages' not in thread or 'messages' not in new_messages:
-        return thread
-    # update indiv messages
-    for message in thread['messages']:
-        for new_message in new_messages['messages']:
-            if message['id'] == new_message['id']:
-                message.update(new_message)
-                break
-
-    # update thread attributes
-    for item in new_messages:
-        if item != 'messages':
-            thread[item] = new_messages[item]
-
 def short_name(key):
     return lookup_info('short_name', key.strip())
 

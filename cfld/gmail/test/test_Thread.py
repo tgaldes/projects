@@ -11,6 +11,7 @@ import pudb
 from email.mime.text import MIMEText
 import base64
 import NewLogger
+from Message import Message
 
 
 
@@ -20,31 +21,26 @@ parent_path = str(pathlib.Path(__file__).parent.absolute())
 
 # REFACTOR: we can extract a lot of this code into functions- suffering from copy/paste blight currently
 
-def dict_from_fn(fn):
-    with open(fn, 'r') as f:
-        return json.load(f)
+def get_thread_constructor_args(fn):
+    with open(os.path.join(parent_path, fn), 'r') as f:
+        d = json.load(f)
+    messages = []
+    for fields in d['messages']:
+        messages.append(Message(fields))
+    return d['id'], messages
+
 
 def encode_for_payload(text):
     return base64.urlsafe_b64encode(text.encode('utf-8')).decode()
 
 class ThreadTest(unittest.TestCase):
 
-    def test_field(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/make_them_say_no.txt'))
-        mock_service = Mock()
-        thread = Thread(d, mock_service)
-        # Will grab the 'To' field from the first message in thread
-        self.assertEqual('apply@cf-ld.com', thread.field('To'))
-        # Will grab the 'To' field from the last message in thread
-        self.assertEqual('tonyma@uchicago.edu', thread.field('To', subset=thread.field('messages')[-1]))
-
     def test_one_email_thread(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_email_thread.txt'))
         mock_service = Mock()
         mock_service.get_label_id = MagicMock(return_value='mockid')
         mock_service.set_label = MagicMock(return_value={'messages' : [], 'labelIds' : ['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid']})
-        thread = Thread(d, mock_service)
-        id = thread.field('id')
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_email_thread.txt'), mock_service)
+        id = thread.identifier
         self.assertEqual('test subject', thread.subject())
         mock_service.get_email = MagicMock(return_value='tyler@cf-ld.com')
         self.assertEqual(['tgaldes@gmail.com'], thread.default_reply())
@@ -60,7 +56,7 @@ class ThreadTest(unittest.TestCase):
         thread.set_label('test label string')
         mock_service.set_label.assert_called_once_with(id, mock.ANY)
         mock_service.get_label_id.assert_called_once_with('test label string')
-        self.assertTrue('mockid' in thread.field('labelIds'))
+        self.assertTrue('mockid' in thread.label_ids())
 
         # unset a label
         thread.set_label('test label string', unset=True)
@@ -69,20 +65,18 @@ class ThreadTest(unittest.TestCase):
 
 
         # getting some fields from various depths of the json 
-        self.assertEqual('690981', thread.field('historyId'))
-        self.assertEqual('Thu, 29 Oct 2020 21:49:56 -0400', thread.field('Date')) # from the first message object
-        self.assertEqual('test subject', thread.field('Subject'))
-        self.assertEqual('1604022596000', thread.field('internalDate'))
+        self.assertEqual('test subject', thread.subject())
+        self.assertEqual(1604022596, thread.last_ts())
 
         # add a brand new draft
         first_msg = 'draft line one'
         second_msg = 'draft line two'
         draft_id = '1234'
         draft_msg_id = '2345'
-        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg), 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}})
+        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg)}, 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}})
         thread.append_to_draft(first_msg, ['tgaldes@gmail.com'])
         # now when we want to add text to the draft we should append to it
-        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg + second_msg), 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}})
+        mock_service.append_or_create_draft = MagicMock(return_value={'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg + second_msg)}, 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}})
         # Remember that the draft object is a different object than the message with a different id
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         thread.append_to_draft(second_msg, ['tgaldes@gmail.com'])
@@ -101,25 +95,22 @@ class ThreadTest(unittest.TestCase):
             thread.set_label('this label doesn\'t exist')
 
     def test_new_application_email(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/new_application.txt'))
         mock_service = Mock()
         mock_service.get_label_id = MagicMock(return_value='mockid')
         mock_service.set_label = MagicMock(return_value={'messages' : [], 'labelIds' : ['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid']})
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/new_application.txt'), mock_service)
         self.assertEqual('kimaquinosmc@gmail.com', thread.get_new_application_email())
 
     def test_last_ts(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/make_them_say_no.txt'))
         mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/make_them_say_no.txt'), mock_service)
         self.assertEqual(1604097866, thread.last_ts())
 
     def test_labels(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/make_them_say_no.txt'))
         mock_service = Mock()
         ln = 'label_name'
         mock_service.get_label_name = MagicMock(return_value=ln)
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/make_them_say_no.txt'), mock_service)
         self.assertEqual([ln for x in range(4)], thread.labels())
 
     # Not currently part of public interface
@@ -127,38 +118,27 @@ class ThreadTest(unittest.TestCase):
         pass
 
     def test_short_name(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/make_them_say_no.txt'))
         mock_service = Mock()
         mock_service.get_label_name = MagicMock(return_value='Schools/USC')
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/make_them_say_no.txt'), mock_service)
         self.assertEqual('USC', thread.short_name())
         mock_service.get_label_name = MagicMock(return_value='not a school label')
         self.assertEqual('the campus', thread.short_name())
+        mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
         self.assertTrue(thread.is_last_message_from_us())
 
-    def test_short_name(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/make_them_say_no.txt'))
+    def test_new_destinations_match_existing_draft(self):
         mock_service = Mock()
-        mock_service.get_label_name = MagicMock(return_value='Schools/USC')
-        thread = Thread(d, mock_service)
-        self.assertEqual('USC', thread.short_name())
-        mock_service.get_label_name = MagicMock(return_value='not a school label')
-        self.assertEqual('the campus', thread.short_name())
-
-    def test_new_desintations_match_existing_draft(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
-        mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'), mock_service)
         first_msg = 'draft line one'
         with self.assertRaises(Exception):
             thread.append_to_draft('draft msg', ['nottheexistingdraftemail@asdf.com'])
 
     def test_make_them_say_no(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/make_them_say_no.txt'))
         mock_service = Mock()
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
         mock_service.get_label_name = MagicMock(return_value='Schools/USC')
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/make_them_say_no.txt'), mock_service)
         # Evening of 20201030
         self.assertEqual(1604097866, thread.last_ts())
         one_day_in_future = thread.last_ts() + 86400
@@ -180,9 +160,8 @@ class ThreadTest(unittest.TestCase):
         self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: two_days_in_future))
 
     def test_append_creates_response_to_last_message_in_thread(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_from_us.txt'))
         mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_message_from_us.txt'), mock_service)
         self.assertEqual('Hi Rawaa,\r\n\r\nHow long would you want to stay for? We could sign until Mid May right now.\r\n$650 a month, move in 1/4/21, 4.5 months of rent.\r\n\r\nTyler', thread.last_message_text())
         first_msg = 'draft line one'
         second_msg = 'draft line two'
@@ -200,7 +179,7 @@ class ThreadTest(unittest.TestCase):
         message['subject'] = 'Re: Early Termination'
         message['In-Reply-To'] = "<CAAD9TVXaBk=FFHjn-Ah3Px8XG+yrca9EiP1Y+DUYBq6YC5s0Lg@mail.gmail.com>"
         message['References'] = "<CAAD9TVXaBk=FFHjn-Ah3Px8XG+yrca9EiP1Y+DUYBq6YC5s0Lg@mail.gmail.com>"
-        payload = {'message' : {'threadId' : thread.field('id'), 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
+        payload = {'message' : {'threadId' : thread.identifier, 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         # do the asserts
         # None passed as the draft id since we don't have an existing draft in this test case
         mock_service.append_or_create_draft.assert_called_once_with(payload, None)
@@ -221,7 +200,7 @@ class ThreadTest(unittest.TestCase):
         message['subject'] = 'Re: Early Termination'
         message['In-Reply-To'] = "<CAAD9TVXaBk=FFHjn-Ah3Px8XG+yrca9EiP1Y+DUYBq6YC5s0Lg@mail.gmail.com>"
         message['References'] = "<CAAD9TVXaBk=FFHjn-Ah3Px8XG+yrca9EiP1Y+DUYBq6YC5s0Lg@mail.gmail.com>"
-        payload = {'message' : {'threadId' : thread.field('id'), 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
+        payload = {'message' : {'threadId' : thread.identifier, 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         mock_service.append_or_create_draft.assert_called_once_with(payload, draft_id)
         self.assertEqual(first_msg + second_msg, thread.existing_draft_text())
         self.assertEqual(draft_id, thread.existing_draft_id())
@@ -229,10 +208,9 @@ class ThreadTest(unittest.TestCase):
 
 
     def test_append_to_existing_draft_supplied_by_service(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
         mock_service = Mock()
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'), mock_service)
         # We have already sent one email
         self.assertEqual('Best,<br>Tyler<br>CF&LD Team<br>', thread.signature())
         first_msg = 'draft line one'
@@ -254,7 +232,7 @@ class ThreadTest(unittest.TestCase):
         message['subject'] = 'New submission for SJSU'
         message['In-Reply-To'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
         message['References'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
-        payload = {'message' : {'threadId' : thread.field('id'), 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
+        payload = {'message' : {'threadId' : thread.identifier, 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         # do the asserts
         mock_service.append_or_create_draft.assert_called_once_with(payload, draft_id)
         self.assertEqual(existing_text + first_msg, thread.existing_draft_text())
@@ -277,7 +255,7 @@ class ThreadTest(unittest.TestCase):
         message['subject'] = 'New submission for SJSU'
         message['In-Reply-To'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
         message['References'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
-        payload = {'message' : {'threadId' : thread.field('id'), 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
+        payload = {'message' : {'threadId' : thread.identifier, 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         mock_service.append_or_create_draft.assert_called_once_with(payload, draft_id)
         self.assertEqual(existing_text + first_msg + second_msg, thread.existing_draft_text())
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : second_new_draft_msg_id}}, {'id' : 'not our id', 'message' : {'id' : 'not our message id'}}])
@@ -288,74 +266,59 @@ class ThreadTest(unittest.TestCase):
     # message from the payload
     def test_read_message_body_from_decoded_payload(self):
         self.maxDiff = None
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/existing_draft_too_big_for_snippet.txt'))
         expected_decoded_payload = 'the following is a long message\r\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\r\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\r\ncccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\r\ndddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\r\n'
         mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/existing_draft_too_big_for_snippet.txt'), mock_service)
         self.assertEqual(expected_decoded_payload, thread.existing_draft_text())
 
     def test_reply_all(self):
         # Last message in thread is tyler -> George, cc Tim and Micah
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/reply_all.txt'))
         mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/reply_all.txt'), mock_service)
         mock_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
         # george is the to, mharrel and tim are both cced
         self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
         self.assertEqual(['gbremer@yahoo.com'], thread.default_reply(reply_all=False))
-        # Now we'll have sent the last message To all three (not cced)
-        headers = thread.thread['messages'][-1]['payload']['headers']
-        for i, pair in enumerate(headers):
-            if pair['name'] == 'Cc':
-                del headers[i]
-            elif pair['name'] == 'To':
-                pair['value'] += ',Micah Harrel <mharrel@jhtechnologies.com>, Tim Simmons <tim@overdrivenotes.com>'
 
+
+        # Now tyler sent the last message To all three (not cced)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/reply_all_two.txt'), mock_service)
         self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
         self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply(reply_all=False))
 
-        # Now we'll remove the last message in the thread
-        thread.thread['messages'].pop()
-        headers = thread.thread['messages'][-1]['payload']['headers']
         # Last message is from George -> Tyler, Tim, Micah
-        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/reply_all_three.txt'), mock_service)
         self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply(reply_all=False))
-        for i, pair in enumerate(headers):
-            if pair['name'] == 'To':
-                pair['value'] = 'Tyler Galdes <tyler@cleanfloorslockingdoors.com>'
-        headers.append({'name' : 'Cc' , 'value' : 'Micah Harrel <mharrel@jhtechnologies.com>, Tim Simmons <tim@overdrivenotes.com>'})
         self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
-        # Now that tim and micah are ccs we will skip them if we don't want to reply all
+
+        # Now last is Geroge -> Tyler, cc: tim & michah
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/reply_all_four.txt'), mock_service)
         self.assertEqual(['gbremer@yahoo.com'], thread.default_reply(reply_all=False))
+        self.assertEqual(['gbremer@yahoo.com', 'mharrel@jhtechnologies.com', 'tim@overdrivenotes.com'], thread.default_reply())
 
         # Now we load a thread that specifies a Reply-To header
         # we want to pick up that and not use the from field
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to.txt'))
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_message_with_reply_to.txt'), mock_service)
         self.assertEqual(['1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com'], thread.default_reply())
         self.assertEqual(['1he4ezedq4zcji4ahg9r6wxjc25@convo.hotpads.com'], thread.default_reply(reply_all=False))
 
     def test_salutation(self):
         # get from email we sent
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/html_encoded_message_from_us.txt'))
         mock_service = Mock()
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/html_encoded_message_from_us.txt'), mock_service)
         self.assertEqual('Hi Samah,', thread.salutation())
         # get from reply-to field
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to.txt'))
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_message_with_reply_to.txt'), mock_service)
         self.assertEqual('Hi Kimberly,', thread.salutation())
         # Our first email
         self.assertEqual('Best,<br>Tyler Galdes<br>Clean Floors & Locking Doors Team<br>', thread.signature())
         # default
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/new_application.txt'))
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/new_application.txt'), mock_service)
         self.assertEqual('Hi,', thread.salutation())
 
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to_lowercase.txt'))
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_message_with_reply_to_lowercase.txt'), mock_service)
         self.assertEqual('Hi Kimberly,', thread.salutation())
         # Our first email
         self.assertEqual('Best,<br>Tyler Galdes<br>Clean Floors & Locking Doors Team<br>', thread.signature())
@@ -363,9 +326,8 @@ class ThreadTest(unittest.TestCase):
         # some services send the field like 'Reply-to' (to is lowercase)
 
     def test_prepend_to_draft(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
         mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'), mock_service)
         first_msg = 'draft line one'
         second_msg = 'draft line two'
         draft_id = '1234'
@@ -384,22 +346,20 @@ class ThreadTest(unittest.TestCase):
         message['subject'] = 'New submission for SJSU'
         message['In-Reply-To'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
         message['References'] = "<CAAD9TVVj3xy5=oH0CpNozRUu-zKWLvQKyzBPQgE9+6nZJ1L-ZA@mail.gmail.com>"
-        payload = {'message' : {'threadId' : thread.field('id'), 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
+        payload = {'message' : {'threadId' : thread.identifier, 'raw' : base64.urlsafe_b64encode(message.as_string().encode('utf-8')).decode()}}
         # do the asserts
         mock_service.append_or_create_draft.assert_called_once_with(payload, draft_id)
         self.assertEqual(first_msg + existing_text, thread.existing_draft_text())
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         
     def test_remove_existing_draft(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_email_thread.txt'))
         mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_email_thread.txt'), mock_service)
 
         # With no draft, we shouldn't do anything on the service
         thread.remove_existing_draft()
 
         # Now we'll get a thread that has an existing draft
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
         mock_service = Mock()
         first_msg = 'draft line one'
         second_msg = 'draft line two'
@@ -408,30 +368,27 @@ class ThreadTest(unittest.TestCase):
         mock_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         mock_service.delete_draft = MagicMock()
 
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'), mock_service)
         thread.remove_existing_draft()
         mock_service.delete_draft.assert_called_once_with(draft_id)
         self.assertFalse(thread.has_existing_draft())
 
     def test_signature_with_many_emails_from_us(self):
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_back_and_forth_last_message_from_tenant.txt'))
         mock_service = Mock()
         mock_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_back_and_forth_last_message_from_tenant.txt'), mock_service)
         self.assertEqual('Best,<br>Tyler<br>', thread.signature())
 
     def test_len(self):
         # With a draft
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'))
         mock_service = Mock()
         mock_service.get_drafts = MagicMock(return_value=[{'id' : '5678', 'message' : {'id' : '2345'}}])
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'), mock_service)
         self.assertEqual(2, len(thread))
 
         # Without a draft
-        d = dict_from_fn(os.path.join(parent_path, 'thread_test_inputs/one_message_with_reply_to.txt'))
         mock_service = Mock()
-        thread = Thread(d, mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_message_with_reply_to.txt'), mock_service)
         self.assertEqual(1, len(thread))
 
 # TODO: if the draft text ends with \n\n don't append it to the text a second time
