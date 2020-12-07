@@ -8,6 +8,8 @@ import pdb
 
 from util import list_of_emails_to_string_of_emails
 from Logger import Logger
+from Thread import Thread
+from Message import GMailMessage
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
@@ -39,12 +41,14 @@ class GMailService(Logger):
         self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 30, q='label:INBOX').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
-            self.all_full_threads.append(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+            thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+            self.all_full_threads.append(thread)
 
         self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 10, q='label:unread').execute().get('threads', [])
         self.unread_full_threads = []
         for item in self.unread_threads:
-            self.unread_full_threads.append(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+            thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+            self.unread_full_threads.append(thread)
 
 
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
@@ -112,8 +116,15 @@ class GMailService(Logger):
             draft = self.service.users().drafts().create(userId=userId, body=payload).execute()
             self.li('Created new draft with id: {}'.format(draft['id']))
         self.__update_drafts(draft)
-        message = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
-        return message
+        message_data = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
+        return GMailMessage(message_data)
+
+
+    def __create_thread_from_raw(self, raw_thread):
+        messages = []
+        for message in raw_thread['messages']:
+            messages.append(GMailMessage(message))
+        return Thread(raw_thread['id'], messages, self)
 
 if __name__=='__main__':
     gs = GMailService('apply@cleanfloorslockingdoors.com')

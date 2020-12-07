@@ -9,8 +9,7 @@ from time import time
 from util import list_of_emails_to_string_of_emails
 from Logger import Logger
 import base64
-
-from Message import Message
+#from Message import GMailMessage
 
 domains = ['cleanfloorslockingdoors.com', 'cf-ld.com']
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
@@ -96,7 +95,7 @@ class Thread(Logger):
         mime_email['In-Reply-To'] = self.__last_message().message_id()
         mime_email['References'] = self.__last_message().message_id()
         payload = {'message' : {'threadId' : self.identifier, 'raw' : base64.urlsafe_b64encode(mime_email.as_string().encode('utf-8')).decode()}}
-        response = self.service.append_or_create_draft(payload, draft_id)
+        response = self.service.append_or_create_draft(payload, draft_id) # service returns a Message class
         self.__add_or_update_message(response)
 
     def prepend_to_draft(self, body, destinations):
@@ -262,12 +261,12 @@ class Thread(Logger):
                     raise Exception('{} not in list of recipients for existing draft. Existing recipients are: {}'.format(email, self.messages[-1].recipients()))
         return
 
-    def __add_or_update_message(self, new_message_data):
+    def __add_or_update_message(self, new_message):
         for i, old_message in enumerate(self.messages):
-            if old_message.id() == new_message_data['id']:
-                old_message.update_all(new_message_data)
+            if old_message.id() == new_message.id():
+                old_message.update_all(new_message)
                 return
-        self.messages.append(Message(new_message_data)) # TODO: have a message factory injected as a constructor arg
+        self.messages.append(new_message)
                 
 
 

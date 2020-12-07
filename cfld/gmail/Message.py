@@ -8,12 +8,15 @@ def extract_email(email_string):
         return email_string
     return email_string.split(' ')[-1].strip('<').strip('>')
 
-class Message(Logger):
+class GMailMessage(Logger):
     def __init__(self, fields):
-        super(Message, self).__init__(__name__)
+        super(GMailMessage, self).__init__(__name__)
         self.fields = fields
-    def update_all(self, fields):
-        self.fields = fields
+    def update_all(self, message):
+        self.fields = message.get_all_fields()
+    def get_all_fields(self):
+        return self.fields
+        
     def update_from_many(self, new_messages_fields):
         for new_fields in new_messages_fields:
             if new_fields['id'] == self.__field('id'):

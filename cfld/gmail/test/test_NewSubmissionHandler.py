@@ -7,21 +7,12 @@ import json
 from datetime import date, timedelta
 import pdb
 
-from Thread import Thread
 from NewSubmissionHandler import NewSubmissionHandler
 import NewLogger
-from Message import Message
 
 # global config
 NewLogger.global_log_level = 'DEBUG' # TODO: use the TestConfig module
 parent_path = str(pathlib.Path(__file__).parent.absolute())
-def get_thread_constructor_args(fn):
-    with open(os.path.join(parent_path, fn), 'r') as f:
-        d = json.load(f)
-    messages = []
-    for fields in d['messages']:
-        messages.append(Message(fields))
-    return d['id'], messages
 
 class NewSubmissionHandlerTest(unittest.TestCase):
     
@@ -46,7 +37,8 @@ class NewSubmissionHandlerTest(unittest.TestCase):
                 (minus_index, delay_move_in, delay_move_in_two, delay_move_in_end_one, delay_move_in_end_two, delay_move_in_end_three, ), \
                 (zero_index, open_at_desired_move_in)]
         nsh = NewSubmissionHandler(raw_availability=raw_availability, raw_availability_blurbs=raw_availability_blurbs, max_availability_index=max_index)
-        t = Thread(*get_thread_constructor_args('thread_test_inputs/new_submission_only.txt'), None)
+        t = Mock()
+        t.__len__ = MagicMock(return_value=1)
         t.short_name = MagicMock(return_value=short_name)
 
         # one room type desired open for move in
