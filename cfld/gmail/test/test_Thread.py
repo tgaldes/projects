@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, Mock
 from unittest import mock
 import unittest
 from Thread import Thread
-import pathlib
 import os
 import json
 import pdb
@@ -12,23 +11,12 @@ from email.mime.text import MIMEText
 import base64
 import NewLogger
 from Message import GMailMessage
+from TestUtil import get_thread_constructor_args
 
 
 
 # global config
 NewLogger.global_log_level = 'DEBUG' # TODO: use the TestConfig module
-parent_path = str(pathlib.Path(__file__).parent.absolute())
-
-# REFACTOR: we can extract a lot of this code into functions- suffering from copy/paste blight currently
-
-def get_thread_constructor_args(fn):
-    with open(os.path.join(parent_path, fn), 'r') as f:
-        d = json.load(f)
-    messages = []
-    for fields in d['messages']:
-        messages.append(GMailMessage(fields))
-    return d['id'], messages
-
 
 def encode_for_payload(text):
     return base64.urlsafe_b64encode(text.encode('utf-8')).decode()

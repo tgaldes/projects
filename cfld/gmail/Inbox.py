@@ -24,8 +24,8 @@ class Inbox(Logger):
                 res.append(thread)
         return res
     
-    def get_unread_threads(self):
-        return self.service.get_unread_threads()
+    '''def get_unread_threads(self):
+        return self.service.get_unread_threads()'''
 
     def get_all_threads(self):
         return self.service.get_all_threads()

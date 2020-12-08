@@ -70,7 +70,8 @@ class GMailService(Logger):
         if label_string in self.label_string_2_id:
             return self.label_string_2_id[label_string]
         return None
-
+    def get_user(self):
+        return self.user
     def get_label_name(self, label_id):
         if label_id in self.label_id_2_string:
             return self.label_id_2_string[label_id]

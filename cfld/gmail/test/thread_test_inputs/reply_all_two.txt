@@ -1,0 +1,263 @@
+{
+    "id": "17576431ab6c19b3",
+    "historyId": "696484",
+    "messages": [
+        {
+            "historyId": "696484",
+            "threadId": "17576431ab6c19b3",
+            "labelIds": [
+                "IMPORTANT",
+                "CATEGORY_PERSONAL",
+                "INBOX"
+            ],
+            "payload": {
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "Delivered-To",
+                        "value": "tyler@cleanfloorslockingdoors.com"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by 2002:a17:906:3011:0:0:0:0 with SMTP id 17csp835886ejz;        Thu, 29 Oct 2020 14:28:30 -0700 (PDT)"
+                    },
+                    {
+                        "name": "X-Google-Smtp-Source",
+                        "value": "ABdhPJxHg2KdeJEqNS4lK5fs0VTcF1QIdrQKlU4PRvo1uZxCyRUVLdul2JWvTsMsWcs8+nFUNo6T"
+                    },
+                    {
+                        "name": "X-Received",
+                        "value": "by 2002:ac8:6ec4:: with SMTP id f4mr5797758qtv.228.1604006910670;        Thu, 29 Oct 2020 14:28:30 -0700 (PDT)"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=1; a=rsa-sha256; t=1604006910; cv=none;        d=google.com; s=arc-20160816;        b=gi4J9ue/FoJ29TC8Rgq9hTo+6Ib5nbzRq9hJKaur0qBP1kvTNjWAbrELNZQw14T7es         y2IhLHNe4qFhQ+Wn+MKp0FWEjTTd51bcbhNDbZS6vV0rN5xFPDW7lZ0x2nh861HQY5tE         rWo9+/lYSe+ON7aJ6v2lAd55Lk+l82mMan4V2spa/8sPYRQcGZCwGmCFF2EMOjtYvoVX         ujva/rahP7aD7iI1iopf53n37Zh5FgqDyNRuiqKh624m8a8InBLMxW+omUCBfdu5BI1a         bysxX2+AfZ9TDjA0MqMKgCpmrl0yzb9n7pOdY4orFdLhQqg5qMzm02owBpaOvedzKTpF         dGsg=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=references:mime-version:subject:message-id:to:from:date         :dkim-signature;        bh=4ueOgvB3hExj9mP6nI4GPi2J4GFfuMaM2GfzWUxVmHw=;        b=usL5LHQplPZ29jQrEf6RNYvU3/GSIINsaalD6lUp2KOCh3DMcbRbRtzPdAeecQBDYZ         craifyzj4Igl+0/yf1I+MVPfhvurB3+cpUhqQfqUgWNsquISw4V/5mTmYJDlSMik3o6w         XXPMJOYl3xU9zwjghBpNRUmNDEfxSKAobgWHRsLDcU61LID6L4UMVer0ZqSacch3pXQF         b/RgdV+Oiv43s+4h1I4xAKOI1NYQafp6aAxqpzwVXPVc5q+Es4mVbc17fBXwQ3pByVJ6         X+kbSSsNlHiyCAM/KI5ZXesvHVUO1Jd/ZmGXOu6TtLKNsgMuIkkZLNF7j2zmrsnI3RCB         qYdQ=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=1; mx.google.com;       dkim=pass header.i=@yahoo.com header.s=s2048 header.b=DbH5Ioa1;       spf=pass (google.com: domain of gbremer@yahoo.com designates 74.6.129.124 as permitted sender) smtp.mailfrom=gbremer@yahoo.com;       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.com"
+                    },
+                    {
+                        "name": "Return-Path",
+                        "value": "<gbremer@yahoo.com>"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from sonic309-14.consmr.mail.bf2.yahoo.com (sonic309-14.consmr.mail.bf2.yahoo.com. [74.6.129.124])        by mx.google.com with ESMTPS id l19si2368055qkl.90.2020.10.29.14.28.30        for <tyler@cleanfloorslockingdoors.com>        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);        Thu, 29 Oct 2020 14:28:30 -0700 (PDT)"
+                    },
+                    {
+                        "name": "Received-SPF",
+                        "value": "pass (google.com: domain of gbremer@yahoo.com designates 74.6.129.124 as permitted sender) client-ip=74.6.129.124;"
+                    },
+                    {
+                        "name": "Authentication-Results",
+                        "value": "mx.google.com;       dkim=pass header.i=@yahoo.com header.s=s2048 header.b=DbH5Ioa1;       spf=pass (google.com: domain of gbremer@yahoo.com designates 74.6.129.124 as permitted sender) smtp.mailfrom=gbremer@yahoo.com;       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.com"
+                    },
+                    {
+                        "name": "DKIM-Signature",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1604006910; bh=4ueOgvB3hExj9mP6nI4GPi2J4GFfuMaM2GfzWUxVmHw=; h=Date:From:To:Subject:References:From:Subject; b=DbH5Ioa1vrHd+Msn/Z4Gy7lfVvCXKLimxco/b/fFCTUW808dIe7qnIF0hQYpwVEKgWCf+3HwsmbrnK/czJNDexG3ytVs3IzcYNinNZTjAtZkYzdptGXdtTHrD8zyD+jeTDta2+07W9V6dc0p8g3XvsbD7qHb0L1C02TMDaJBiDRaQ7FYSKMF1aFZnpP83E70S45loVC4XeEMu6O/1zr2GloarEJziDzt4tvcnArmh1b5VzfyAwhTDDVZu6nqD7iWXCDk52FQbGwOsBG2QZxHYrlPZiVMVaoYnAXKBnudeUFzOhr1me0paP4P7PulZYr/JN1pJ+gXJaf6lHWnfVEFKg=="
+                    },
+                    {
+                        "name": "X-SONIC-DKIM-SIGN",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1604006910; bh=luMmujuOcTCstKFx4a72lzvo5icjuXAoJvChK6G3La5=; h=Date:From:To:Subject; b=SNy5+e5wys8lF1/nQiCf1A2PXiYw54cT3BLTRs8dmlUwMqxqfJpPnFatfh5Hbv8VrYamhIo9Q3uRQ6IkC8g2uK7AGkkgQ84Kf0NdnqoxmLEI1oCN0ZQWKZpNYspq6KfZceQU71HHAiML2IUM0HvJy04if5tkIce3ChBHxRhkdi4MsEu2RvbfVv2ZX4dghUWWPUuXAhIx8aAbO6BXPjrUDQL+S72vIztNeMIfaies+ZYxM5RuLLcuSqLJ+WL8ydwvmEivL/WtB90WU5UFtTzceGHYKOzRWBMJtEKKy1c85NULyoLCW2Aq3763DtZolDZF15E7/PEyVl42n/YqkEyJlQ=="
+                    },
+                    {
+                        "name": "X-YMail-OSG",
+                        "value": "TNq3BqwVM1moYcMxuYqQS5GdpIkeXkUjVOt6dIjenWOvzCAj6o6C6qjJcAG_tiH kIAJAsT0VdDX1_cyH6WLovOj_mTqmDnJZg0CEz1FPOGZimcNwvwoSWZR9qvLvX2KU0jcvJ.ommw8 CkH5h9ycL_FuLA8IVmKDgdaMZ_kInhSnA124eSpo4dZBMq.y5cHF_GzNFowmiHu4MwaJ65qij8zn x50o8V472v4U2zgrf7scRcWJxpNIQMxe6vlm3syF7liNkcdqeBWugrwyGxVQQJclXn8ZxFx7rRq_ t9niPI3C5o_Uk8EvPIjRbSwLyqywuG4OXoHpji_3bsdUfVtUzCig8NN1zemk.0FtkkVBmAHykGF9 jBtMaY3J7I8ZhYgMJjRwWFx_yenMNAUouKkHh0DSOqPwHqD4pK7wISr1Fu3htczajNNDda.y2VSq qvds0hKUtEqewz4xpS4CnaHts6nH21VZe5uKKsKQhNcpaEGrOjsBQCMiHNYJod9DwPnRntztjh0h jPLUVjQhTyMnFa1dbT.3Ljcpx0021WEYqENSxNcGCnO9QysscTvy4QeXXODVPxINLa7sBRcFKb86 CJ_hEry2zIUQJKc4nOuWuUfx7Udns3JRsd5_AZvNbY6q79VhPXE8tV1KJu28VIVIAhOTYrFpS2E4 Szp9.DR1NymfpsaixyNg8hcdpeI6BFqz4KX5Sp4JF1dh8ihzz_QVIeTjkc_kSDR0a3tNUv4jJvTa ZsbiwpQHEprINobZM6T0KX5YH7mzidNj5c4XH089ZkRGEGY9lCJ9dgRUmZN15HC_epwEsvtT98mm LkZ87TKljNwX1xl0DURDIZ5QamNpx6lXFZdWp3B0KFPFIz9hEw01TA102uEA2Nj2ogs7fElqXUnA DDSPgfpMt0pdZntb9OeGGH_dsSBFtJS3Ee7mpY2hOJ9LlbNBPfLuVEYUyRe7GA1316k_JqHxP4kU tRrmQghRlGLW.YrxstvvyA5v62v4ubsTemDtTSHuwzyg0RCGsTxluI7eMAOp7bYvT1HbxHoNOgj6 1WwthqWrVZjdYbNcIoTMUpcA3yNoRP0Q9MRf63XEcJJjY3aFkT2.uLk3KWbEhhYzr0yL7m7Hg__c .ZzORMI4hx5NjMwD43PBDMrRPulDkj1AxJ02L9fax0vMHpqLh2QMjlpLraPQNkTWQkxgkV85ago. YWemhl7atApKm7i.G4m9nfiTRi3k05h8S4bCI56BjZDF0z80y0c6Fhad75uZQP1pSL7ysk5rBoPu QltT6iUq_8qLz0uG63fQb35XdYPbwMWvRQYq.C3MQAxZgFltoCf8eE.8UZtN8Dtdpvtb8ELJtU5J KYLdth_8frFYU8Saunbvmqh_7v0DxVJzcMG6sHAREyPlekiTbauKZ7cWUsMW4oJFciA5pqZRUgTS ZlVLB6d.kMv0U6J9cwpltEKmlxGPP1yzXZ6nUgJkUFQ.LaJEbJ54jK0S0sIEp2jJDZ6vTC86EuIz GxIH4MDVN0BWy2P.P8j1M75XF3HJxmB57u57rgL4zbaQhUz1zKsezLcmUSJ3LCrYZ0BNHnJKOGfg GxDUg6D6hcDQQWMqCRvnW0LALXUD8s1ZgjBDdKz.gExmNpj33WZ0nfl4aaZ2TUGgJUuPFyb5U1k2 k8bKYFEaCo5i7RC6LdiKNZBDn99rTh5xCcmRWqSibFGprael96Oo2qomozhjXZu94n.KKOasgw62 dbtBR4vU62sjk84FBp9TnnJIZJr2j5nXtv90gQsyIrJedVcoLkT9Mplr2X1YMCcEM2MXBhMF1bMJ Y5diXc85jpDuBnGAJ.TBrQpmlsEK5V3u.TxMXABLHpdB.oT2s0KaYYCSJGa1Ftg_Z3dJfQrJ9RJq r9JQe0.b138PtpviCVk_SZ1C_2gKPGUv3G8CcPKfwk8TIkXEeIZZURng39Zc0lDZblqI0MBvlzLY qikBT1j9zABP4dO9Bqt5cAuIgJekQFc7jYhjEY2AqPSe9Q.70YFqZCa0f8JVJ2Fk9t_4I.dXCqsj F5NcMDvhAblhbCHfFqdrU5ARJ3j4UM1k7z8kOY3q3_6B8OmXg0xGhN1ovcEf5qKLo4n.BiklfMSH AE7dLjn057rUANRqu9H6joi1ewsFBFf2cqg5Y7uvsWgxrais_d1cA7g06pvTRqnYJlm6PulicjF. P0_FPwUmcDVatzxPCM9Zc4.07xBQPg4TgvRgh9Pfi5qWCIq__mSXeOqfIzc9l11wHxdZNhkBr3mW SX35qk9dZRNPpuzO5kdJCo0_pZD8LsnE1_lBEfMv.SN4YQNkI.vgSRzwbBNBpVDqC6.lbxV1vmeb XElOXTKUwrFzS_VtZpbCvJQSGVVFOWNrbTPhVxKSOuqWsrNP0eFyUsZ6gML5K_ytY.lkVcjhuTl3 jJg1_SnTalDYyWttXcNPDdAXTY8RQKRmcBn3essoZaVE7OQ_DPbP8DlnBg3ilC0uDgAemDnaFOxt dmETZX3NnAy.v35t_NgGgT06OUVy5II7vgUPUfRMZwf6J9Ur3vzZylBaKSZABf5Ra6mYF7v8YQQj Ta3qOQEtZHFzNuijy8m.8_adi6z6ChYOjq1ljwylao4D9Z_Bmg8YX2vfgUF3bjA--"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Thu, 29 Oct 2020 21:28:30 +0000"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Thu, 29 Oct 2020 21:28:28 +0000 (UTC)"
+                    },
+                    {
+                        "name": "From",
+                        "value": "George Bremer <gbremer@yahoo.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "Tyler Galdes <tyler@cleanfloorslockingdoors.com>, Micah Harrel <mharrel@jhtechnologies.com>, Tim Simmons <tim@overdrivenotes.com>"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<59858485.273697.1604006908597@mail.yahoo.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Fernando Lopez"
+                    },
+                    {
+                        "name": "MIME-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "multipart/alternative; boundary=\"----=_Part_273696_366085672.1604006908596\""
+                    },
+                    {
+                        "name": "References",
+                        "value": "<59858485.273697.1604006908597.ref@mail.yahoo.com>"
+                    },
+                    {
+                        "name": "X-Mailer",
+                        "value": "WebService/1.1.16944 YMailNorrin Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+                    },
+                    {
+                        "name": "Content-Length",
+                        "value": "876"
+                    }
+                ],
+                "body": {
+                    "size": 0
+                },
+                "partId": "",
+                "parts": [
+                    {
+                        "body": {
+                            "size": 95,
+                            "data": "SGkgVHlsZXItDQpXZSByZWNlaXZlZCBGZXJuYW5kbydzIDMwIGRheSBub3RpY2UgdG9kYXkgc28gaGlzIGxlYXNlIHdpbGwgZW5kIDExLzI4LzIwLg0KR2VvcmdlDQo="
+                        },
+                        "filename": "",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=UTF-8"
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "7bit"
+                            }
+                        ],
+                        "partId": "0",
+                        "mimeType": "text/plain"
+                    },
+                    {
+                        "body": {
+                            "size": 503,
+                            "data": "PGh0bWw-PGhlYWQ-PC9oZWFkPjxib2R5PjxkaXYgY2xhc3M9InlhaG9vLXN0eWxlLXdyYXAiIHN0eWxlPSJmb250LWZhbWlseTpIZWx2ZXRpY2EgTmV1ZSwgSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZjtmb250LXNpemU6MTZweDsiPjxkaXYgZGlyPSJsdHIiIGRhdGEtc2V0ZGlyPSJmYWxzZSI-SGkgVHlsZXItPC9kaXY-PGRpdiBkaXI9Imx0ciIgZGF0YS1zZXRkaXI9ImZhbHNlIj48YnI-PC9kaXY-PGRpdiBkaXI9Imx0ciIgZGF0YS1zZXRkaXI9ImZhbHNlIj5XZSByZWNlaXZlZCBGZXJuYW5kbydzIDMwIGRheSBub3RpY2UgdG9kYXkgc28gaGlzIGxlYXNlIHdpbGwgZW5kIDExLzI4LzIwLjwvZGl2PjxkaXYgZGlyPSJsdHIiIGRhdGEtc2V0ZGlyPSJmYWxzZSI-PGJyPjwvZGl2PjxkaXYgZGlyPSJsdHIiIGRhdGEtc2V0ZGlyPSJmYWxzZSI-R2VvcmdlPC9kaXY-PGRpdiBkaXI9Imx0ciIgZGF0YS1zZXRkaXI9ImZhbHNlIj48YnI-PC9kaXY-PC9kaXY-PC9ib2R5PjwvaHRtbD4="
+                        },
+                        "filename": "",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=UTF-8"
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "7bit"
+                            }
+                        ],
+                        "partId": "1",
+                        "mimeType": "text/html"
+                    }
+                ],
+                "mimeType": "multipart/alternative"
+            },
+            "id": "17576431ab6c19b3",
+            "sizeEstimate": 8218,
+            "snippet": "Hi Tyler- We received Fernando&#39;s 30 day notice today so his lease will end 11/28/20. George",
+            "internalDate": "1604006908000"
+        },
+        {
+            "historyId": "696484",
+            "threadId": "17576431ab6c19b3",
+            "labelIds": [
+                "SENT"
+            ],
+            "payload": {
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "MIME-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Thu, 29 Oct 2020 21:25:40 -0400"
+                    },
+                    {
+                        "name": "References",
+                        "value": "<59858485.273697.1604006908597.ref@mail.yahoo.com> <59858485.273697.1604006908597@mail.yahoo.com>"
+                    },
+                    {
+                        "name": "In-Reply-To",
+                        "value": "<59858485.273697.1604006908597@mail.yahoo.com>"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<CAO4d5_z4uBiXwqgqBikp_TPfMyv6DzQY0UOW5Ryr5ZnjbTG2oQ@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Re: Fernando Lopez"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Tyler Galdes <tyler@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "George Bremer <gbremer@yahoo.com>, Micah Harrel <mharrel@jhtechnologies.com>, Tim Simmons <tim@overdrivenotes.com>"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "multipart/alternative; boundary=\"00000000000057261b05b2d946e7\""
+                    }
+                ],
+                "body": {
+                    "size": 0
+                },
+                "partId": "",
+                "parts": [
+                    {
+                        "body": {
+                            "size": 384,
+                            "data": "SGkgR2VvcmdlLA0KDQpTb3VuZHMgZ3JlYXQsIEknbGwgdXBkYXRlIG91ciBhZHZlcnRpc2luZyBtYXRlcmlhbHMgYWNjb3JkaW5nbHkgZm9yIGENCmRlY2VtYmVyIDFzdCBtb3ZlIGluIGRhdGUgdG8gZ2l2ZSB5b3UgZ3V5cyBzb21lIHRpbWUgdG8gbWFrZSBzdXJlIHRoZSByb29tDQppcyBvaw0KDQpCZXN0LA0KVHlsZXINCkNGJkxEDQoNCg0KT24gVGh1LCBPY3QgMjksIDIwMjAgYXQgNToyOCBQTSBHZW9yZ2UgQnJlbWVyIDxnYnJlbWVyQHlhaG9vLmNvbT4gd3JvdGU6DQoNCj4gSGkgVHlsZXItDQo-DQo-IFdlIHJlY2VpdmVkIEZlcm5hbmRvJ3MgMzAgZGF5IG5vdGljZSB0b2RheSBzbyBoaXMgbGVhc2Ugd2lsbCBlbmQgMTEvMjgvMjAuDQo-DQo-IEdlb3JnZQ0KPg0KPg0K"
+                        },
+                        "filename": "",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"UTF-8\""
+                            }
+                        ],
+                        "partId": "0",
+                        "mimeType": "text/plain"
+                    },
+                    {
+                        "body": {
+                            "size": 1067,
+                            "data": "PGRpdiBkaXI9Imx0ciI-SGkgR2VvcmdlLDxkaXY-PGJyPjwvZGl2PjxkaXY-U291bmRzIGdyZWF0LCBJJiMzOTtsbCB1cGRhdGUgb3VyIGFkdmVydGlzaW5nIG1hdGVyaWFscyBhY2NvcmRpbmdseSBmb3IgYSBkZWNlbWJlciAxc3QgbW92ZSBpbiBkYXRlIHRvIGdpdmUgeW91IGd1eXMgc29tZSB0aW1lIHRvIG1ha2Ugc3VyZSB0aGUgcm9vbSBpcyBvazwvZGl2PjxkaXY-PGJyIGNsZWFyPSJhbGwiPjxkaXY-PGRpdiBkaXI9Imx0ciIgY2xhc3M9ImdtYWlsX3NpZ25hdHVyZSIgZGF0YS1zbWFydG1haWw9ImdtYWlsX3NpZ25hdHVyZSI-PGRpdiBkaXI9Imx0ciI-QmVzdCw8ZGl2PlR5bGVyPC9kaXY-PGRpdj5DRiZhbXA7TEQ8L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48YnI-PC9kaXY-PC9kaXY-PGJyPjxkaXYgY2xhc3M9ImdtYWlsX3F1b3RlIj48ZGl2IGRpcj0ibHRyIiBjbGFzcz0iZ21haWxfYXR0ciI-T24gVGh1LCBPY3QgMjksIDIwMjAgYXQgNToyOCBQTSBHZW9yZ2UgQnJlbWVyICZsdDs8YSBocmVmPSJtYWlsdG86Z2JyZW1lckB5YWhvby5jb20iPmdicmVtZXJAeWFob28uY29tPC9hPiZndDsgd3JvdGU6PGJyPjwvZGl2PjxibG9ja3F1b3RlIGNsYXNzPSJnbWFpbF9xdW90ZSIgc3R5bGU9Im1hcmdpbjowcHggMHB4IDBweCAwLjhleDtib3JkZXItbGVmdDoxcHggc29saWQgcmdiKDIwNCwyMDQsMjA0KTtwYWRkaW5nLWxlZnQ6MWV4Ij48ZGl2PjxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OiZxdW90O0hlbHZldGljYSBOZXVlJnF1b3Q7LEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4Ij48ZGl2IGRpcj0ibHRyIj5IaSBUeWxlci08L2Rpdj48ZGl2IGRpcj0ibHRyIj48YnI-PC9kaXY-PGRpdiBkaXI9Imx0ciI-V2UgcmVjZWl2ZWQgRmVybmFuZG8mIzM5O3MgMzAgZGF5IG5vdGljZSB0b2RheSBzbyBoaXMgbGVhc2Ugd2lsbCBlbmQgMTEvMjgvMjAuPC9kaXY-PGRpdiBkaXI9Imx0ciI-PGJyPjwvZGl2PjxkaXYgZGlyPSJsdHIiPkdlb3JnZTwvZGl2PjxkaXYgZGlyPSJsdHIiPjxicj48L2Rpdj48L2Rpdj48L2Rpdj48L2Jsb2NrcXVvdGU-PC9kaXY-DQo="
+                        },
+                        "filename": "",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"UTF-8\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "partId": "1",
+                        "mimeType": "text/html"
+                    }
+                ],
+                "mimeType": "multipart/alternative"
+            },
+            "id": "175771c3f04d906b",
+            "sizeEstimate": 2368,
+            "snippet": "Hi George, Sounds great, I&#39;ll update our advertising materials accordingly for a december 1st move in date to give you guys some time to make sure the room is ok Best, Tyler CF&amp;LD On Thu, Oct",
+            "internalDate": "1604021140000"
+        }
+    ]
+}
+
