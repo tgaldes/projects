@@ -15,10 +15,11 @@ from SheetService import SheetService
 
 
 class Main:
-    def __init__(self, mail_services, sheet_service, logger):
+    def __init__(self, mail_services, sheet_service, logger, org_name):
         globals.init(sheet_service.get_lookup_info_data(), \
                      sheet_service.get_availability(), \
-                     sheet_service.get_availability_blurbs())
+                     sheet_service.get_availability_blurbs(),
+                     org_name)
         self.inboxes = {}
         for service in mail_services:
             self.inboxes[service.get_user()] = Inbox(service)
@@ -49,14 +50,11 @@ if __name__=='__main__':
         exit(1)
         
     sheet_service = SheetService('tyler@cleanfloorslockingdoors.com', mode)
-    print(sheet_service.get_lookup_info_data())
-    print(sheet_service.get_availability())
-    print(sheet_service.get_availability_blurbs())
-    print(sheet_service.get_rule_construction_data())
     services = []
     services.append(GMailService('tyler@cleanfloorslockingdoors.com'))
     services.append(GMailService('apply@cleanfloorslockingdoors.com'))
-    m = Main(services, sheet_service, logger)
+    m = Main(services, sheet_service, logger, 'cfld')
+    m.run()
 
     logger.li('Shutting down after successful run. Goodbye!')
     exit(0)

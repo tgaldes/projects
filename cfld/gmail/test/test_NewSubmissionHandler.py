@@ -7,7 +7,7 @@ import json
 from datetime import date, timedelta
 import pdb
 
-from NewSubmissionHandler import NewSubmissionHandler
+from orgs.cfld.NewSubmissionHandler import NewSubmissionHandler
 import NewLogger
 
 # global config

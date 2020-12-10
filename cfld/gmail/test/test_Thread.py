@@ -82,12 +82,13 @@ class ThreadTest(unittest.TestCase):
             mock_service.get_label_id = MagicMock(return_value=None)
             thread.set_label('this label doesn\'t exist')
 
-    def test_new_application_email(self):
+    # TODO: integration test for org specific python code
+    '''def test_new_application_email(self):
         mock_service = Mock()
         mock_service.get_label_id = MagicMock(return_value='mockid')
         mock_service.set_label = MagicMock(return_value={'messages' : [], 'labelIds' : ['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid']})
         thread = Thread(*get_thread_constructor_args('thread_test_inputs/new_application.txt'), mock_service)
-        self.assertEqual('kimaquinosmc@gmail.com', thread.get_new_application_email())
+        self.assertEqual('kimaquinosmc@gmail.com', thread.get_new_application_email())'''
 
     def test_last_ts(self):
         mock_service = Mock()

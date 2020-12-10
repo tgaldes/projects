@@ -26,7 +26,7 @@ class IntegrationTest(unittest.TestCase):
         email_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
 
         logger = Logger('TestIntegration')
-        m = Main([email_service], sheet_service, logger)
+        m = Main([email_service], sheet_service, logger, 'cfld')
         m.run()
 
         self.assertTrue('test label string' in all_threads[0].labels())

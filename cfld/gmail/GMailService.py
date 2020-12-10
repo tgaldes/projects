@@ -38,13 +38,13 @@ class GMailService(Logger):
                 pickle.dump(creds, token)
 
         self.service = build('gmail', 'v1', credentials=creds)
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 30, q='label:INBOX').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 4, q='label:INBOX').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
             thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
             self.all_full_threads.append(thread)
 
-        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 10, q='label:unread').execute().get('threads', [])
+        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 4, q='label:unread').execute().get('threads', [])
         self.unread_full_threads = []
         for item in self.unread_threads:
             thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())

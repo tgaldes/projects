@@ -138,9 +138,6 @@ class Thread(Logger):
             and self.messages[-1].has_label_id('SENT')
         return ts_true and last_msg_true
 
-    def get_email_from_new_submission(self): # TODO: maybe we leave looking in the dictionary to the caller of the above func
-        pass
-        
     # For reply all, get everything in the from, to, and cc fields that isn't our email
     def default_reply(self, reply_all=True):
         counter = -1
@@ -194,18 +191,6 @@ class Thread(Logger):
                 return label_name[len(delim):]
         return 'the campus' # TODO: are we sure?
 
-    # parse the thread created when a tenant submits their application 
-    # and return the tenant email address
-    # REFACTOR: this belongs in a CFLD utility function file that does business specific logic
-    # no need to bring in my cfld code to the rest of the application. same with NewSubmissionHandler
-    def get_new_application_email(self):
-        substring = '<tr><th>Email:</th><td>'
-        decoded_html = self.messages[0].content()
-        start_index = decoded_html.find(substring) + len(substring)
-        if start_index == -1:
-            raise Exception('Could not find the substring: {} in the first message of the thread.'.format(substring))
-        end_index = decoded_html[start_index:].index('<') + start_index
-        return decoded_html[start_index:end_index]
 
     def has_existing_draft(self):
         if self.existing_draft_text():

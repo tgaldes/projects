@@ -29,11 +29,17 @@ def link(link_dest, link_text=None):
     return '<a href="{}">{}</a>'.format(link_dest, link_text)
 
 def evaluate_expression(expression, **kwargs):
-    local_request = 'local_result = ' + expression.replace('thread', 'kwargs["thread"]')
+    local_request = __get_imports() + 'local_result = ' + expression.replace('thread', 'kwargs["thread"]')
     exec(local_request)
     return locals()['local_result']
 
 def short_name(key):
     return lookup_info('short_name', key.strip())
 
-
+def __get_imports():
+    try:
+        org_name = globals.org_name
+        if org_name == 'cfld':
+            return 'from orgs.cfld.NewSubmissionHandler import NewSubmissionHandler\nfrom orgs.cfld.util import get_new_application_email\n'
+    except:
+        return ''
