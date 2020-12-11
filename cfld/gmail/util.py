@@ -38,8 +38,10 @@ def short_name(key):
 
 def __get_imports():
     try:
-        org_name = globals.org_name
-        if org_name == 'cfld':
-            return 'from orgs.cfld.NewSubmissionHandler import NewSubmissionHandler\nfrom orgs.cfld.util import get_new_application_email\n'
+        return '\n'.join(globals.g_config['org']['imports']) + '\n'
     except:
         return ''
+
+def signature(thread):
+    return evaluate_expression('imported_signature_implementation(thread.get_user_message_count(), thread.get_user_name())', **locals())
+    

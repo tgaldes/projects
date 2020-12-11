@@ -10,18 +10,20 @@ from util import list_of_emails_to_string_of_emails
 from Logger import Logger
 from Thread import Thread
 from Message import GMailMessage
+import base64
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
-class GMailService(Logger):
-    def __init__(self, email):
+class GMailService(Logger, domains, secret_path, token_dir):
+    def __init__(self, email, domains):
         super(GMailService, self).__init__(__name__)
         self.email = email
         self.user = email.split('@')[0]
+        self.domains = domains
         self.li('Creating {} for {}'.format(__name__, email))
         creds = None
-        pickle_path = 'token.gmail.{}.pickle'.format(self.user)
+        pickle_path = os.path.join(token_dir, 'token.sheets.{}.pickle'.format(self.user))
         if os.path.exists(pickle_path):
             with open(pickle_path, 'rb') as token:
                 creds = pickle.load(token)
@@ -31,27 +33,35 @@ class GMailService(Logger):
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SCOPES)
+                    secret_path, SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open(pickle_path, 'wb') as token:
                 pickle.dump(creds, token)
 
         self.service = build('gmail', 'v1', credentials=creds)
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 4, q='label:INBOX').execute().get('threads', [])
+        self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
+        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 4, q='Your signature is required on Lease agreement - 2715 Portland Street - 5B'label:INBOX').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='Lease agreement - 1000 5th Street Southeast - 1 between Clean Floors and Locking Doors Inc., Emmet Hurley, Gerald Freeman, and 1 more is Signed and Filed!').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
-            thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+            thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
+            thread = self.__create_thread_from_raw(thread_map)
+            thread.add_attachment_to_draft(*thread.last_attachment(), ['apply@cf-ld.com'])
+            '''fn = './test/thread_test_inputs/signed_lease.txt'
+            with open(fn, 'w') as f:
+                import json
+                json.dump(thread_map, f, indent=4)'''
             self.all_full_threads.append(thread)
 
-        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 4, q='label:unread').execute().get('threads', [])
+        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 0, q='label:unread').execute().get('threads', [])
+        #self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 15, q='label:unread').execute().get('threads', [])
         self.unread_full_threads = []
         for item in self.unread_threads:
             thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
             self.unread_full_threads.append(thread)
 
 
-        self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         results = self.service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
@@ -72,6 +82,8 @@ class GMailService(Logger):
         return None
     def get_user(self):
         return self.user
+    def get_domains(self):
+        return self.domains()
     def get_label_name(self, label_id):
         if label_id in self.label_id_2_string:
             return self.label_id_2_string[label_id]
@@ -85,29 +97,36 @@ class GMailService(Logger):
     def get_all_threads(self):
         return self.all_full_threads
 
-    def set_label(self, id, payload, userId='me'):
+    def set_label(self, id, label_id, unset=False, userId='me'):
 # TODO: same expo backoff function as v1
-        message = self.service.users().threads().modify(userId=userId,
+        payload = { 'addLabelIds' : [],
+                    'removeLabelIds' : []
+                  }
+        if unset:
+            payload['removeLabelIds'] = [label_id]
+        else:
+            payload['addLabelIds'] = [label_id]
+        resp = self.service.users().threads().modify(userId=userId,
                                               id=id,
                                               body=payload).execute()
-        return message
+        if 'labelIds' in resp:
+            return resp['labelIds']
+        return []
 
     def get_drafts(self):
         return self.drafts
 
     def delete_draft(self, draft_id, userId='me'):
         return self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
-    def __update_drafts(self, new_draft):
-        for i, old_draft in enumerate(self.drafts):
-            if new_draft['id'] == old_draft['id']:
-                self.drafts[i] = new_draft # update with the new message id
-                return
-        self.drafts.append(new_draft)
+
+    def get_attachment(self, attachment_id, message_id):
+        return self.service.users().messages().attachments().get(userId='me', messageId=message_id, id=attachment_id).execute()
 
 # if id=None we will create a new draft, otherwise update draft with id = id
 # add the new draft to our internal state
 # return the MESSAGE object of the associated draft
-    def append_or_create_draft(self, payload, draft_id=None, userId='me'):
+    def append_or_create_draft(self, mime_email, thread_id, draft_id=None, userId='me'):
+        payload = {'message' : {'threadId' : thread_id, 'raw' : base64.urlsafe_b64encode(mime_email.as_string().encode('utf-8')).decode()}}
 # update an existing draft
         if draft_id:
             draft = self.service.users().drafts().update(userId=userId, id=draft_id, body=payload).execute()
@@ -118,17 +137,24 @@ class GMailService(Logger):
             self.li('Created new draft with id: {}'.format(draft['id']))
         self.__update_drafts(draft)
         message_data = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
-        return GMailMessage(message_data)
+        return GMailMessage(message_data, self)
 
 
     def __create_thread_from_raw(self, raw_thread):
         messages = []
         for message in raw_thread['messages']:
-            messages.append(GMailMessage(message))
+            messages.append(GMailMessage(message, self))
         return Thread(raw_thread['id'], messages, self)
 
+    def __update_drafts(self, new_draft):
+        for i, old_draft in enumerate(self.drafts):
+            if new_draft['id'] == old_draft['id']:
+                self.drafts[i] = new_draft # update with the new message id
+                return
+        self.drafts.append(new_draft)
+
 if __name__=='__main__':
-    gs = GMailService('apply@cleanfloorslockingdoors.com')
+    gs = GMailService('tyler@cleanfloorslockingdoors.com')
     while True:
         gs.get_next_thread()
 

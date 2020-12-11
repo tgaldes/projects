@@ -9,9 +9,10 @@ def extract_email(email_string):
     return email_string.split(' ')[-1].strip('<').strip('>')
 
 class GMailMessage(Logger):
-    def __init__(self, fields):
+    def __init__(self, fields, service):
         super(GMailMessage, self).__init__(__name__)
         self.fields = fields
+        self.service = service
     def update_all(self, message):
         self.fields = message.get_all_fields()
     def get_all_fields(self):
@@ -114,7 +115,12 @@ class GMailMessage(Logger):
         data = ''
         if 'parts' in payload:
             for part in payload['parts']:
-                data += part['body']['data']
+                if 'parts' in part:
+                    for inner_part in part['parts']:
+                        if 'data' in inner_part['body']:
+                            data += inner_part['body']['data']
+                elif 'data' in part['body']:
+                    data += part['body']['data']
         else:
             data = payload['body']['data']
         ret = base64.urlsafe_b64decode(data.encode('UTF8')).decode('UTF8')
@@ -126,3 +132,28 @@ class GMailMessage(Logger):
         if index > 0:
             return ret[:index]
         return ret
+
+    # return a list of all the (attachment data, filename), empty if no attachments
+    def attachments(self):
+        attachment_ids = []
+        attachment_fns = []
+        payload = self.__field('payload')
+        data = ''
+        if 'parts' in payload:
+            for part in payload['parts']:
+                if 'parts' in part:
+                    for inner_part in part['parts']:
+                        if 'attachmentId' in inner_part['body']:
+                            attachment_ids.append(inner_part['body']['attachmentId'])
+                            attachment_fns.append(inner_part['filename'])
+                elif 'attachmentId' in part['body']:
+                    attachment_ids.append(part['body']['attachmentId'])
+                    attachment_fns.append(part['filename'])
+        elif 'attachmentId' in payload['body']:
+            attachment_ids.append(payload['body']['attachmentId'])
+            attachment_fns.append(payload['filename'])
+        attachment_data = []
+        for attachment_id in attachment_ids:
+            attachment = self.service.get_attachment(attachment_id, self.__field('id'))
+            attachment_data.append(base64.urlsafe_b64decode(attachment['data'].encode('UTF8')))
+        return list(zip(attachment_data, attachment_fns))

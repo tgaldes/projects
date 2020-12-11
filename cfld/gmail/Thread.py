@@ -1,17 +1,9 @@
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
-import base64
-from email import encoders
 import pdb
 from time import time
 
-from util import list_of_emails_to_string_of_emails
 from Logger import Logger
-import base64
-#from Message import GMailMessage
+from MimeEmail import create_multipart
 
-domains = ['cleanfloorslockingdoors.com', 'cf-ld.com']
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
 class Thread(Logger):
     def __init__(self, identifier, messages, service):
@@ -27,33 +19,26 @@ class Thread(Logger):
     def subject(self):
         return self.messages[0].subject()
     
-    def signature(self): # TODO: how should we template this for tyler/wyatt both having signatures in the apply inbox?
+    def set_label(self, label_string, unset=False):
+        label_id = self.service.get_label_id(label_string)
+        if label_id:
+            resp = self.service.set_label(self.identifier, label_id, unset)
+            for label_id in resp:
+                for message in self.messages:
+                    message.add_label_id(label_id)
+        else:
+            raise Exception('Service cannot find a label id for label: {}'.format(label_string))
+    # return the number of messages in the thread that have been sent by the user
+    def get_user_message_count(self):
         my_email_count = 0
         for message in self.messages:
             if self.__is_my_email(message.sender()) and not message.is_draft():
                 my_email_count += 1
-        if my_email_count == 0:
-            return 'Best,<br>Tyler Galdes<br>Clean Floors & Locking Doors Team<br>'
-        elif my_email_count == 1:
-            return 'Best,<br>Tyler<br>CF&LD Team<br>'
-        return 'Best,<br>Tyler<br>'
-    def set_label(self, label_string, unset=False):
-        label_id = self.service.get_label_id(label_string)
-        if label_id:
-            payload = { 'addLabelIds' : [],
-                        'removeLabelIds' : []
-                      }
-            if unset:
-                payload['removeLabelIds'] = [label_id]
-            else:
-                payload['addLabelIds'] = [label_id]
-            resp = self.service.set_label(self.identifier, payload)
-            if 'labelIds' in resp:
-                for message in self.messages:
-                    for label_id in resp['labelIds']:
-                        message.add_label_id(label_id)
-        else:
-            raise Exception('Service cannot find a label id for label: {}'.format(label_string))
+        return my_email_count
+   
+    # if thread was constructed for tom@abc.com this would return 'tom'
+    def get_user_name(self):
+        return self.service.get_user()
 
     def label_ids(self):
         return self.messages[0].label_ids()
@@ -79,25 +64,6 @@ class Thread(Logger):
             raise Exception('Trying to remove a draft message when the last message is telling us it\'s not a draft')
         self.messages.pop()
 
-    def __add_or_update_draft(self, body, destinations):
-        self.__check_destinations_match(destinations)
-        self.ld('Draft will have body: {}'.format(body))
-        mime_email = MIMEText(body, 'html')
-        draft_id = self.existing_draft_id()
-        if draft_id:
-            if not self.messages[-1].is_draft():
-                raise Exception('Trying to remove a draft message when the last message is telling us it\'s not a draft')
-            self.messages.pop() # we'll get a new message id when we do a modify of a draft
-
-        mime_email['to'] = list_of_emails_to_string_of_emails(destinations)
-        mime_email['from'] = self.service.get_email()
-        mime_email['subject'] = self.subject()
-        mime_email['In-Reply-To'] = self.__last_message().message_id()
-        mime_email['References'] = self.__last_message().message_id()
-        payload = {'message' : {'threadId' : self.identifier, 'raw' : base64.urlsafe_b64encode(mime_email.as_string().encode('utf-8')).decode()}}
-        response = self.service.append_or_create_draft(payload, draft_id) # service returns a Message class
-        self.__add_or_update_message(response)
-
     def prepend_to_draft(self, body, destinations):
         new_body = body + self.existing_draft_text()
         self.__add_or_update_draft(new_body, destinations)
@@ -105,6 +71,45 @@ class Thread(Logger):
     def append_to_draft(self, body, destinations):
         new_body = self.existing_draft_text() + body
         self.__add_or_update_draft(new_body, destinations)
+
+    def last_attachment(self):
+        for message in reversed(self.messages):
+            for attachment_data, attachment_fn in reversed(message.attachments()):
+                return attachment_data, attachment_fn
+        return ''
+    def add_attachment_to_draft(self, data, fn, destinations):
+        self.__check_destinations_match(destinations)
+        if not data:
+            self.le('Empty attachment passed, no action will be taken')
+            return
+        draft_id = self.existing_draft_id()
+        self.__try_remove_draft_before_update(draft_id)
+
+        existing_body = self.existing_draft_text()
+        existing_attachments = self.existing_draft_attachments()
+        existing_attachments.append((data, fn))
+        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), existing_body, existing_attachments)
+
+        response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
+        self.__add_or_update_message(response)
+
+    def __add_or_update_draft(self, body, destinations):
+        self.__check_destinations_match(destinations)
+        self.ld('Draft will have body: {}'.format(body))
+        draft_id = self.existing_draft_id()
+        self.__try_remove_draft_before_update(draft_id)
+
+        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), existing_body, self.existing_attachments)
+        response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
+        self.__add_or_update_message(response)
+
+    def __try_remove_draft_before_update(self, draft_id):
+        if draft_id:
+            if not self.messages[-1].is_draft():
+                raise Exception('Trying to remove a draft message when the last message is telling us it\'s not a draft')
+            self.messages.pop() # we'll get a new message id when we do a modify of a draft
+
+        
 
     # Get the greeting we want to use for messages sent to the thread
     # If we are sending to multiple people, something like 'Hi all,\n\n'
@@ -206,13 +211,11 @@ class Thread(Logger):
     def last_message_text(self):
         return self.__last_message().content()
 
-    # Decode the payload of the message, useful when getting emails that contain a lot
-
     def __is_my_email(self, test_email):
         if not test_email:
             return False
         my_email = self.service.get_email()
-        if test_email.split('@')[1] in domains \
+        if test_email.split('@')[1] in self.service.get_domains() \
                 and test_email.split('@')[0] == my_email.split('@')[0]:
             return True
         return False
@@ -229,6 +232,10 @@ class Thread(Logger):
         if self.messages[-1].is_draft():
             return self.messages[-1].content()
         return ''
+    def existing_draft_attachments(self):
+        if self.messages[-1].is_draft():
+            return self.messages[-1].attachments()
+        return []
 
     def existing_draft_id(self):
         if self.messages[-1].is_draft():

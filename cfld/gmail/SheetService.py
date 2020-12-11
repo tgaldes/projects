@@ -12,16 +12,16 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 # This class is kept very simple for now
 # Will just load and make available a 2D array of the prod_rules named sheet
 class SheetService(Logger):
-    def __init__(self, email, sheet_name):
+    def __init__(self, email, sheet_name, spreadsheet_id, secret_path, token_dir):
         super(SheetService, self).__init__(__name__)
         self.li('Creating {} for {}'.format(__name__, email))
 
-        self.spreadsheet_id = '1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI'
+        self.spreadsheet_id = spreadsheet_id
 
 
         self.user = email.split('@')[0]
         creds = None
-        pickle_path = 'token.sheets.{}.pickle'.format(self.user)
+        pickle_path = os.path.join(token_dir, 'token.sheets.{}.pickle'.format(self.user))
         if os.path.exists(pickle_path):
             with open(pickle_path, 'rb') as token:
                 creds = pickle.load(token)
@@ -31,7 +31,7 @@ class SheetService(Logger):
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SCOPES)
+                    secret_path, SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open(pickle_path, 'wb') as token:

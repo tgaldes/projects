@@ -1,6 +1,6 @@
 import pdb
 import sys
-
+import json
 
 import globals
 from Logger import Logger
@@ -40,20 +40,22 @@ class Main:
 if __name__=='__main__':
     logger = Logger('main')
     if len(sys.argv) < 2:
-        logger.li('No mode specified, defaulting to using test rules.')
-        mode = 'test'
-    else:
-        mode = sys.argv[1]
-    supported_modes = ['test', 'prod']
-    if mode not in supported_modes:
-        logger.lf('{} is not in supported modes: {}, exiting'.format(mode, supported_modes))
+        logger.li('No path specified for json config, exiting')
         exit(1)
-        
-    sheet_service = SheetService('tyler@cleanfloorslockingdoors.com', mode)
-    services = []
-    services.append(GMailService('tyler@cleanfloorslockingdoors.com'))
-    services.append(GMailService('apply@cleanfloorslockingdoors.com'))
-    m = Main(services, sheet_service, logger, 'cfld')
+    fn = sys.argv[1]
+    with open(fn, 'r') as f:
+        config = json.load(f)
+    
+
+    if config['type'] == 'gmail':
+        sheet_service = SheetService(config['sheet_service_email', config['sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
+        services = []
+        for email in config['emails']:
+            services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))
+    else:
+        logger.lf('Only gmail type supported, exiting')
+        exit(1)
+    m = Main(services, sheet_service, logger, config)
     m.run()
 
     logger.li('Shutting down after successful run. Goodbye!')
