@@ -1,12 +1,10 @@
 from unittest.mock import MagicMock, Mock
 import unittest
 import os
-from Matchers import *
-from Thread import Thread
+from framework.Matchers import *
+from test.TestConfig import parent_path
 
 
-import pathlib
-parent_path = str(pathlib.Path(__file__).parent.absolute())
 class SubjectMatcherTest(unittest.TestCase):
 
     def test_throw_on_empty_init(self):
@@ -15,19 +13,19 @@ class SubjectMatcherTest(unittest.TestCase):
 
     def test_no_match(self):
         sm = SubjectMatcher('test subject')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.subject = MagicMock(return_value='')
         self.assertFalse(sm.matches(thread))
 
     def test_match(self):
         sm = SubjectMatcher('test subject')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.subject = MagicMock(return_value='test subject')
         self.assertTrue(sm.matches(thread))
 
     def test_raise_on_no_matching_groups(self):
         sm = SubjectMatcher('test subject')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.subject = MagicMock(return_value='no match')
         with self.assertRaises(Exception):
             sm.get_matching_groups({})
@@ -41,7 +39,7 @@ class LabelMatcherTest(unittest.TestCase):
 
     def test_match(self):
         lm = LabelMatcher('automation')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.labels = MagicMock(return_value=['no match', 'automation'])
         self.assertTrue(lm.matches(thread))
         self.assertEqual((), lm.get_matching_groups(thread))
@@ -54,7 +52,7 @@ class LabelMatcherTest(unittest.TestCase):
 
     def test_raise_on_no_matching_groups(self):
         lm = LabelMatcher('label')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.labels = MagicMock(return_value=['no match', 'still no match'])
         self.assertFalse(lm.matches(thread))
         with self.assertRaises(Exception):
@@ -69,7 +67,7 @@ class BodyMatcherTest(unittest.TestCase):
 
     def test_match(self):
         bm = BodyMatcher('.*automation.*')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.last_message_text = MagicMock(return_value='this message has automation in it')
         self.assertTrue(bm.matches(thread))
         self.assertEqual((), bm.get_matching_groups(thread))
@@ -89,7 +87,7 @@ class BodyMatcherTest(unittest.TestCase):
 
     def test_raise_on_no_matching_groups(self):
         bm = BodyMatcher('.*automation.*')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.last_message_text = MagicMock(return_value='this is not the phrase you are looking for')
         self.assertFalse(bm.matches(thread))
         with self.assertRaises(Exception):
@@ -97,7 +95,7 @@ class BodyMatcherTest(unittest.TestCase):
 
     def test_match_really_big_haystack(self):
         bm = BodyMatcher('.*additional details.*')
-        thread = Thread('testid', [], None)
+        thread = Mock()
         with open(os.path.join(parent_path, 'matcher_test_inputs/big_haystack.txt'), 'r') as f:
             haystack = str(f.read())
         thread.last_message_text = MagicMock(return_value=haystack)
@@ -114,7 +112,7 @@ class ExpressionMatcherTest(unittest.TestCase):
             em = ExpressionMatcher('')
 
     def test_all(self):
-        thread = Thread('testid', [], None)
+        thread = Mock()
 
         em = ExpressionMatcher('False')
         self.assertFalse(em.matches(thread))

@@ -2,29 +2,24 @@ import pdb
 import sys
 import json
 
-import globals
-from Logger import Logger
-from GMailService import GMailService
-from Actions import *
-from Matchers import *
-from RuleHolder import RuleHolder
-from Thread import Thread
-from Inbox import Inbox
-from RuleFactory import RuleFactory
-from SheetService import SheetService
+import framework.globals
+from framework.Logger import Logger
+from services.gmail.GMailService import GMailService
+from framework.RuleHolder import RuleHolder
+from framework.Thread import Thread
+from framework.Inbox import Inbox
+from framework.RuleFactory import RuleFactory
+from services.gmail.SheetService import SheetService
 
 
 class Main:
-    def __init__(self, mail_services, sheet_service, logger, org_name):
-        globals.init(sheet_service.get_lookup_info_data(), \
-                     sheet_service.get_availability(), \
-                     sheet_service.get_availability_blurbs(),
-                     org_name)
+    def __init__(self, mail_services, logger, config):
+        framework.globals.init(config)
         self.inboxes = {}
         for service in mail_services:
             self.inboxes[service.get_user()] = Inbox(service)
 
-        self.rule_factory = RuleFactory(sheet_service.get_rule_construction_data(), self.inboxes)
+        self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes)
         self.logger = logger
 
     def run(self):
@@ -48,14 +43,13 @@ if __name__=='__main__':
     
 
     if config['type'] == 'gmail':
-        sheet_service = SheetService(config['sheet_service_email', config['sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
         services = []
         for email in config['emails']:
             services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))
     else:
         logger.lf('Only gmail type supported, exiting')
         exit(1)
-    m = Main(services, sheet_service, logger, config)
+    m = Main(services, logger, config)
     m.run()
 
     logger.li('Shutting down after successful run. Goodbye!')

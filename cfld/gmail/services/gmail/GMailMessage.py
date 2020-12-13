@@ -1,6 +1,6 @@
 import base64
 import pdb
-from Logger import Logger
+from framework.Logger import Logger
 
 # Message specific utils
 def extract_email(email_string):

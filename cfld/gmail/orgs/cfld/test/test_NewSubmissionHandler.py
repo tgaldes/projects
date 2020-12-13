@@ -8,11 +8,7 @@ from datetime import date, timedelta
 import pdb
 
 from orgs.cfld.NewSubmissionHandler import NewSubmissionHandler
-import NewLogger
-
-# global config
-NewLogger.global_log_level = 'DEBUG' # TODO: use the TestConfig module
-parent_path = str(pathlib.Path(__file__).parent.absolute())
+import test.TestConfig
 
 class NewSubmissionHandlerTest(unittest.TestCase):
     

@@ -1,29 +1,28 @@
-from __future__ import print_function
 import pickle
+import pdb
 import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-import pdb
-
-from util import list_of_emails_to_string_of_emails
-from Logger import Logger
-from Thread import Thread
-from Message import GMailMessage
 import base64
+
+from framework.util import list_of_emails_to_string_of_emails
+from framework.Logger import Logger
+from framework.Thread import Thread
+from services.gmail.GMailMessage import GMailMessage
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
-class GMailService(Logger, domains, secret_path, token_dir):
-    def __init__(self, email, domains):
+class GMailService(Logger):
+    def __init__(self, email, domains, secret_path, token_dir):
         super(GMailService, self).__init__(__name__)
         self.email = email
         self.user = email.split('@')[0]
         self.domains = domains
         self.li('Creating {} for {}'.format(__name__, email))
         creds = None
-        pickle_path = os.path.join(token_dir, 'token.sheets.{}.pickle'.format(self.user))
+        pickle_path = os.path.join(token_dir, 'token.gmail.{}.pickle'.format(self.user))
         if os.path.exists(pickle_path):
             with open(pickle_path, 'rb') as token:
                 creds = pickle.load(token)
@@ -42,14 +41,14 @@ class GMailService(Logger, domains, secret_path, token_dir):
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
         #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 4, q='Your signature is required on Lease agreement - 2715 Portland Street - 5B'label:INBOX').execute().get('threads', [])
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='Lease agreement - 1000 5th Street Southeast - 1 between Clean Floors and Locking Doors Inc., Emmet Hurley, Gerald Freeman, and 1 more is Signed and Filed!').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 2, q='New submission for sjsu').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
             thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
+            pdb.set_trace()
             thread = self.__create_thread_from_raw(thread_map)
-            thread.add_attachment_to_draft(*thread.last_attachment(), ['apply@cf-ld.com'])
-            '''fn = './test/thread_test_inputs/signed_lease.txt'
-            with open(fn, 'w') as f:
+            fn = './test/thread_test_inputs/signed_lease.txt'
+            '''with open(fn, 'w') as f:
                 import json
                 json.dump(thread_map, f, indent=4)'''
             self.all_full_threads.append(thread)
@@ -154,7 +153,7 @@ class GMailService(Logger, domains, secret_path, token_dir):
         self.drafts.append(new_draft)
 
 if __name__=='__main__':
-    gs = GMailService('tyler@cleanfloorslockingdoors.com')
+    gs = GMailService('apply@cleanfloorslockingdoors.com', ["cleanfloorslockingdoors.com", "cf-ld.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")
     while True:
         gs.get_next_thread()
 

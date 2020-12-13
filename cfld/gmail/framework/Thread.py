@@ -1,8 +1,8 @@
 import pdb
 from time import time
 
-from Logger import Logger
-from MimeEmail import create_multipart
+from framework.Logger import Logger
+from framework.MimeEmail import create_multipart
 
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
 class Thread(Logger):
@@ -83,12 +83,15 @@ class Thread(Logger):
             self.le('Empty attachment passed, no action will be taken')
             return
         draft_id = self.existing_draft_id()
-        self.__try_remove_draft_before_update(draft_id)
-
         existing_body = self.existing_draft_text()
         existing_attachments = self.existing_draft_attachments()
         existing_attachments.append((data, fn))
         mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), existing_body, existing_attachments)
+        try:
+            self.remove_existing_draft()
+        except:
+            pass
+
 
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
         self.__add_or_update_message(response)
@@ -97,19 +100,14 @@ class Thread(Logger):
         self.__check_destinations_match(destinations)
         self.ld('Draft will have body: {}'.format(body))
         draft_id = self.existing_draft_id()
-        self.__try_remove_draft_before_update(draft_id)
 
-        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), existing_body, self.existing_attachments)
+        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), body, self.existing_draft_attachments())
+        try:
+            self.remove_existing_draft()
+        except:
+            pass
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
         self.__add_or_update_message(response)
-
-    def __try_remove_draft_before_update(self, draft_id):
-        if draft_id:
-            if not self.messages[-1].is_draft():
-                raise Exception('Trying to remove a draft message when the last message is telling us it\'s not a draft')
-            self.messages.pop() # we'll get a new message id when we do a modify of a draft
-
-        
 
     # Get the greeting we want to use for messages sent to the thread
     # If we are sending to multiple people, something like 'Hi all,\n\n'
@@ -120,7 +118,7 @@ class Thread(Logger):
     def salutation(self):
         # If there is a message we sent in the thread, use that
         base = 'Hi{},'
-        for message in reversed(self.messages):
+        for message in self.messages:
             if not message.is_draft() and self.__is_my_email(message.sender()):
                 return message.content().split(',')[0] + ','
         # Otherwise if we have a reply-to in the first message of the thread, pull the first name from that
@@ -176,28 +174,19 @@ class Thread(Logger):
     # return the epoch time of the last message sent or received
     def last_ts(self):
         return self.messages[-1].ts()
-
-    # We'll need this one so that we can do matching against the contents of the mesasges we get from zillow/zumper/rentpath
-    # We want to be able to populate the draft response that answers their questions they might type
-    # in the site dialouge before sending it to us
-    # This is going to be useful when implementing the body regex matcher
-    # actually, if we are just doing a regex we don't give a shit if there's html
-    # around it :)
-    def generic_decode(self):
-        pass
     
     # Retun a string representing the short name of the school
     # empty string if we can't find a label matching 'Schools/.*'
-    def short_name(self):
+    '''def short_name(self): # TODO: move to cfld
         delim = 'Schools/'
         for label_id in self.messages[0].label_ids():
             label_name = self.service.get_label_name(label_id)
             if label_name and label_name.find(delim) == 0:
                 return label_name[len(delim):]
-        return 'the campus' # TODO: are we sure?
+        return 'the campus' # TODO: are we sure?'''
 
 
-    def has_existing_draft(self):
+    def has_draft(self):
         if self.existing_draft_text():
             return True
         return False
@@ -214,9 +203,9 @@ class Thread(Logger):
     def __is_my_email(self, test_email):
         if not test_email:
             return False
-        my_email = self.service.get_email()
+        user = self.service.get_user()
         if test_email.split('@')[1] in self.service.get_domains() \
-                and test_email.split('@')[0] == my_email.split('@')[0]:
+                and test_email.split('@')[0] == user:
             return True
         return False
 

@@ -1,8 +1,6 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-import os
-from Matchers import *
-from Inbox import Inbox
+from framework.Inbox import Inbox
 
 
 class InboxTest(unittest.TestCase):

@@ -1,8 +1,6 @@
-from unittest.mock import MagicMock, Mock
-from unittest import mock
 import unittest
 
-from LookupInfo import LookupInfo
+from framework.LookupInfo import LookupInfo
 
 class LookupInfoTest(unittest.TestCase):
 

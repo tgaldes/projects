@@ -1,9 +1,5 @@
 import pdb
-
-from GMailService import GMailService
-from Logger import Logger
-
-
+from framework.Logger import Logger
 
 class Inbox(Logger):
     def __init__(self, service):

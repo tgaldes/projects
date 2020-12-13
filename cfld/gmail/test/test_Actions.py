@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-from Actions import *
-from Thread import Thread
-import NewLogger
-NewLogger.global_log_level = 'DEBUG'
+import test.TestConfig
+from framework.Actions import *
+from framework.Thread import Thread
 
 class LabelActionTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):

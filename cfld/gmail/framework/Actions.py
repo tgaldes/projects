@@ -1,10 +1,10 @@
 import pdb
 from interface import implements
 
-from Interfaces import IAction
-from util import evaluate_expression
-from Thread import Thread
-from Logger import Logger
+from framework.Interfaces import IAction
+from framework.util import evaluate_expression
+from framework.Thread import Thread
+from framework.Logger import Logger
 
 class LabelAction(implements(IAction), Logger):
     def __init__(self, value, unset=False):

@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 import pdb
 
-from Logger import Logger
+from framework.Logger import Logger
 
 def room_types_to_string(types, joiner='and'):
     if len(types) == 1:

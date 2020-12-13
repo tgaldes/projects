@@ -2,7 +2,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
-from util import list_of_emails_to_string_of_emails
+from framework.util import list_of_emails_to_string_of_emails
 
 
 def create_multipart(destinations, from_email, subject, in_reply_to, references, body, attachments, body_encoding='html'):

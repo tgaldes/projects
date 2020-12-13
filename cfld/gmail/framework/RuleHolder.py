@@ -1,6 +1,6 @@
 from interface import implements
-from Logger import Logger
-from Interfaces import IRule
+from framework.Logger import Logger
+from framework.Interfaces import IRule
 
 class RuleHolder(implements(IRule), Logger):
     row_num = 2

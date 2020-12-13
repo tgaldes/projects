@@ -1,12 +1,11 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-import NewLogger
-NewLogger.global_log_level = 'DEBUG'
+import test.TestConfig
 
-from RuleFactory import RuleFactory
-from Matchers import *
-from Actions import *
-from RuleGroup import *
+from framework.RuleFactory import RuleFactory
+from framework.RuleGroup import IfElseRuleGroup, IfAnyRuleGroup, SingleRuleGroup
+from framework.Matchers import BodyMatcher, ComboMatcher, SubjectMatcher, AllMatcher, LabelMatcher
+from framework.Actions import LabelAction, DraftAction, RedirectAction
 
 class RuleFactoryTest(unittest.TestCase):
     header = ['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group', 'group_type', 'rule_type']
