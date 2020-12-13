@@ -53,12 +53,5 @@ if __name__=='__main__':
     m.run()
 
     logger.li('Shutting down after successful run. Goodbye!')
-    exit(0)
-
-# We can have hardcoded actions available via command line such as:
-# remove all drafts
-# remove all of X label
-
-
 
 

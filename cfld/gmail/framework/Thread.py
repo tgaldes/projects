@@ -53,16 +53,17 @@ class Thread(Logger):
             return len(self.messages) - 1
         return len(self.messages)
 
-    def remove_existing_draft(self):
+    def remove_existing_draft(self, delete_at_service_level=True):
         draft_id = self.existing_draft_id()
         if not draft_id:
             self.lw('No existing draft to remove. Thread id: {} subject: {}'.format(self.identifier, self.subject()))
             return
-        self.service.delete_draft(draft_id)
         # remove the draft from local copy
         if not self.messages[-1].is_draft():
             raise Exception('Trying to remove a draft message when the last message is telling us it\'s not a draft')
         self.messages.pop()
+        if delete_at_service_level:
+            self.service.delete_draft(draft_id)
 
     def prepend_to_draft(self, body, destinations):
         new_body = body + self.existing_draft_text()
@@ -88,10 +89,9 @@ class Thread(Logger):
         existing_attachments.append((data, fn))
         mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), existing_body, existing_attachments)
         try:
-            self.remove_existing_draft()
+            self.remove_existing_draft(False) # Remove our copy but not the service copy
         except:
             pass
-
 
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
         self.__add_or_update_message(response)
@@ -103,7 +103,7 @@ class Thread(Logger):
 
         mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), body, self.existing_draft_attachments())
         try:
-            self.remove_existing_draft()
+            self.remove_existing_draft(False) # Remove our copy but not the service copy
         except:
             pass
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class

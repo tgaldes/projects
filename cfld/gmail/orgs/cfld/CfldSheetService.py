@@ -8,19 +8,19 @@ class CfldSheetService(SheetService):
         try:
             return self.lookup_info_data
         except:
-            self.lookup_info_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='lookup_info!A1:C100'.format(sheet_name)).execute().get('values', [])
+            self.lookup_info_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='lookup_info!A1:C100').execute().get('values', [])
         return self.lookup_info_data
 
     def get_availability(self):
         try:
             return self.availability
         except:
-            self.availability = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='availability!A1:E100'.format(sheet_name)).execute().get('values', [])
+            self.availability = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='availability!A1:E100').execute().get('values', [])
         return self.availability
 
     def get_availability_blurbs(self):
         try:
             return self.availability_blurbs
         except:
-            self.availability_blurbs = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='availability!I1:N3'.format(sheet_name)).execute().get('values', [])
+            self.availability_blurbs = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='availability!I1:N3').execute().get('values', [])
         return self.availability_blurbs

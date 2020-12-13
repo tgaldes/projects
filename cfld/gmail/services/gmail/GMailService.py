@@ -40,21 +40,18 @@ class GMailService(Logger):
 
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
-        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 4, q='Your signature is required on Lease agreement - 2715 Portland Street - 5B'label:INBOX').execute().get('threads', [])
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 2, q='New submission for sjsu').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
             thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
-            pdb.set_trace()
             thread = self.__create_thread_from_raw(thread_map)
-            fn = './test/thread_test_inputs/signed_lease.txt'
-            '''with open(fn, 'w') as f:
+            '''fn = './test/thread_test_inputs/signed_lease.txt'
+            with open(fn, 'w') as f:
                 import json
                 json.dump(thread_map, f, indent=4)'''
             self.all_full_threads.append(thread)
 
-        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 0, q='label:unread').execute().get('threads', [])
-        #self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 15, q='label:unread').execute().get('threads', [])
+        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='label:unread').execute().get('threads', [])
         self.unread_full_threads = []
         for item in self.unread_threads:
             thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
@@ -82,7 +79,7 @@ class GMailService(Logger):
     def get_user(self):
         return self.user
     def get_domains(self):
-        return self.domains()
+        return self.domains
     def get_label_name(self, label_id):
         if label_id in self.label_id_2_string:
             return self.label_id_2_string[label_id]
@@ -128,8 +125,11 @@ class GMailService(Logger):
         payload = {'message' : {'threadId' : thread_id, 'raw' : base64.urlsafe_b64encode(mime_email.as_string().encode('utf-8')).decode()}}
 # update an existing draft
         if draft_id:
-            draft = self.service.users().drafts().update(userId=userId, id=draft_id, body=payload).execute()
-            self.li('Appended to existing draft with id: {}'.format(draft_id))
+            try:
+                draft = self.service.users().drafts().update(userId=userId, id=draft_id, body=payload).execute()
+                self.li('Appended to existing draft with id: {}'.format(draft_id))
+            except:
+                pdb.set_trace()
 # create a new draft!
         else:
             draft = self.service.users().drafts().create(userId=userId, body=payload).execute()

@@ -1,7 +1,6 @@
-from orgs.cfld.CfldOrg import CfldOrg
+import pdb
 
-# TODO: there should be a cleaner way to do this
-org = None
+from orgs.cfld.CfldOrg import CfldOrg
 
 # parse the thread created when a tenant submits their application 
 # and return the tenant email address
@@ -57,6 +56,7 @@ def short_name(key):
     return org.lookup_info('short_name', key.strip())
 
 def org_init(config):
+    global org
     org = CfldOrg(config)
     return org
     

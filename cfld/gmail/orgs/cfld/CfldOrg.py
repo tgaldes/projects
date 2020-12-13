@@ -9,9 +9,9 @@ class CfldOrg(Logger, implements(IOrg)):
     def __init__(self, config):
         super(CfldOrg, self).__init__(__name__)
         self.ss = CfldSheetService(config['sheet_service_email'], config['sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
-        self.nsh = NewSubmissionHandler(ss.get_availability(), \
-                                   ss.get_availability_blurbs())
-        self.li = LookupInfo(ss.get_lookup_info_data())
+        self.nsh = NewSubmissionHandler(self.ss.get_availability(), \
+                                   self.ss.get_availability_blurbs())
+        self.li = LookupInfo(self.ss.get_lookup_info_data())
         self.config = config
     # IOrg
     def get_rule_construction_data(self):
