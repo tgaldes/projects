@@ -2,9 +2,9 @@ from interface import implements
 import copy
 import pdb
 
-from RuleHolder import RuleHolder
-from Interfaces import IRule
-from Logger import Logger
+from framework.RuleHolder import RuleHolder
+from framework.Interfaces import IRule
+from framework.Logger import Logger
 
 
 # When we have more enum type values we can extract them somewhere else

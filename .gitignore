@@ -1,5 +1,4 @@
 *.pickle
-*.json
 *.pyc
 *.swp
 airbnb/

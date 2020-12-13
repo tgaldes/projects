@@ -1,4 +1,4 @@
-import NewLogger
+import framework.NewLogger as NewLogger
 import pathlib
 # global config
 NewLogger.global_log_level = 'DEBUG'

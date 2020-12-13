@@ -1,6 +1,6 @@
 import pdb
 
-from Logger import Logger
+from framework.Logger import Logger
 
 
 class LookupInfo(Logger):

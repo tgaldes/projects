@@ -2,9 +2,9 @@ import re
 import pdb
 from interface import implements
 
-from Interfaces import IMatcher
-from Logger import Logger
-from util import evaluate_expression
+from framework.Interfaces import IMatcher
+from framework.Logger import Logger
+from framework.util import evaluate_expression
 
 
 class RegexMatcher(Logger):

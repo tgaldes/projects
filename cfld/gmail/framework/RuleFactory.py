@@ -1,9 +1,10 @@
-from Matchers import *
-from Actions import *
 import collections
-from Logger import Logger
-from RuleHolder import RuleHolder
-from RuleGroup import IfAnyRuleGroup, IfElseRuleGroup, SingleRuleGroup
+
+from framework.Matchers import *
+from framework.Actions import *
+from framework.Logger import Logger
+from framework.RuleHolder import RuleHolder
+from framework.RuleGroup import IfAnyRuleGroup, IfElseRuleGroup, SingleRuleGroup
 
 def row_is_empty(row):
     for item in row:

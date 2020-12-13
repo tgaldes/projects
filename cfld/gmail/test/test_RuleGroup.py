@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-import NewLogger
-NewLogger.global_log_level = 'DEBUG'
+import test.TestConfig
 
-from RuleGroup import *
+from framework.RuleGroup import *
 
 rule_group_type_enums = ['yes', 'yes2']
 class TestRuleGroupBase(RuleGroup):

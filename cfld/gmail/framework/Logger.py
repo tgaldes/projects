@@ -1,6 +1,5 @@
 import logging
-from NewLogger import getLogger
-import pdb
+from framework.NewLogger import getLogger
 
 class Logger:
     def __init__(self, parent_name):

@@ -14,3 +14,8 @@ class IRule(Interface):
     def process(self, thread):
         pass
 
+class IOrg(Interface):
+    def get_rule_construction_data(self):
+        pass
+    def get_imports(self):
+        pass

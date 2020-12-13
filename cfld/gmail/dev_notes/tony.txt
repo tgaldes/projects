@@ -19,8 +19,10 @@ projects-
     - reference - https://stackoverflow.com/questions/41407414/convert-string-to-enum-in-python
     - we can use the enum value instead of hardcoding the strings in RuleFactory and RuleGroup.py
 
-3) new test cases: 
+3) group numbers in rulefactory- enforce a blank line in the sheet to separate rule groups instead of forcing the user to specify a monotonically increasing list of numbers
+
+4) new test cases: 
+    - instead of importing GMailMessage in the thread unit tests we should be mocking the message class there
     - use ./run_coverage.sh to see a report of which lines we don't hit in our unit tests 
     - write test cases to hit those lines in each file
 
-4) group numbers in rulefactory- enforce a blank line in the sheet to separate rule groups instead of forcing the user to specify a monotonically increasing list of numbers

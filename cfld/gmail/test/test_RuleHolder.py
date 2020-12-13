@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-import NewLogger
-NewLogger.global_log_level = 'DEBUG'
+import test.TestConfig
 
-from RuleHolder import RuleHolder
+from framework.RuleHolder import RuleHolder
 
 class RuleHolderTest(unittest.TestCase):
 
