@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, Mock
 import unittest
 import test.TestConfig
 from framework.Actions import *
-from framework.Thread import Thread
 
 class LabelActionTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -19,27 +18,27 @@ class LabelActionTest(unittest.TestCase):
 
     def test_set_label_no_matches(self):
         la = LabelAction(self.label_one)
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.set_label = MagicMock()
         la.process(thread, [])
         thread.set_label.assert_called_once_with(self.label_one_unwrapped, unset=False)
 
     def test_set_label_with_match(self):
         la = LabelAction(self.label_two)
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.set_label = MagicMock()
         la.process(thread, self.matches)
         thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=False)
 
         la = LabelAction(self.label_three)
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.set_label = MagicMock()
         la.process(thread, self.matches)
         thread.set_label.assert_called_once_with('label three ' + self.matches[1], unset=False)
 
     def test_unset_label(self):
         la = LabelAction(self.label_two, unset=True)
-        thread = Thread('testid', [], None)
+        thread = Mock()
         thread.set_label = MagicMock()
         la.process(thread, self.matches)
         thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=True)
@@ -159,4 +158,19 @@ class EmptyActionTest(unittest.TestCase):
         # Do nothing!
         ea.process(None, None)
         
+
+class AttachmentActionTest(unittest.TestCase):
+
+    def test_basic(self):
+        eval_dest = 'tgaldes@gmail.com,another@asdf.com'
+        dest = '"' + eval_dest + '"'
+        fa = AttachmentAction(dest)
+        thread = Mock()
+        last_message = 'last message'
+        attachment_data = 'data'
+        attachment_fn = 'fn'
+        thread.last_attachment = MagicMock(return_value=(attachment_data, attachment_fn))
+        thread.add_attachment_to_draft = MagicMock()
+        fa.process(thread, ())
+        thread.add_attachment_to_draft.assert_called_once_with(attachment_data, attachment_fn, eval_dest)
 

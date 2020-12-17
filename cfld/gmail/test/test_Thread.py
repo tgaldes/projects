@@ -402,6 +402,16 @@ class ThreadTest(unittest.TestCase):
         mock_service.delete_draft.assert_called_once_with(draft_id)
         self.assertFalse(thread.has_draft())
 
+    def test_age_in_days(self):
+        mock_service = Mock()
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/message_from_tenant_then_message_and_draft_from_us.txt'), mock_service)
+        zero_ts = 1604096012000
+        self.assertEqual(0, thread.age_in_days(now_f=lambda: thread.last_ts()))
+        self.assertEqual(1, thread.age_in_days(now_f=lambda: thread.last_ts() + 86400))
+        self.assertEqual(2, thread.age_in_days(now_f=lambda: thread.last_ts() + 86400 * 2))
+        self.assertEqual(2, thread.age_in_days(now_f=lambda: thread.last_ts() + 86400 * 2 + 20))
+
+
     def test_len(self):
         # With a draft
         mock_service = Mock()

@@ -2,7 +2,7 @@ import pdb
 from interface import implements
 
 from framework.Interfaces import IAction
-from framework.util import evaluate_expression
+from framework.util import evaluate_expression, get_imports
 from framework.Thread import Thread
 from framework.Logger import Logger
 
@@ -24,7 +24,6 @@ class LabelAction(implements(IAction), Logger):
             self.ld('{} adding label: {}'.format(self.__class__, label_string))
         thread.set_label(label_string, unset=self.unset)
 
-# TODO: how to insert link in draft we create?
 class DraftAction(implements(IAction), Logger):
     def __init__(self, value, destinations, prepend=False, name=__name__):
         super(DraftAction, self).__init__(name)
@@ -63,7 +62,8 @@ class RedirectAction(DraftAction):
     def process(self, thread, matches):
         self.ld('{} is processing a thread'.format(self.__class__))
         # Careful that the name we do the assignment on in exec doesn't exist in the rest of the current scope
-        local_request = 'res = ' + self.thread_finder_expression
+        # TODO: why don't we use the util.evaluate_expression function? because we use self, so going forward it would be valuable to expose instance vars to util.evaluate_expression
+        local_request = get_imports() +'res = ' + self.thread_finder_expression
         exec(local_request)
         found_threads = locals()['res']
         if not found_threads:
@@ -83,6 +83,19 @@ class EmptyAction(implements(IAction), Logger):
         super(EmptyAction, self).__init__(__name__)
     def process(self, thread, matches):
         pass
+
+# Create a draft to the destinations in the same thread, grabbing all attachments
+# and content from the most recent message in the thread
+class AttachmentAction(Logger):
+    def __init__(self, destinations):
+        super(AttachmentAction, self).__init__(__name__)
+        self.destinations = destinations
+
+    def process(self, thread, matches):
+        destinations = evaluate_expression(self.destinations, **locals())
+        thread.add_attachment_to_draft(*thread.last_attachment(), destinations) 
+        
+
 
 
         

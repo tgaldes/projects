@@ -41,6 +41,7 @@ class GMailService(Logger):
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
         self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
+        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='Lease agreement - 1000 5th Street Southeast - 1 between Clean Floors and Locking Doors Inc., Emmet Hurley, Gerald Freeman, and 1 more is Signed and Filed!').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
             thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
@@ -125,11 +126,8 @@ class GMailService(Logger):
         payload = {'message' : {'threadId' : thread_id, 'raw' : base64.urlsafe_b64encode(mime_email.as_string().encode('utf-8')).decode()}}
 # update an existing draft
         if draft_id:
-            try:
-                draft = self.service.users().drafts().update(userId=userId, id=draft_id, body=payload).execute()
-                self.li('Appended to existing draft with id: {}'.format(draft_id))
-            except:
-                pdb.set_trace()
+            draft = self.service.users().drafts().update(userId=userId, id=draft_id, body=payload).execute()
+            self.li('Appended to existing draft with id: {}'.format(draft_id))
 # create a new draft!
         else:
             draft = self.service.users().drafts().create(userId=userId, body=payload).execute()

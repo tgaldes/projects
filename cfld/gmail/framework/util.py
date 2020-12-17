@@ -24,13 +24,13 @@ def link(link_dest, link_text=None):
 
 def evaluate_expression(expression, **kwargs):
     try:
-        local_request = __get_imports() + 'local_result = ' + expression.replace('thread', 'kwargs["thread"]')
+        local_request = get_imports() + 'local_result = ' + expression.replace('thread', 'kwargs["thread"]')
         exec(local_request)
     except:
-        pdb.set_trace()
+        raise Exception("threw on local_request: {}".format(local_request))
     return locals()['local_result']
 
-def __get_imports():
+def get_imports():
     try:
         return '\n'.join(framework.globals.g_org.get_imports()) + '\n'
     except:

@@ -171,9 +171,21 @@ class Thread(Logger):
                 
         raise Exception('Couldn\'t find email that didn\'t match our own')
 
+    # TODO ut
+    def default_reply_str(self, prepend=True):
+        ret = ''
+        for email in self.default_reply():
+            ret += email + ','
+        if prepend:
+            return ',' + ret[:-1]
+        return ret[:-1]
+
     # return the epoch time of the last message sent or received
     def last_ts(self):
         return self.messages[-1].ts()
+
+    def age_in_days(self, now_f=time):
+        return int((now_f() - self.messages[-1].ts()) / 86400)
     
     # Retun a string representing the short name of the school
     # empty string if we can't find a label matching 'Schools/.*'
@@ -236,7 +248,10 @@ class Thread(Logger):
 
     # TODO: return a bool
     def __check_destinations_match(self, new_destinations):
+        return # TODO
         if self.messages[-1].is_draft():
+            if type(new_destinations) == str:
+                new_destinations = new_destinations.split(',')
             for email in new_destinations:
                 if not email in self.messages[-1].recipients():
                     raise Exception('{} not in list of recipients for existing draft. Existing recipients are: {}'.format(email, self.messages[-1].recipients()))

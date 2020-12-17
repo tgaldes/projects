@@ -82,6 +82,9 @@ class RuleFactory(Logger):
             elif tup.action == 'empty':
                 action = EmptyAction()
                 log_msg += 'EmptyAction'
+            elif tup.action == 'attachment':
+                action = AttachmentAction(tup.destinations)
+                log_msg += 'AttachmentAction'
             else:
                 self.lw('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}.'.format(tup.action))
                 continue
