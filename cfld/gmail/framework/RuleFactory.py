@@ -35,11 +35,9 @@ class RuleFactory(Logger):
 
             tup = RuleTuple(*rule_row)
             if not tup.group or not (float(tup.group) == last_group_index or last_group_index < float(tup.group)):
-                self.lw('Cannot specify a group index of {} when last group index was {}'.format(tup.group, last_group_index))
-                continue
+                raise Exception('Cannot specify a group index of {} when last group index was {}. tup: {}'.format(tup.group, last_group_index, tup))
             if not tup.email:
-                self.lw('Cannot create a rule without a user specified.')
-                continue
+                raise Exception('Cannot create a rule without a user specified. tup: {}'.format(tup))
             matchers = []
             # create matcher
             if tup.label_regex:
@@ -75,8 +73,7 @@ class RuleFactory(Logger):
                 log_msg += 'RemoveDraftAction'
             elif tup.action == 'redirect':
                 if tup.dest_email not in inboxes:
-                    self.lw('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))
-                    continue
+                    raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))
                 action = RedirectAction(inboxes[tup.dest_email], tup.finder, tup.value, tup.destinations)
                 log_msg += 'RedirectAction'
             elif tup.action == 'empty':
@@ -86,8 +83,8 @@ class RuleFactory(Logger):
                 action = AttachmentAction(tup.destinations)
                 log_msg += 'AttachmentAction'
             else:
-                self.lw('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}.'.format(tup.action))
-                continue
+                    print(tup)
+                    raise Exception('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}. tup: {}'.format(tup.action, tup))
 
             # Create the rule holder
             if len(matchers) == 1:

@@ -14,8 +14,7 @@ class RuleFactoryTest(unittest.TestCase):
             [RuleFactoryTest.header, \
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '0', '', ''], \
              ['subject match, draft action', 'apply', '', '', 'sregex', '', '', 'draft', 'value expression', '', 'dest expresssion', '1', '', ''], \
-             ['match anything', 'apply', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', ''], \
-             ['unused rule- no unused action', 'apply', '', '', 'sregex', '', '', 'unused', '', 'value expression', 'dest expresssion', '3', '', '']]
+             ['match anything', 'apply', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', '']]
 
         rf = RuleFactory(sheet_data)
 
@@ -40,15 +39,45 @@ class RuleFactoryTest(unittest.TestCase):
         self.assertTrue(isinstance(rh.action, DraftAction))
         self.assertEqual('value expression', rh.action.value)
 
+    # We have this very throw heavy so users are warned asap about bad configuration 
+    # of their rules
+    def test_throw_for_bad_setup(self):
+        # Throw for no inboxes passed when we try to create redirect rules
+        sheet_data = \
+            [RuleFactoryTest.header, \
+             ['redirect- wont be created since we dont specify inboxes', 'apply', 'tyler', 'automation', '', '', '', 'redirect', 'value_exp', 'finder_expr', 'dest_expr', '1']]
+        with self.assertRaises(Exception):
+            rf = RuleFactory(sheet_data)
+        # Bad action name
+        sheet_data = \
+            [RuleFactoryTest.header, \
+             ['match anything', 'apply', '', '', '', '', '', 'I dont know how to create an action for this string', 'value expression', '', 'dest expresssion', '2', '', '']]
+        with self.assertRaises(Exception):
+            rf = RuleFactory(sheet_data)
+        # no rule user specified
+        sheet_data = \
+            [RuleFactoryTest.header, \
+             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', '']]
+        with self.assertRaises(Exception):
+            rf = RuleFactory(sheet_data)
+        # group number does down 
+        sheet_data = \
+            [RuleFactoryTest.header, \
+             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', ''], \
+             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '1', '', '']]
+        with self.assertRaises(Exception):
+            rf = RuleFactory(sheet_data)
+        # group number not interpretable as float
+        sheet_data = \
+            [RuleFactoryTest.header, \
+             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2.a', '', '']]
+        with self.assertRaises(Exception):
+            rf = RuleFactory(sheet_data)
+
     def test_need_inboxes_for_redirect(self):
         sheet_data = \
             [RuleFactoryTest.header, \
              ['redirect- wont be created since we dont specify inboxes', 'apply', 'tyler', 'automation', '', '', '', 'redirect', 'value_exp', 'finder_expr', 'dest_expr', '1']]
-
-        rf = RuleFactory(sheet_data)
-        # no rules created for the redirect since we didn't specify inbox objects
-        rules = rf.get_rule_groups_for_user('apply')
-        self.assertEqual(0, len(rules))
 
         inboxes = {'apply' : 'apply_inbox', 'tyler' : 'tyler_inbox'}
         rf = RuleFactory(sheet_data, inboxes)
@@ -69,11 +98,9 @@ class RuleFactoryTest(unittest.TestCase):
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '1', '', ''], \
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '2', 'ifany', 'if'], \
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '2', '', 'any'], \
-             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '1', '', ''], \
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '3', '', ''], \
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '4', 'ifelse', ''], \
-             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '4', 'ifelse', ''], \
-             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '3', '', '']]
+             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '4', 'ifelse', '']]
         # final group sizes should be 3, 2, 1, 2
         # types are ifelse, ifany, single, ifany
 
