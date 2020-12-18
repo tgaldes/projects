@@ -81,11 +81,12 @@ class Thread(Logger):
                 return attachment_data, attachment_fn
         return ''
     def add_attachment_to_draft(self, data, fn, destinations):
-        self.__check_destinations_match(destinations)
         if not data:
             self.le('Empty attachment passed, no action will be taken')
             return
         draft_id = self.existing_draft_id()
+        if draft_id:
+            destinations = self.__concatenate_destinations(destinations)
         existing_body = self.existing_draft_text()
         existing_attachments = self.existing_draft_attachments()
         existing_attachments.append((data, fn))
@@ -99,9 +100,10 @@ class Thread(Logger):
         self.__add_or_update_message(response)
 
     def __add_or_update_draft(self, body, destinations):
-        self.__check_destinations_match(destinations)
         self.ld('Draft will have body: {}'.format(body))
         draft_id = self.existing_draft_id()
+        if draft_id:
+            destinations = self.__concatenate_destinations(destinations)
 
         mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), body, self.existing_draft_attachments())
         try:
@@ -249,15 +251,10 @@ class Thread(Logger):
         return None
 
     # TODO: return a bool
-    def __check_destinations_match(self, new_destinations):
-        return # TODO
+    def __concatenate_destinations(self, new_destinations):
         if self.messages[-1].is_draft():
-            if type(new_destinations) == str:
-                new_destinations = new_destinations.split(',')
-            for email in new_destinations:
-                if not email in self.messages[-1].recipients():
-                    raise Exception('{} not in list of recipients for existing draft. Existing recipients are: {}'.format(email, self.messages[-1].recipients()))
-        return
+            return list(set(new_destinations) | set(self.messages[-1].recipients()))
+        return new_destinations
 
     def __add_or_update_message(self, new_message):
         for i, old_message in enumerate(self.messages):

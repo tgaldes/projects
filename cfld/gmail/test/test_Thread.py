@@ -424,8 +424,40 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_message_with_reply_to.txt'), mock_service)
         self.assertEqual(1, len(thread))
 
-# TODO: if the draft text ends with \n\n don't append it to the text a second time
+    # if we call append to draft multiple times with different recipients in each
+    # call, we'll add all the recipients together for the draft we create
+    def test_add_to_list_of_draft_recipients(self):
+        mock_service = Mock()
+        mock_service.get_drafts = MagicMock(return_value=[{'id' : '5678', 'message' : {'id' : '2345'}}])
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_email_thread.txt'), mock_service)
+        first_msg = 'draft line one'
+        second_msg = 'draft line two'
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        email_one, email_two, email_three = 'email@one.com', 'email@two.com', 'email@three.com'
+        mock_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg)}, 'headers' : [{'name' : 'to', 'value' : 'Bob bob <{}>'.format(email_one)}]}}, {}))
+        thread.append_to_draft(first_msg, [email_one])
+        mock_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg)}, 'headers' : [{'name' : 'to', 'value' : ' <{}>,<{}>'.format(email_one, email_two)}]}}, {}))
+        thread.append_to_draft(second_msg, [email_two])
+        mime_multipart, thread_id, called_draft_id = mock_service.append_or_create_draft.call_args[0]
+        self.assertTrue(email_one in mime_multipart['to'])
+        self.assertTrue(email_two in mime_multipart['to'])
+        self.assertTrue(email_one in thread.messages[-1].recipients())
+        self.assertTrue(email_two in thread.messages[-1].recipients())
 
+        # now add a third recipient via the add attachement call
+        mock_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : first_msg, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(first_msg)}, 'headers' : [{'name' : 'to', 'value' : ' <{}>,<{}>,<{}>'.format(email_one, email_two, email_three)}]}}, {}))
 
+        attachment_data = 'abcdefghijklmnop'
+        attachment_fn = 'test second attachment.pdf'
+        # add an attachment
+        thread.add_attachment_to_draft(attachment_data, attachment_fn, [email_three])
+        mime_multipart, thread_id, called_draft_id = mock_service.append_or_create_draft.call_args[0]
 
+        self.assertTrue(email_one in mime_multipart['to'])
+        self.assertTrue(email_two in mime_multipart['to'])
+        self.assertTrue(email_three in mime_multipart['to'])
+        self.assertTrue(email_one in thread.messages[-1].recipients())
+        self.assertTrue(email_two in thread.messages[-1].recipients())
+        self.assertTrue(email_three in thread.messages[-1].recipients())
 

@@ -32,15 +32,23 @@ class DraftAction(implements(IAction), Logger):
             super(DraftAction, self).__init__(name)
         self.value = value
         self.destinations = destinations
-        if not self.value or not self.destinations:
-            raise Exception('Cannot create with empty value: {} or destinations: {}'.format(self.value, self.destinations))
         self.label_action = LabelAction('"automation"')
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.prepend = prepend
     def process(self, thread, matches):
         self.ld('processing a thread')
-        draft_content = evaluate_expression(self.value, **locals())
-        destinations = evaluate_expression(self.destinations, **locals())
+        if self.value:
+            draft_content = evaluate_expression(self.value, **locals())
+        else:
+            draft_content = ''
+        def convert_string_emails_to_list(emails):
+            if type(emails) == str:
+                return emails.split(',')
+            return emails
+        if self.destinations:
+            destinations = convert_string_emails_to_list(evaluate_expression(self.destinations, **locals()))
+        else:
+            destinations = []
         if self.prepend:
             thread.prepend_to_draft(draft_content, destinations)
         else:

@@ -44,11 +44,14 @@ class LabelActionTest(unittest.TestCase):
         thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=True)
 
 class DraftActionTest(unittest.TestCase):
-    def test_throw_on_empty_init(self):
-        with self.assertRaises(Exception):
-            da = DraftAction('', 'exp')
-        with self.assertRaises(Exception):
-            da = DraftAction('exp', '')
+
+    def test_no_body_or_destinations_specified(self):
+        mock_thread = Mock()
+        mock_thread.append_to_draft = MagicMock()
+        mock_thread.set_label = MagicMock()
+        da = DraftAction('', '')
+        da.process(mock_thread, [])
+        mock_thread.append_to_draft.assert_called_once_with('', [])
 
     def test_add_draft_no_matches(self):
         mock_thread = Mock()
@@ -57,14 +60,25 @@ class DraftActionTest(unittest.TestCase):
         mock_thread.default_reply = MagicMock(return_value=email)
         mock_thread.short_name = MagicMock(return_value='school')
         mock_thread.set_label = MagicMock()
-        da = DraftAction('thread.default_reply()', '"Formatting a message with the short name: {}".format(thread.short_name())')
+        da = DraftAction('"Formatting a message with the short name: {}".format(thread.short_name())', 'thread.default_reply()')
         da.process(mock_thread, [])
         mock_thread.default_reply.assert_called_once_with()
         mock_thread.short_name.assert_called_once_with()
-        mock_thread.append_to_draft.assert_called_once_with(email, 'Formatting a message with the short name: school')
+        mock_thread.append_to_draft.assert_called_once_with('Formatting a message with the short name: school', email)
 
         # Make sure we've added the automation label
         mock_thread.set_label.assert_called_once_with('automation', unset=False)
+
+    def test_convert_destinations_from_string_to_list(self):
+        mock_thread = Mock()
+        email = 'destination@abc.com'
+        mock_thread.append_to_draft = MagicMock()
+        mock_thread.short_name = MagicMock(return_value='school')
+        mock_thread.set_label = MagicMock()
+        da = DraftAction('"Formatting a message with the short name: {}".format(thread.short_name())', '"{}"'.format(email))
+        da.process(mock_thread, [])
+        mock_thread.short_name.assert_called_once_with()
+        mock_thread.append_to_draft.assert_called_once_with('Formatting a message with the short name: school', [email])
         
     def test_add_draft_with_matches(self):
         mock_thread = Mock()
@@ -72,10 +86,10 @@ class DraftActionTest(unittest.TestCase):
         mock_thread.append_to_draft = MagicMock()
         mock_thread.default_reply = MagicMock(return_value=email)
         mock_thread.set_label = MagicMock()
-        da = DraftAction('thread.default_reply()', '"Formatting a message with the short name: {}".format(match(1))')
+        da = DraftAction('"Formatting a message with the short name: {}".format(match(1))', 'thread.default_reply()')
         da.process(mock_thread, ['match a', 'match b'])
         mock_thread.default_reply.assert_called_once_with()
-        mock_thread.append_to_draft.assert_called_once_with(email, 'Formatting a message with the short name: match b')
+        mock_thread.append_to_draft.assert_called_once_with('Formatting a message with the short name: match b', email)
 
         # Make sure we've added the automation label
         mock_thread.set_label.assert_called_once_with('automation', unset=False)
@@ -86,10 +100,10 @@ class DraftActionTest(unittest.TestCase):
         mock_thread.prepend_to_draft = MagicMock()
         mock_thread.default_reply = MagicMock(return_value=email)
         mock_thread.set_label = MagicMock()
-        da = DraftAction('thread.default_reply()', '"Formatting a message with the short name: {}".format(match(1))', prepend=True)
+        da = DraftAction('"Formatting a message with the short name: {}".format(match(1))', 'thread.default_reply()', prepend=True)
         da.process(mock_thread, ['match a', 'match b'])
         mock_thread.default_reply.assert_called_once_with()
-        mock_thread.prepend_to_draft.assert_called_once_with(email, 'Formatting a message with the short name: match b')
+        mock_thread.prepend_to_draft.assert_called_once_with('Formatting a message with the short name: match b', email)
 
 
 class MockThread(unittest.TestCase):
@@ -115,8 +129,6 @@ class RedirectActionTest(unittest.TestCase):
             ra = RedirectAction('exp', '', 'exp')
         with self.assertRaises(Exception):
             ra = RedirectAction('exp', 'exp', '')
-        with self.assertRaises(Exception):
-            ra = RedirectAction('exp', 'exp', 'exp', None)
 
     # This tests the flow the RedirectAction sees when we get a new rental application
     # 1 The application goes to tyler@ inbox
