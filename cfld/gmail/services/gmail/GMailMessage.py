@@ -10,7 +10,7 @@ def extract_email(email_string):
 
 class GMailMessage(Logger):
     def __init__(self, fields, service):
-        super(GMailMessage, self).__init__(__name__)
+        super(GMailMessage, self).__init__(__class__)
         self.fields = fields
         self.service = service
     def update_all(self, message):

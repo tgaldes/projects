@@ -16,11 +16,11 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 class GMailService(Logger):
     def __init__(self, email, domains, secret_path, token_dir):
-        super(GMailService, self).__init__(__name__)
+        super(GMailService, self).__init__(__class__)
         self.email = email
         self.user = email.split('@')[0]
         self.domains = domains
-        self.li('Creating {} for {}'.format(__name__, email))
+        self.li('Creating for {}'.format(email))
         creds = None
         pickle_path = os.path.join(token_dir, 'token.gmail.{}.pickle'.format(self.user))
         if os.path.exists(pickle_path):
@@ -40,8 +40,8 @@ class GMailService(Logger):
 
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
-        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='Lease agreement - 1000 5th Street Southeast - 1 between Clean Floors and Locking Doors Inc., Emmet Hurley, Gerald Freeman, and 1 more is Signed and Filed!').execute().get('threads', [])
+        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='Nicole is requesting an application for 123 S 11th St, San Jose, CA, 95112').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
             thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()

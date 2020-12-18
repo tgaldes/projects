@@ -4,7 +4,7 @@ from interface import implements
 
 from framework.Interfaces import IMatcher
 from framework.Logger import Logger
-from framework.util import evaluate_expression
+from framework.util import evaluate_expression, class_to_string
 
 
 class RegexMatcher(Logger):
@@ -12,9 +12,9 @@ class RegexMatcher(Logger):
         super(RegexMatcher, self).__init__(self._name())
         self.re_string = re_string
         if not self.re_string:
-            raise Exception('Cannot create {} with empty re_string: {}'.format(self._name, self.re_string))
+            raise Exception('Cannot create with empty re_string: {}'.format(self.re_string))
         self.re = re.compile(self.re_string)
-        self.ld('Created {}, re_string={}'.format(self._name, self.re_string))
+        self.ld('Created: re_string={}'.format(self.re_string))
 
     # re struggles with really large haystacks and greedy matching
     # since the BodyMatcher will be using a lot of .*text.* regexes
@@ -32,7 +32,7 @@ class RegexMatcher(Logger):
 
     def matches(self, text):
         if self.re.match(text):
-            self.ld('{}: \'{}\' matches regex:\'{}\''.format(self._name, text, self.re_string))
+            self.ld('\'{}\' matches regex:\'{}\''.format(text, self.re_string))
             return True
         return self.__try_non_re_match(text)
 
@@ -46,7 +46,7 @@ class RegexMatcher(Logger):
             return g.groups()
         elif self.__try_non_re_match(text):
             return ()
-        raise Exception('Asked for matching groups when no match. {} re: {} thread subject: {}'.format(self._name, self.re_string, text))
+        raise Exception('Asked for matching groups when no match. re: {} thread subject: {}'.format(self.re_string, text))
     
 
 class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
@@ -101,11 +101,11 @@ class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
 
 class ExpressionMatcher(implements(IMatcher), Logger):
     def __init__(self, expression):
-        super(ExpressionMatcher, self).__init__(__name__)
+        super(ExpressionMatcher, self).__init__(__class__)
         self.expression = expression
         if not self.expression:
             raise Exception('Cannot create {} with empty expression: {}'.format(self.__class__, self.expression))
-        self.ld('Created {}, expression={}'.format(self.__class__, self.expression))
+        self.ld('Created: expression={}'.format(self.expression))
 
     def matches(self, thread):
         return evaluate_expression(self.expression, **locals())
@@ -118,11 +118,11 @@ class ExpressionMatcher(implements(IMatcher), Logger):
 # AND behavior (later we can make it and/or)
 class ComboMatcher(implements(IMatcher), Logger):
     def __init__(self, matchers):
-        super(ComboMatcher, self).__init__(__name__)
+        super(ComboMatcher, self).__init__(__class__)
         if len(matchers) == 0:
             raise Exception('Cannot create ComboMatcher with empty list of matchers.')
         self.matchers = matchers
-        self.ld('Created {} with {} matchers'.format(self.__class__, len(self.matchers)))
+        self.ld('Created: with {} matchers'.format(len(self.matchers)))
 
     def matches(self, thread):
         for matcher in self.matchers:
@@ -144,7 +144,7 @@ class ComboMatcher(implements(IMatcher), Logger):
 # regex matchers for all of these rules
 class AllMatcher(Logger): # TODO ut
     def __init__(self):
-        super(AllMatcher, self).__init__(__name__)
+        super(AllMatcher, self).__init__(__class__)
     
     def matches(self, thread):
         return True

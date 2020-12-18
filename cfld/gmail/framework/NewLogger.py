@@ -11,7 +11,7 @@ def getLogger(file_name, module_name, path='./log/', root=True, stdout=True):
         'version': 1,
         'formatters': {
             'standard': {
-                'format': '%(asctime)s [%(levelname)7s] %(name)12s:- %(message)s'
+                'format': '%(asctime)s [%(levelname)7s] %(name)20s:- %(message)s'
             },
         },
         'handlers': {

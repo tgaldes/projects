@@ -7,7 +7,7 @@ from framework.MimeEmail import create_multipart
 # Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
 class Thread(Logger):
     def __init__(self, identifier, messages, service):
-        super(Thread, self).__init__(__name__)
+        super(Thread, self).__init__(__class__)
         self.service = service
         self.identifier = identifier
         self.messages = messages

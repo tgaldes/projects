@@ -14,8 +14,8 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 # This class provides a base to connect to google sheets api and get rule construction information, which every org will need
 class SheetService(Logger):
     def __init__(self, email, sheet_name, spreadsheet_id, secret_path, token_dir):
-        super(SheetService, self).__init__(__name__)
-        self.li('Creating {} for {}'.format(__name__, email))
+        super(SheetService, self).__init__(__class__)
+        self.li('Creating: for {}'.format(email))
 
         self.spreadsheet_id = spreadsheet_id
 

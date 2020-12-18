@@ -13,7 +13,7 @@ def room_types_to_string(types, joiner='and'):
 
 class NewSubmissionHandler(Logger):
     def __init__(self, raw_availability, raw_availability_blurbs, max_availability_index=100):
-        super(NewSubmissionHandler, self).__init__(__name__)
+        super(NewSubmissionHandler, self).__init__(__class__)
         self.suite_bathroom_ending = 'wb'
         self.availability = {}
         for row in raw_availability:
@@ -70,7 +70,7 @@ class NewSubmissionHandler(Logger):
         if len(thread) == 1:
             return self.__handle_first_msg(thread)
         else:
-            self.lw('{} not configured to respond to threads of more than length 1. Not doing anything'.format(__name__))
+            self.lw('not configured to respond to threads of more than length 1. Not doing anything')
 
     # extract the relevant fields of the message
     # return a dictionary of all the fields in the New Submission for short_name message

@@ -5,7 +5,7 @@ from framework.Logger import Logger
 
 class LookupInfo(Logger):
     def __init__(self, data):
-        super(LookupInfo, self).__init__(__name__)
+        super(LookupInfo, self).__init__(__class__)
         self.info = {}
         for row in data:
             if row[0]:

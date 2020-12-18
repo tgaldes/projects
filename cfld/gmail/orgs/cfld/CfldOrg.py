@@ -7,7 +7,7 @@ from framework.LookupInfo import LookupInfo
 
 class CfldOrg(Logger, implements(IOrg)):
     def __init__(self, config):
-        super(CfldOrg, self).__init__(__name__)
+        super(CfldOrg, self).__init__(__class__)
         self.ss = CfldSheetService(config['sheet_service_email'], config['sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
         self.nsh = NewSubmissionHandler(self.ss.get_availability(), \
                                    self.ss.get_availability_blurbs())

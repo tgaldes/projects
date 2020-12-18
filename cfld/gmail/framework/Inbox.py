@@ -3,7 +3,7 @@ from framework.Logger import Logger
 
 class Inbox(Logger):
     def __init__(self, service):
-        super(Inbox, self).__init__(__name__)
+        super(Inbox, self).__init__(__class__)
         self.service = service
 
     def get_service(self):

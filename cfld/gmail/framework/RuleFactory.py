@@ -17,7 +17,7 @@ class RuleFactory(Logger):
     # first list is the header which we'll use to create a named tuple
     # then for each row we'll create an instance of the desired RuleHolder
     def __init__(self, sheet_data=[], inboxes={}):
-        super(RuleFactory, self).__init__(__name__)
+        super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
         RuleTuple = collections.namedtuple('RuleTuple', sheet_data[0])

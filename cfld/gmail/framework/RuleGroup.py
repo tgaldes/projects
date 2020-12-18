@@ -27,12 +27,12 @@ class RuleGroup(Logger):
 # When the first irule matches the thread, we break
 class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
     def __init__(self, rules_tup):
-        super(IfElseRuleGroup, self).__init__(rules_tup, __name__)
+        super(IfElseRuleGroup, self).__init__(rules_tup, __class__)
         self.rules = []
         for irule, _, rule_type in rules_tup:
             self.rules.append(irule)
         if not self.rules:
-            raise Exception('Cannot create {} with empty rule list'.format(self.__class__))
+            raise Exception('Cannot create with empty rule list')
         self.li('Created IfElseRuleGroup')
 
     def __getitem__(self, key):
@@ -56,7 +56,7 @@ class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
 # If any if actions returned true, do all the then actions
 class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
     def __init__(self, rules_tup):
-        super(IfAnyRuleGroup, self).__init__(rules_tup, __name__)
+        super(IfAnyRuleGroup, self).__init__(rules_tup, __class__)
         self.if_rules = []
         self.any_rules = []
         for irule, _, rule_type in rules_tup:
@@ -67,7 +67,7 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
             else:
                 raise Exception('unknown if any rule type: {}'.format(rule_type))
         if not self.if_rules or not self.any_rules:
-            raise Exception('Cannot create {} with empty if rule list: {} or any rule list: {}'.format(self.__class__, self.if_rules, self.any_rules))
+            raise Exception('Cannot create with empty if rule list: {} or any rule list: {}'.format(self.if_rules, self.any_rules))
         self.li('Created IfAnyRuleGroup')
 
     def __len__(self):
@@ -98,9 +98,9 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
 
 class SingleRuleGroup(implements(IRule), Logger):
     def __init__(self, rules_tup):
-        super(SingleRuleGroup, self).__init__(__name__)
+        super(SingleRuleGroup, self).__init__(__class__)
         if len(rules_tup) != 1:
-            raise Exception('Cannot create {} with rule list of size != 1: {}'.format(self.__class__, rules_tup))
+            raise Exception('Cannot create with rule list of size != 1: {}'.format(rules_tup))
         self.rule = rules_tup[0][0]
         self.li('Created SingleRuleGroup')
 

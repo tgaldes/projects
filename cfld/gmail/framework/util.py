@@ -3,6 +3,13 @@ import inspect
 from flatten_dict import flatten 
 from flatten_dict import unflatten 
 import framework.globals
+# TODO: diff list of user utils and framework utils that aren't exposed to user
+def class_to_string(c):
+    temp = str(c)
+    temp = temp[temp.rfind('.') + 1:]
+    if temp.find('\'') == -1:
+        return temp
+    return temp[:temp.find('\'')]
 
 def list_of_emails_to_string_of_emails(l):
     if type(l) == str:
