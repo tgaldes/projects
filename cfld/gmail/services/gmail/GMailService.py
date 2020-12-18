@@ -40,13 +40,13 @@ class GMailService(Logger):
 
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
-        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='Nicole is requesting an application for 123 S 11th St, San Jose, CA, 95112').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
+        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='New submission for USC').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
             thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
             thread = self.__create_thread_from_raw(thread_map)
-            '''fn = './test/thread_test_inputs/signed_lease.txt'
+            '''fn = './test/integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'
             with open(fn, 'w') as f:
                 import json
                 json.dump(thread_map, f, indent=4)'''
@@ -152,6 +152,4 @@ class GMailService(Logger):
 
 if __name__=='__main__':
     gs = GMailService('apply@cleanfloorslockingdoors.com', ["cleanfloorslockingdoors.com", "cf-ld.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")
-    while True:
-        gs.get_next_thread()
 
