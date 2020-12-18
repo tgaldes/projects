@@ -1,6 +1,7 @@
 import pdb
 from interface import implements
 from framework.Interfaces import IOrg
+from framework.LookupInfo import LookupInfo
 
 org = None
 # Define external so we can overwrite while testing different rule configurations
@@ -14,16 +15,22 @@ example_rule_construction_data = [header, ['Label by school', 'tyler', '', '', '
 class ExampleOrg(implements(IOrg)):
     def __init__(self, config):
         self.config = config
+        if 'lookup_info' in self.config:
+            self.li = LookupInfo(self.config['lookup_info'])
     # IOrg
     def get_rule_construction_data(self):
         return example_rule_construction_data
     def get_imports(self):
         return self.config['org']['imports']
+    def lookup_info(self, key_a, key_b):
+        return self.li.lookup_info(key_a, key_b)
 
 def signature(thread):
     return 'test signature for thread id {}'.format(thread.identifier)
 
+
 def org_init(config):
+    global org
     org = ExampleOrg(config)
     return org
 
@@ -33,3 +40,6 @@ def org_init(config):
 
 def get_new_application_email(thread):
     return 'tgaldes@gmail.com'
+
+def lookup_info(key_a, key_b):
+    return org.lookup_info(key_a, key_b)

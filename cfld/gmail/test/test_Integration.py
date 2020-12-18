@@ -101,3 +101,57 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual('<CACUCK-CJ6Aq-+i=h3bo5745o59FsfXQbfTX5xKeLFS7jM-JpGw@mail.gmail.com>', mime_multipart['In-Reply-To'])
         self.assertEqual('<CACUCK-CJ6Aq-+i=h3bo5745o59FsfXQbfTX5xKeLFS7jM-JpGw@mail.gmail.com>', mime_multipart['References'])
         self.assertEqual(draft_text, mime_multipart.__dict__['_payload'][0].__dict__['_payload'])
+
+        self.assertTrue(apply_threads[0].has_draft())
+        self.assertTrue(draft_text in apply_threads[0].existing_draft_text())
+
+    def test_lookup_info(self):
+    # Use the lookup_info class to populate the draft and the draft destinations
+        from orgs.example_org.ExampleOrg import header, signature 
+        import orgs.example_org.ExampleOrg
+
+        draft_text = 'I just processed the application'
+        orgs.example_org.ExampleOrg.example_rule_construction_data = [header, \
+['lookup_info_test', 'apply', '', 'Schools/(.*)', '', '.*submitted my application.*', 'not thread.is_last_message_from_us()', 'draft','lookup_info("parking", match(0))', '', 'lookup_info("executed_leases", match(0))', '5', '', '']]
+        
+        school = 'USC'
+        dest_email = 'lookup@one.com,lookup@two.com'
+        parking_info = 'information about parking'
+
+        apply_service = Mock()
+        apply_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'), apply_service)]
+        apply_service.get_all_threads = MagicMock(return_value=apply_threads)
+        apply_service.get_user = MagicMock(return_value='apply')
+        apply_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
+        apply_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
+        apply_service.get_label_name = MagicMock(return_value='Schools/USC')
+
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        apply_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
+        apply_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : parking_info, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(parking_info)}, 'headers' : [{'name' : 'to', 'value' : '<{}>,<{}>'.format(*dest_email.split(','))}]}}, {}))
+        apply_service.set_label = MagicMock(return_value={'labelIds' : ['test label id for "automation" label']})
+        config = {}
+        config['org'] = {}
+        config['org']['name'] = 'example_org'
+        config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature', 'from orgs.example_org.ExampleOrg import lookup_info']
+        logger = Logger('TestIntegration')
+        config['lookup_info'] = [['parking', school, parking_info], ['', 'UCLA', 'more info'], ['executed_leases', school, dest_email], ['', 'UCLA', 'otheremail@one.com']]
+        m = Main([apply_service], logger, config)
+
+        m.run()
+        mime_multipart, thread_id, called_draft_id = apply_service.append_or_create_draft.call_args[0]
+        self.assertIsNone(called_draft_id)
+        self.assertEqual('apply@cleanfloorslockingdoors.com', mime_multipart['from'])
+        for email in dest_email.split(','):
+            self.assertTrue(email in mime_multipart['to'])
+        self.assertEqual('New submission for USC', mime_multipart['subject'])
+        self.assertEqual('<CACUCK-CJ6Aq-+i=h3bo5745o59FsfXQbfTX5xKeLFS7jM-JpGw@mail.gmail.com>', mime_multipart['In-Reply-To'])
+        self.assertEqual('<CACUCK-CJ6Aq-+i=h3bo5745o59FsfXQbfTX5xKeLFS7jM-JpGw@mail.gmail.com>', mime_multipart['References'])
+        self.assertEqual(parking_info, mime_multipart.__dict__['_payload'][0].__dict__['_payload'])
+
+
+        self.assertTrue('Schools/{}'.format(school) in apply_threads[0].labels())
+        self.assertTrue(apply_threads[0].has_draft())
+        self.assertTrue(parking_info in apply_threads[0].existing_draft_text())
+

@@ -30,10 +30,12 @@ def link(link_dest, link_text=None):
     return '<a href="{}">{}</a>'.format(link_dest, link_text)
 
 def evaluate_expression(expression, **kwargs):
+    # TODO: throw better exception message
     try:
         local_request = get_imports() + 'local_result = ' + expression.replace('thread,', 'kwargs["thread"],').replace('thread)', 'kwargs["thread"])').replace('(thread', '(kwargs["thread"]').replace('thread.', 'kwargs["thread"].').replace('inbox.', 'kwargs["inbox"].')
         exec(local_request)
     except:
+        #pdb.set_trace()
         raise Exception("threw on local_request: {}".format(local_request))
     return locals()['local_result']
 
