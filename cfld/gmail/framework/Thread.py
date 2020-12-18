@@ -18,6 +18,8 @@ class Thread(Logger):
 
     def subject(self):
         return self.messages[0].subject()
+    def id(self):
+        return self.identifier
     
     def set_label(self, label_string, unset=False):
         label_id = self.service.get_label_id(label_string)
