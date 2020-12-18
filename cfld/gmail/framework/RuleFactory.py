@@ -34,7 +34,7 @@ class RuleFactory(Logger):
             rule_row.extend(['' for x in range(header_size - len(rule_row))])
 
             tup = RuleTuple(*rule_row)
-            if not tup.group or not (int(tup.group) == last_group_index or last_group_index < int(tup.group)):
+            if not tup.group or not (float(tup.group) == last_group_index or last_group_index < float(tup.group)):
                 self.lw('Cannot specify a group index of {} when last group index was {}'.format(tup.group, last_group_index))
                 continue
             if not tup.email:
@@ -96,11 +96,11 @@ class RuleFactory(Logger):
                 rh = RuleHolder(action, ComboMatcher(matchers))
 
             # Add the (RuleHolder, type, rule_type) tuple # TODO
-            if int(tup.group) == last_group_index:
+            if float(tup.group) == last_group_index:
                 raw_rule_group_tuples[-1][0].append((rh, tup.group_type, tup.rule_type))
             else: # group of one rule
                 raw_rule_group_tuples.append(([(rh, tup.group_type, tup.rule_type)], tup.email))
-            last_group_index = int(tup.group)
+            last_group_index = float(tup.group)
 
             log_msg += ', Group #{}'.format(tup.group)
 
