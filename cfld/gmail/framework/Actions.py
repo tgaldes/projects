@@ -72,11 +72,7 @@ class RedirectAction(DraftAction):
         
     def process(self, thread, matches):
         self.ld('processing a thread')
-        # Careful that the name we do the assignment on in exec doesn't exist in the rest of the current scope
-        # TODO: why don't we use the util.evaluate_expression function? because we use self, so going forward it would be valuable to expose instance vars to util.evaluate_expression
-        local_request = get_imports() +'res = ' + self.thread_finder_expression
-        exec(local_request)
-        found_threads = locals()['res']
+        found_threads = evaluate_expression(self.thread_finder_expression, **{**locals(), **self.__dict__})
         if not found_threads:
             self.li('No found_threads matched the expression: {}'.format(self.thread_finder_expression))
         for found_thread in found_threads:

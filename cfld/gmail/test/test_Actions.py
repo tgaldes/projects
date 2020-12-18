@@ -143,7 +143,7 @@ class RedirectActionTest(unittest.TestCase):
         mock_inbox.get_service = MagicMock(return_value='service')
         mock_output_thread = Mock()
         mock_inbox.get_threads_from_email_address = MagicMock(return_value=[mock_output_thread])
-        finder_expression = 'self.inbox.get_threads_from_email_address(thread.get_new_application_email())'
+        finder_expression = 'inbox.get_threads_from_email_address(thread.get_new_application_email())'
         destinations = 'thread.default_reply()'
         expression = '"You\'ll need to approve the application for housing at {} on your end".format(thread.get_short_name())'
 

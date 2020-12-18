@@ -31,7 +31,7 @@ def link(link_dest, link_text=None):
 
 def evaluate_expression(expression, **kwargs):
     try:
-        local_request = get_imports() + 'local_result = ' + expression.replace('thread', 'kwargs["thread"]')
+        local_request = get_imports() + 'local_result = ' + expression.replace('thread,', 'kwargs["thread"],').replace('thread)', 'kwargs["thread"])').replace('(thread', '(kwargs["thread"]').replace('thread.', 'kwargs["thread"].').replace('inbox.', 'kwargs["inbox"].')
         exec(local_request)
     except:
         raise Exception("threw on local_request: {}".format(local_request))
