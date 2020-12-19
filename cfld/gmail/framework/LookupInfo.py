@@ -15,7 +15,10 @@ class LookupInfo(Logger):
                 else:
                     self.info[row[0]] = {}
             # add value to dictionary
-            self.info[last_key][row[1]] = row[2]
+            if len(row) > 2:
+                self.info[last_key][row[1]] = row[2]
+            else:
+                self.info[last_key][row[1]] = ''
         print(self.info)
 
     def lookup_info(self, key_a, key_b):

@@ -27,6 +27,7 @@ class Main:
         for rule_group, user in self.rule_factory.get_rule_groups():
             inbox = self.inboxes[user]
             for thread in inbox.get_all_threads():
+                self.logger.li('Processing thread id: '.format(thread.id()))
                 rule_group.process(thread)
                 count += 1
         self.logger.li('Processed an email {} times'.format(count))

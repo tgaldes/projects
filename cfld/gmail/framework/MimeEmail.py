@@ -17,7 +17,9 @@ def create_multipart(destinations, from_email, subject, in_reply_to, references,
         attachment.add_header('Content-Disposition', 'attachment', filename=fn)
         multipart.attach(attachment)
 
-    multipart['to'] = list_of_emails_to_string_of_emails(destinations)
+    email_string = list_of_emails_to_string_of_emails(destinations)
+    if email_string:
+        multipart['to'] = email_string
     multipart['from'] = from_email
     multipart['subject'] = subject
     multipart['In-Reply-To'] = in_reply_to
