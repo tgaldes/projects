@@ -1,7 +1,11 @@
 from unittest.mock import MagicMock, Mock
 import unittest
+import os
+
 import test.TestConfig
 from framework.Actions import *
+from TestUtil import parent_path
+
 
 class LabelActionTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -185,4 +189,56 @@ class AttachmentActionTest(unittest.TestCase):
         thread.add_attachment_to_draft = MagicMock()
         fa.process(thread, ())
         thread.add_attachment_to_draft.assert_called_once_with(attachment_data, attachment_fn, eval_dest)
+
+
+def initialize():
+    try:
+        os.remove(ShellActionTest.output_fn)
+    except:
+        pass
+class ShellActionTest(unittest.TestCase):
+    script_dir = 'shell_test_scripts'
+    output_fn = '/tmp/shell_action_test_output.txt'
+    def test_success(self):
+        initialize()
+        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'ok.sh') + '"'
+        sa = ShellAction(command)
+
+        thread = Mock()
+        matches = []
+        self.assertEqual(0, sa.process(thread, matches))
+
+        with open(ShellActionTest.output_fn, 'r') as f:
+            # file gives us a newline
+            self.assertEqual('Hello, world!', f.read().strip())
+
+    # The script we try to run here does have exe perms
+    def test_failure(self):
+        initialize()
+        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'error.sh') + '"'
+        sa = ShellAction(command)
+
+        thread = Mock()
+        matches = []
+        self.assertEqual(13, sa.process(thread, matches))
+            
+    def test_evaluate(self):
+        initialize()
+        ret = 'I expect this in the file'
+        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'evaluate.sh') + ' {}"'.format(ret)
+        sa = ShellAction(command)
+
+        thread = Mock()
+        thread.default_reply = MagicMock(return_value=ret)
+        matches = []
+        self.assertEqual(0, sa.process(thread, matches))
+
+
+        with open(ShellActionTest.output_fn, 'r') as f:
+            # file gives us a newline
+            self.assertEqual(ret, f.read().strip())
+
+
+
+
 

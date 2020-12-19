@@ -1,5 +1,6 @@
 import pdb
 from interface import implements
+import subprocess
 
 from framework.Interfaces import IAction
 from framework.util import evaluate_expression, get_imports
@@ -102,7 +103,23 @@ class AttachmentAction(Logger):
         destinations = evaluate_expression(self.destinations, **locals())
         thread.add_attachment_to_draft(*thread.last_attachment(), destinations) 
         
+class ShellAction(Logger):
+    def __init__(self, command):
+        super(ShellAction, self).__init__(__class__)
+        self.command = command
+        self.ld('Created: command={}'.format(self.command))
 
+    def process(self, thread, matches):
+        evaluated_command = evaluate_expression(self.command, **locals())
+        child = subprocess.Popen(evaluated_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, error = child.communicate()
+        rc = child.returncode
 
+        self.li('stdout: {}'.format(out))
+        self.li('stderr: {}'.format(error))
+
+        if rc != 0:
+            self.le('subprocess failed.\nstdout: {}\n\nstderr: {}\n\nrc: {}'.format(out, error, rc))
+        return rc
 
         

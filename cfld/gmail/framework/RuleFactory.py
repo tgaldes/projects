@@ -82,6 +82,9 @@ class RuleFactory(Logger):
             elif tup.action == 'attachment':
                 action = AttachmentAction(tup.destinations)
                 log_msg += 'AttachmentAction'
+            elif tup.action == 'shell':
+                action = AttachmentAction(tup.value)
+                log_msg += 'ShellAction'
             else:
                     print(tup)
                     raise Exception('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}. tup: {}'.format(tup.action, tup))
