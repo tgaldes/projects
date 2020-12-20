@@ -35,7 +35,7 @@ class NewSubmissionHandlerTest(unittest.TestCase):
         nsh = NewSubmissionHandler(raw_availability=raw_availability, raw_availability_blurbs=raw_availability_blurbs, max_availability_index=max_index)
         t = Mock()
         t.__len__ = MagicMock(return_value=1)
-        t.short_name = MagicMock(return_value=short_name)
+        t.labels = MagicMock(return_value='Schools/' + short_name)
 
         # one room type desired open for move in
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type, move_in.strftime('%Y-%m-%d')))

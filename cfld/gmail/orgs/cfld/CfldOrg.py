@@ -29,3 +29,21 @@ class CfldOrg(Logger, implements(IOrg)):
     def short_name(self, key):
         return self.li.lookup_info('short_name', key.strip())
 
+# Having non class wrapper functions around the org makes it easier to call these 
+# functions in the rule snippets (don't need 'org.XXXXXX')
+# AND easier to make them visible in evaluate_expression 
+# (import a function instead of importing a global class instance)
+def lookup_info(k1, k2):
+    return org.lookup_info(k1, k2)
+
+def run_new_submission_handler(t):
+    return org.run_new_submission_handler(t)
+
+# TODO: update rules on sheet
+def short_name_from_address(key):
+    return org.lookup_info('short_name', key.strip())
+
+def org_init(config):
+    global org
+    org = CfldOrg(config)
+    return org
