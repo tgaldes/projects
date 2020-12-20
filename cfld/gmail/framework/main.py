@@ -15,14 +15,15 @@ from services.gmail.SheetService import SheetService
 class Main:
     def __init__(self, mail_services, logger, config):
         framework.globals.init(config)
-        self.inboxes = {}
-        for service in mail_services:
-            self.inboxes[service.get_user()] = Inbox(service)
-
-        self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes)
         self.logger = logger
+        self.mail_services = mail_services
 
     def run(self):
+        self.inboxes = {}
+        for service in self.mail_services:
+            self.inboxes[service.get_user()] = Inbox(service)
+        self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes)
+
         count = 0
         for rule_group, user in self.rule_factory.get_rule_groups():
             inbox = self.inboxes[user]

@@ -112,7 +112,6 @@ class IntegrationTest(unittest.TestCase):
         from orgs.example_org.ExampleOrg import header, signature 
         import orgs.example_org.ExampleOrg
 
-        draft_text = 'I just processed the application'
         orgs.example_org.ExampleOrg.example_rule_construction_data = [header, \
 ['lookup_info_test', 'apply', '', 'Schools/(.*)', '', '.*submitted my application.*', 'not thread.is_last_message_from_us()', 'draft','lookup_info("parking", match(0))', '', 'lookup_info("executed_leases", match(0))', '5', '', '']]
         

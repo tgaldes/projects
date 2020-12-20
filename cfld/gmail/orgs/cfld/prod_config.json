@@ -10,8 +10,8 @@
                      "from orgs.cfld.util import get_new_application_email", 
                      "from orgs.cfld.util import signature",
                      "from orgs.cfld.CfldOrg import lookup_info",
-                     "from orgs.cfld.CfldOrg import short_name_from_address",
-                     "from orgs.cfld.util import short_name_from_thread"]
+                     "from orgs.cfld.CfldOrg import short_name_from_address"
+                     ]
     },
     "spreadsheet_id" : "1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI",
     "sheet_service_email" : "tyler@cleanfloorslockingdoors.com",
