@@ -4,7 +4,7 @@ import os
 
 import framework.globals
 
-from orgs.cfld.util import signature, get_new_application_email, thread_short_name
+from orgs.cfld.util import signature, get_new_application_email, short_name_from_thread
 
 
 class CfldTest(unittest.TestCase):
@@ -48,13 +48,13 @@ class CfldTest(unittest.TestCase):
         mock_thread = Mock()
 
         mock_thread.labels = MagicMock(return_value=['Schools/USC', 'another label'])
-        self.assertEqual('USC', thread_short_name(mock_thread))
+        self.assertEqual('USC', short_name_from_thread(mock_thread))
 
         mock_thread.labels = MagicMock(return_value=['another label', 'Schools/USC'])
-        self.assertEqual('USC', thread_short_name(mock_thread))
+        self.assertEqual('USC', short_name_from_thread(mock_thread))
 
         mock_thread.labels = MagicMock(return_value=['another label', ' blah '])
-        self.assertEqual('the campus', thread_short_name(mock_thread))
+        self.assertEqual('the campus', short_name_from_thread(mock_thread))
 
 
 

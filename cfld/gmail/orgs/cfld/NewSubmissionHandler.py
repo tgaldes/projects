@@ -2,6 +2,7 @@ from datetime import datetime, date, timedelta
 import pdb
 
 from framework.Logger import Logger
+from orgs.cfld.util import short_name_from_thread
 
 def room_types_to_string(types, joiner='and'):
     if len(types) == 1:
@@ -66,7 +67,7 @@ class NewSubmissionHandler(Logger):
 
     def handle_thread(self, thread):
         self.li('Handling thread with id {} subject {}'.format(thread.identifier, thread.subject()))
-        short_name = thread.short_name() # key into the response data
+        short_name = short_name_from_thread(thread) # we use the school to look up the room availability at the school
         if len(thread) == 1:
             return self.__handle_first_msg(thread)
         else:
@@ -133,17 +134,17 @@ class NewSubmissionHandler(Logger):
             response += self.availability_blurbs[timedelta(days=0)].format(room_type=formatted_list_of_room_types, \
                                 desired=datetime.strftime(parsed_msg['move_in'], '%m-%d-%Y'), \
                                 available = datetime.strftime(parsed_msg['move_in'], '%m-%d-%Y'), \
-                                short_name = thread.short_name())
+                                short_name = short_name_from_thread(thread))
         if delay_move_in_types:
             response += self.availability_blurbs[timedelta(days=-1)][0].format(room_type=delay_move_in_types[0][0], \
                                 desired=datetime.strftime(parsed_msg['move_in'], '%m-%d-%Y'), \
                                 available = datetime.strftime(delay_move_in_types[0][1], '%m-%d-%Y'), \
-                                short_name = thread.short_name())
+                                short_name = short_name_from_thread(thread))
             for room_type, date_available in delay_move_in_types[1:]:
                 response += self.availability_blurbs[timedelta(days=-1)][1].format(room_type=room_type, \
                                     desired=datetime.strftime(parsed_msg['move_in'], '%m-%d-%Y'), \
                                     available = datetime.strftime(date_available, '%m-%d-%Y'), \
-                                    short_name = thread.short_name())
+                                    short_name = short_name_from_thread(thread))
             # Add the end value
             if len(delay_move_in_types) == 1:
                 response += self.availability_blurbs[timedelta(days=-1)][2] # 'Let me know if that interests you'
@@ -156,7 +157,7 @@ class NewSubmissionHandler(Logger):
             formatted_list_of_room_types = room_types_to_string(not_available_types, joiner='or')
             response += self.availability_blurbs[None].format(room_type=formatted_list_of_room_types, \
                                 desired=datetime.strftime(parsed_msg['move_in'], '%m-%d-%Y'), \
-                                short_name = thread.short_name())
+                                short_name = short_name_from_thread(thread))
         return response
 
     def __get_date_available(self, short_name, gender, room_type):

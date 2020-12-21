@@ -34,6 +34,7 @@ class IntegrationTest(unittest.TestCase):
         config['org'] = {}
         config['org']['name'] = 'example_org'
         config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature']
+        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
         logger = Logger('TestIntegration')
         m = Main([email_service], logger, config)
 
@@ -89,6 +90,7 @@ class IntegrationTest(unittest.TestCase):
         config['org'] = {}
         config['org']['name'] = 'example_org'
         config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature', 'from orgs.example_org.ExampleOrg import get_new_application_email']
+        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
         logger = Logger('TestIntegration')
         m = Main([tyler_service, apply_service], logger, config)
 
@@ -110,7 +112,6 @@ class IntegrationTest(unittest.TestCase):
         from orgs.example_org.ExampleOrg import header, signature 
         import orgs.example_org.ExampleOrg
 
-        draft_text = 'I just processed the application'
         orgs.example_org.ExampleOrg.example_rule_construction_data = [header, \
 ['lookup_info_test', 'apply', '', 'Schools/(.*)', '', '.*submitted my application.*', 'not thread.is_last_message_from_us()', 'draft','lookup_info("parking", match(0))', '', 'lookup_info("executed_leases", match(0))', '5', '', '']]
         
@@ -137,6 +138,7 @@ class IntegrationTest(unittest.TestCase):
         config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature', 'from orgs.example_org.ExampleOrg import lookup_info']
         logger = Logger('TestIntegration')
         config['lookup_info'] = [['parking', school, parking_info], ['', 'UCLA', 'more info'], ['executed_leases', school, dest_email], ['', 'UCLA', 'otheremail@one.com']]
+        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
         m = Main([apply_service], logger, config)
 
         m.run()

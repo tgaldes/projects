@@ -1,7 +1,5 @@
 import pdb
 
-from orgs.cfld.CfldOrg import CfldOrg
-
 # parse the thread created when a tenant submits their application 
 # and return the tenant email address
 def get_new_application_email(thread):
@@ -35,29 +33,12 @@ def signature(thread):
 
 # Retun a string representing the short name of the school
 # empty string if we can't find a label matching 'Schools/.*'
-def thread_short_name(thread):
+def short_name_from_thread(thread):
     delim = 'Schools/'
     for label_name in thread.labels():
         if label_name and label_name.find(delim) == 0:
             return label_name[len(delim):]
     return 'the campus'
 
-# Having non class wrapper functions around the org makes it easier to call these 
-# functions in the rule snippets (don't need 'org.XXXXXX')
-# AND easier to make them visible in evaluate_expression 
-# (import a function instead of importing a global class instance)
-def lookup_info(k1, k2):
-    return org.lookup_info(k1, k2)
-
-def run_new_submission_handler(t):
-    return org.handle_thread(t)
-
-def short_name(key):
-    return org.lookup_info('short_name', key.strip())
-
-def org_init(config):
-    global org
-    org = CfldOrg(config)
-    return org
     
 
