@@ -22,6 +22,6 @@ class LookupInfo(Logger):
         print(self.info)
 
     def lookup_info(self, key_a, key_b):
-        return self.info[key_a][key_b]
-
-li = LookupInfo
+        if key_a in self.info and key_b in self.info[key_a]:
+            return self.info[key_a][key_b]
+        return ''

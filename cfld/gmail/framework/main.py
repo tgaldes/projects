@@ -9,6 +9,7 @@ from framework.RuleHolder import RuleHolder
 from framework.Thread import Thread
 from framework.Inbox import Inbox
 from framework.RuleFactory import RuleFactory
+from framework.BaseValidator import BaseValidator
 from services.gmail.SheetService import SheetService
 
 
@@ -17,21 +18,31 @@ class Main:
         framework.globals.init(config)
         self.logger = logger
         self.mail_services = mail_services
+        self.config = config
 
     def run(self):
         self.inboxes = {}
         for service in self.mail_services:
             self.inboxes[service.get_user()] = Inbox(service)
         self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes)
+        
+        if 'validate' in self.config and self.config['validate']:
+            BaseValidator.set_validate_mode(True)
+            for rule_group, user in self.rule_factory.get_rule_groups():
+                inbox = self.inboxes[user]
+                for thread in inbox.get_threads_by_label('automation/dev_test_case/validate'):
+                    self.logger.li('Processing thread id: {} in validate mode'.format(thread.id()))
+                    rule_group.process(thread)
+            BaseValidator.set_validate_mode(False)
 
         count = 0
         for rule_group, user in self.rule_factory.get_rule_groups():
             inbox = self.inboxes[user]
             for thread in inbox.get_all_threads():
-                self.logger.li('Processing thread id: '.format(thread.id()))
+                self.logger.li('Processing thread id: {}'.format(thread.id()))
                 rule_group.process(thread)
                 count += 1
-        self.logger.li('Processed an email {} times'.format(count))
+        self.logger.li('Processed a rule group on an email {} times'.format(count))
         
         
 if __name__=='__main__':

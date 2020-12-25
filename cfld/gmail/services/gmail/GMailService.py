@@ -51,12 +51,11 @@ class GMailService(Logger):
                 import json
                 json.dump(thread_map, f, indent=4)'''
             self.all_full_threads.append(thread)
-
-        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='label:unread').execute().get('threads', [])
+        '''self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='label:unread').execute().get('threads', [])
         self.unread_full_threads = []
         for item in self.unread_threads:
             thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
-            self.unread_full_threads.append(thread)
+            self.unread_full_threads.append(thread)'''
 
 
 
@@ -72,6 +71,7 @@ class GMailService(Logger):
                 self.label_id_2_string[label['id']] = label['name']
         self.thread_index = 0
         self.ld('Loaded labels: {}'.format(self.label_string_2_id.keys()))
+        self.full_threads_by_label = {}
 
     def get_label_id(self, label_string): # TODO: create label on demand? Or force an exception when the desired label doesn't match somehting I've already created
         if label_string in self.label_string_2_id:
@@ -89,10 +89,21 @@ class GMailService(Logger):
     def get_email(self):
         return self.email
 
-    def get_unread_threads(self):
-        return self.unread_full_threads
+    '''def get_unread_threads(self):
+        return self.unread_full_threads'''
     def get_all_threads(self):
         return self.all_full_threads
+
+    # on demand call made to service to get everything that matches the label
+    def get_threads_by_label(self, label_string):
+        if label_string in self.full_threads_by_label:
+            return self.full_threads_by_label[label_string]
+        res = []
+        for item in  self.service.users().threads().list(userId='me', maxResults = 20, q='label:{}'.format(label_string)).execute().get('threads', []):
+            thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+            res.append(thread)
+        self.full_threads_by_label[label_string] = res
+        return res
 
     def set_label(self, id, label_id, unset=False, userId='me'):
 # TODO: same expo backoff function as v1

@@ -5,12 +5,13 @@ import pdb
 from framework.RuleHolder import RuleHolder
 from framework.Interfaces import IRule
 from framework.Logger import Logger
+from framework.BaseValidator import BaseValidator
 
 
 # When we have more enum type values we can extract them somewhere else
 if_any_rule_types = ['if', 'any']
 
-class RuleGroup(Logger):
+class RuleGroup(BaseValidator):
     def __init__(self, rules_tup, child):
         super(RuleGroup, self).__init__(child)
         enums = copy.copy(self._enums())
@@ -25,7 +26,7 @@ class RuleGroup(Logger):
         # REFACTOR: overriding functions should be returning enum values
 
 # When the first irule matches the thread, we break
-class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
+class IfElseRuleGroup(implements(IRule), RuleGroup):
     def __init__(self, rules_tup):
         super(IfElseRuleGroup, self).__init__(rules_tup, __class__)
         self.rules = []
@@ -45,7 +46,11 @@ class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
 
     def process(self, thread):
         for irule in self.rules:
-            if irule.process(thread):
+            rule_match = irule.process(thread)
+            # in validate mode we want to pass the thread to every rule
+            if super().force_match():
+                continue
+            elif rule_match:
                 break
 
     def _enums(self):
@@ -54,7 +59,7 @@ class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
 
 # Do the if actions until one returns true
 # If any if actions returned true, do all the then actions
-class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
+class IfAnyRuleGroup(implements(IRule), RuleGroup):
     def __init__(self, rules_tup):
         super(IfAnyRuleGroup, self).__init__(rules_tup, __class__)
         self.if_rules = []
@@ -85,9 +90,13 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
         for irule in self.if_rules:
             if irule.process(thread):
                 match = True
-                break
+                # in validate mode we want to pass the thread to every rule
+                if super().force_match():
+                    continue
+                elif match:
+                    break
 
-        if match:
+        if match or super().force_match():
             for i, irule in enumerate(self.any_rules):
                 if not irule.process(thread):
                     raise Exception('any_rule {} at index {} did not match thread with id: {} subject: {}'.format(irule, i, thread.field('id'), thread.subject())) 

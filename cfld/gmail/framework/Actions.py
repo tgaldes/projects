@@ -100,9 +100,10 @@ class AttachmentAction(Logger):
 
     def process(self, thread, matches):
         destinations = evaluate_expression(self.destinations, **locals())
-        thread.add_attachment_to_draft(*thread.last_attachment(), destinations) 
+        last_attachment = thread.last_attachment()
+        if len(last_attachment) == 2:
+            thread.add_attachment_to_draft(*last_attachment, destinations) 
         
 
 
 
-        

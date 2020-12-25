@@ -25,4 +25,7 @@ class Inbox(Logger):
 
     def get_all_threads(self):
         return self.service.get_all_threads()
+
+    def get_threads_by_label(self, label):
+        return self.service.get_threads_by_label(label)
         

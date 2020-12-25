@@ -3,11 +3,12 @@ import pdb
 from interface import implements
 
 from framework.Interfaces import IMatcher
-from framework.Logger import Logger
+from framework.BaseValidator import BaseValidator
 from framework.util import evaluate_expression, class_to_string
+from framework.Logger import Logger
 
 
-class RegexMatcher(Logger):
+class RegexMatcher(BaseValidator):
     def __init__(self, re_string):
         super(RegexMatcher, self).__init__(self._name())
         self.re_string = re_string
@@ -43,9 +44,14 @@ class RegexMatcher(Logger):
         r = self.__try_non_re_match(text)
         if r:
             self.ld('\'{}\' matches regex:\'{}\' thread_id: {} subject {}'.format(self.__clean_text(text), self.re_string, identifier, subject))
+            return True
+        elif super().force_match():
+            # TODO: have a method on thread that will get us what we want the log output to be
+            self.ld('\'{}\' forced to return true for thread_id: {} subject {}'.format(self.re_string, identifier, subject))
+            return True
         else:
             self.ld('\'{}\' no match regex:\'{}\' thread_id: {} subject {}'.format(self.__clean_text(text), self.re_string, identifier, subject))
-        return r
+            return False
 
     def _name(self):
         raise Exception('_name is not implemented in RegexMatcher.')
@@ -56,7 +62,9 @@ class RegexMatcher(Logger):
             self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
             return g.groups()
         elif self.__try_non_re_match(text):
-            return ()
+            return []
+        elif super().force_match():
+            return []
         raise Exception('Asked for matching groups when no match. re: {} thread subject: {}'.format(self.re_string, text))
     
 
@@ -112,7 +120,7 @@ class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
         return str(self.__class__)
 
 
-class ExpressionMatcher(implements(IMatcher), Logger):
+class ExpressionMatcher(BaseValidator, implements(IMatcher)):
     def __init__(self, expression):
         super(ExpressionMatcher, self).__init__(__class__)
         self.expression = expression
@@ -123,6 +131,9 @@ class ExpressionMatcher(implements(IMatcher), Logger):
     def matches(self, thread):
         if evaluate_expression(self.expression, **locals()):
             self.ld('{} returns true thread_id: {} subject {}'.format(self.expression, thread.id(), thread.subject()))
+            return True
+        elif super().force_match():
+            self.ld('\'{}\' forced to return true for thread_id: {} subject {}'.format(self.expression, thread.id(), thread.subject()))
             return True
         self.ld('{} returns false thread_id: {} subject {}'.format(self.expression, thread.id(), thread.subject()))
         return False
@@ -170,4 +181,4 @@ class AllMatcher(Logger): # TODO ut
         return True
 
     def get_matching_groups(self, thread):
-        return ()
+        return []

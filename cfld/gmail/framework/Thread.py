@@ -4,7 +4,6 @@ from time import time
 from framework.Logger import Logger
 from framework.MimeEmail import create_multipart
 
-# Once I get the mapping down I need to write 20 asserts for the thread class before adding more functionality
 class Thread(Logger):
     def __init__(self, identifier, messages, service):
         super(Thread, self).__init__(__class__)
@@ -22,14 +21,14 @@ class Thread(Logger):
         return self.identifier
     
     def set_label(self, label_string, unset=False):
+        if self.has_label(label_string):
+            return
         label_id = self.service.get_label_id(label_string)
         if label_id:
             resp = self.service.set_label(self.identifier, label_id, unset)
             for label_id in resp:
                 for message in self.messages:
                     message.add_label_id(label_id)
-        else:
-            raise Exception('Service cannot find a label id for label: {}'.format(label_string))
     # return the number of messages in the thread that have been sent by the user
     def get_user_message_count(self):
         my_email_count = 0
@@ -44,6 +43,10 @@ class Thread(Logger):
 
     def label_ids(self):
         return self.messages[0].label_ids()
+
+    def has_label(self, label_string):
+        return label_string in self.labels()
+
     def labels(self):
         labels = []
         for label_id in self.messages[0].label_ids():
@@ -68,11 +71,16 @@ class Thread(Logger):
             self.service.delete_draft(draft_id)
 
     def prepend_to_draft(self, body, destinations):
-        new_body = body + self.existing_draft_text()
+        if body:
+            new_body = body + self.existing_draft_text()
+        else:
+            new_body = self.existing_draft_text()
         self.__add_or_update_draft(new_body, destinations)
 
     def append_to_draft(self, body, destinations):
-        new_body = self.existing_draft_text() + body
+        new_body = self.existing_draft_text()
+        if body:
+            new_body += body
         self.__add_or_update_draft(new_body, destinations)
 
     def last_attachment(self):

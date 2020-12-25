@@ -17,6 +17,7 @@
     "sheet_service_email" : "tyler@cleanfloorslockingdoors.com",
     "secret_path" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json",
     "client_token_dir" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/",
-    "sheet_name" : "staging_rules"
+    "sheet_name" : "staging_rules",
+    "validate" : 0
 }
 

@@ -22,7 +22,9 @@ def list_of_emails_to_string_of_emails(l):
 def match(index):
     frame = inspect.currentframe()
     kw = frame.f_back.f_locals['kwargs']
-    return kw['matches'][index]
+    if index < len(kw['matches']):
+        return kw['matches'][index]
+    return ''
 
 def link(link_dest, link_text=None):
     if not link_text:

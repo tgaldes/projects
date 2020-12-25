@@ -68,10 +68,12 @@ class ThreadTest(unittest.TestCase):
         # Nor should we get the text of the draft
         self.assertEqual('first message\r\n<div dir="ltr">first message</div>\r\n', thread.last_message_text())
 
-        # try to set a label that doesn't exist, we want an exception
-        with self.assertRaises(Exception):
-            mock_service.get_label_id = MagicMock(return_value=None)
-            thread.set_label('this label doesn\'t exist')
+        # try to set a label that doesn't exist, we want to do nothing
+        mock_service.get_label_id = MagicMock(return_value=None)
+        nonexistent_label = 'doesnt exist'
+        thread.set_label(nonexistent_label)
+        self.assertFalse(nonexistent_label in thread.labels())
+
 
     def test_last_ts(self):
         mock_service = Mock()

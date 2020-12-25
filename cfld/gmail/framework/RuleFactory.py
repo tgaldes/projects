@@ -25,7 +25,9 @@ class RuleFactory(Logger):
         last_group_index = -1
         # List of [(Group, user)..... so we can process in order of the rule groups
         raw_rule_group_tuples = []
+        count = 1
         for rule_row in sheet_data[1:]:
+            count += 1
             if row_is_empty(rule_row):
                 continue
             log_msg = 'Created: '
@@ -88,7 +90,7 @@ class RuleFactory(Logger):
 
             # Create the rule holder
             if len(matchers) == 1:
-                rh = RuleHolder(action, matchers[0])
+                rh = RuleHolder(action, matchers[0], count)
             else:
                 rh = RuleHolder(action, ComboMatcher(matchers))
 
