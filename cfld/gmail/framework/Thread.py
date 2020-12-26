@@ -21,7 +21,9 @@ class Thread(Logger):
         return self.identifier
     
     def set_label(self, label_string, unset=False):
-        if self.has_label(label_string):
+        if self.has_label(label_string) and not unset:
+            return
+        elif not self.has_label(label_string) and unset:
             return
         label_id = self.service.get_label_id(label_string)
         if label_id:
@@ -57,6 +59,9 @@ class Thread(Logger):
         if self.messages[-1].is_draft():
             return len(self.messages) - 1
         return len(self.messages)
+
+    def __repr__(self):
+        return 'thread_id: {} subject: {}'.format(self.id(), self.subject())
 
     def remove_existing_draft(self, delete_at_service_level=True):
         draft_id = self.existing_draft_id()
@@ -99,11 +104,8 @@ class Thread(Logger):
         existing_attachments = self.existing_draft_attachments()
         existing_attachments.append((data, fn))
         mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), existing_body, existing_attachments)
-        try:
+        if draft_id:
             self.remove_existing_draft(False) # Remove our copy but not the service copy
-        except:
-            pass
-
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
         self.__add_or_update_message(response)
 
@@ -114,10 +116,8 @@ class Thread(Logger):
             destinations = self.__concatenate_destinations(destinations)
 
         mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), body, self.existing_draft_attachments())
-        try:
+        if draft_id:
             self.remove_existing_draft(False) # Remove our copy but not the service copy
-        except:
-            pass
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
         self.__add_or_update_message(response)
 

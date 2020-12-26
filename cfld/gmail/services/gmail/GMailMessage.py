@@ -7,6 +7,24 @@ def extract_email(email_string):
     if not email_string:
         return email_string
     return email_string.split(' ')[-1].strip('<').strip('>')
+def extract_emails(emails_string):
+    if not emails_string:
+        return []
+    if len(emails_string.split('@')) == 2 and len(emails_string.split(' ')) == 1:
+        return [emails_string.strip('<').strip('>')]
+    insert_mode = False
+    res = []
+    current_email = ''
+    for char in emails_string:
+        if char == '<':
+            insert_mode = True
+        elif char == '>':
+            insert_mode = False
+            res.append(current_email)
+            current_email = ''
+        elif insert_mode:
+            current_email += char
+    return res
 
 class GMailMessage(Logger):
     def __init__(self, fields, service):
@@ -69,12 +87,7 @@ class GMailMessage(Logger):
         res = self.__field('To', default='')
         if not res:
             res = self.__field('to', default='')
-        to_emails = []
-        if res:
-            res = res.split(',')
-            for i, to_email in enumerate(res):
-                to_emails.append(extract_email(to_email))
-        return to_emails
+        return extract_emails(res)
     def reply_to(self, raw=False):
         res = self.__field('Reply-To', default='')
         if res: 
@@ -90,12 +103,9 @@ class GMailMessage(Logger):
 
     def cc(self):
         res = self.__field('Cc', default=None)
-        cc_emails = []
         if res:
-            res = res.split(',')
-            for i, cc_email in enumerate(res):
-                cc_emails.append(extract_email(cc_email))
-        return cc_emails
+            return extract_emails(res)
+        return []
 
     def ts(self):
         return int(int(self.__field('internalDate')) / 1000)

@@ -19,11 +19,11 @@ class CfldIntegrationTest(unittest.TestCase):
     def test_new_submission_handler(self):
 
         rule_construction_data = [header, \
-['test new submission handler', 'apply', '', 'automation/contact_form', '', '', 'len(thread) == 1', 'draft','run_new_submission_handler(thread)', '', 'thread.default_reply()', '1', '', '']]
+['test new submission handler', 'apply', '', 'automation/contact_form', '', '', 'len(thread) == 1', 'draft','run_new_submission_handler(thread)', '', 'thread.default_reply()', '1', '', '', '']]
         
         apply_service = Mock()
         apply_threads = [Thread(*get_thread_constructor_args('../orgs/cfld/test/integration_test_inputs/new_submission_only.txt'), apply_service)]
-        apply_service.get_all_threads = MagicMock(return_value=apply_threads)
+        apply_service.query = MagicMock(return_value=apply_threads)
         apply_service.get_user = MagicMock(return_value='apply')
         apply_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
         apply_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])

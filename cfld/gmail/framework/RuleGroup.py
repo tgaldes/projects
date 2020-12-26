@@ -12,7 +12,7 @@ from framework.BaseValidator import BaseValidator
 if_any_rule_types = ['if', 'any']
 
 class RuleGroup(BaseValidator):
-    def __init__(self, rules_tup, child):
+    def __init__(self, rules_tup, child, query):
         super(RuleGroup, self).__init__(child)
         enums = copy.copy(self._enums())
         for i, (_, group_type, unused) in enumerate(rules_tup):
@@ -20,15 +20,19 @@ class RuleGroup(BaseValidator):
                 enums.append('')
             if group_type not in enums:
                 raise Exception('group_type: {} passed in error'.format(group_type))
+        self.query = query
 
     def _enums(self):
         raise Exception('Implement _enums in child RuleGroup')
         # REFACTOR: overriding functions should be returning enum values
 
+    def get_query(self):
+        return self.query
+
 # When the first irule matches the thread, we break
 class IfElseRuleGroup(implements(IRule), RuleGroup):
-    def __init__(self, rules_tup):
-        super(IfElseRuleGroup, self).__init__(rules_tup, __class__)
+    def __init__(self, rules_tup, query):
+        super(IfElseRuleGroup, self).__init__(rules_tup, __class__, query)
         self.rules = []
         for irule, _, rule_type in rules_tup:
             self.rules.append(irule)
@@ -60,8 +64,8 @@ class IfElseRuleGroup(implements(IRule), RuleGroup):
 # Do the if actions until one returns true
 # If any if actions returned true, do all the then actions
 class IfAnyRuleGroup(implements(IRule), RuleGroup):
-    def __init__(self, rules_tup):
-        super(IfAnyRuleGroup, self).__init__(rules_tup, __class__)
+    def __init__(self, rules_tup, query):
+        super(IfAnyRuleGroup, self).__init__(rules_tup, __class__, query)
         self.if_rules = []
         self.any_rules = []
         for irule, _, rule_type in rules_tup:
@@ -105,13 +109,16 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup):
         return ['ifany']
 
 
-class SingleRuleGroup(implements(IRule), Logger):
-    def __init__(self, rules_tup):
-        super(SingleRuleGroup, self).__init__(__class__)
+class SingleRuleGroup(implements(IRule), RuleGroup):
+    def __init__(self, rules_tup, query):
+        super(SingleRuleGroup, self).__init__(rules_tup, __class__, query)
         if len(rules_tup) != 1:
             raise Exception('Cannot create with rule list of size != 1: {}'.format(rules_tup))
         self.rule = rules_tup[0][0]
         self.li('Created SingleRuleGroup')
+
+    def _enums(self):
+        return ['']
 
     def __len__(self):
         return 1

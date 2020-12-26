@@ -40,8 +40,8 @@ class GMailService(Logger):
 
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
-        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='New submission for USC').execute().get('threads', [])
+        self.all_threads = self.service.users().threads().list(userId='me', maxResults = 20, q='label:INBOX').execute().get('threads', [])
+        #self.all_threads = self.service.users().threads().list(userId='me', maxResults = 1, q='December parking').execute().get('threads', [])
         self.all_full_threads = []
         for item in self.all_threads:
             thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
@@ -71,7 +71,8 @@ class GMailService(Logger):
                 self.label_id_2_string[label['id']] = label['name']
         self.thread_index = 0
         self.ld('Loaded labels: {}'.format(self.label_string_2_id.keys()))
-        self.full_threads_by_label = {}
+        self.full_threads_by_query = {}
+        self.full_threads_by_query[''] = self.all_full_threads
 
     def get_label_id(self, label_string): # TODO: create label on demand? Or force an exception when the desired label doesn't match somehting I've already created
         if label_string in self.label_string_2_id:
@@ -93,16 +94,16 @@ class GMailService(Logger):
         return self.unread_full_threads'''
     def get_all_threads(self):
         return self.all_full_threads
-
-    # on demand call made to service to get everything that matches the label
-    def get_threads_by_label(self, label_string):
-        if label_string in self.full_threads_by_label:
-            return self.full_threads_by_label[label_string]
+    
+    # Empty q gets us all_full_threads
+    def query(self, q):
+        if query in self.full_threads_by_query:
+            return self.full_threads_by_query[query]
         res = []
-        for item in  self.service.users().threads().list(userId='me', maxResults = 20, q='label:{}'.format(label_string)).execute().get('threads', []):
+        for item in  self.service.users().threads().list(userId='me', maxResults = 99, q='{}'.format(query)).execute().get('threads', []):
             thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
             res.append(thread)
-        self.full_threads_by_label[label_string] = res
+        self.full_threads_by_query[query] = res
         return res
 
     def set_label(self, id, label_id, unset=False, userId='me'):
@@ -119,6 +120,9 @@ class GMailService(Logger):
                                               body=payload).execute()
         if 'labelIds' in resp:
             return resp['labelIds']
+        elif 'messages' in resp:
+            return resp['messages'][0]['labelIds']
+        self.lw('No labelIds in response to set_label call for label_id: {} label_string: {}'.format(label_id, label_id_2_string[label_id]))
         return []
 
     def get_drafts(self):

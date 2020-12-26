@@ -37,20 +37,20 @@ class RegexMatcher(BaseValidator):
             return text[:99]
         return text
 
-    def matches(self, text, identifier, subject):
+    def matches(self, text, thread):
         if self.re.match(text):
-            self.ld('\'{}\' matches regex:\'{}\' thread_id: {} subject {}'.format(self.__clean_text(text), self.re_string, identifier, subject))
+            self.ld('\'{}\' matches regex:\'{}\' {}'.format(self.__clean_text(text), self.re_string, thread))
             return True
         r = self.__try_non_re_match(text)
         if r:
-            self.ld('\'{}\' matches regex:\'{}\' thread_id: {} subject {}'.format(self.__clean_text(text), self.re_string, identifier, subject))
+            self.ld('\'{}\' matches regex:\'{}\' {}'.format(self.__clean_text(text), self.re_string, thread))
             return True
         elif super().force_match():
             # TODO: have a method on thread that will get us what we want the log output to be
-            self.ld('\'{}\' forced to return true for thread_id: {} subject {}'.format(self.re_string, identifier, subject))
+            self.ld('\'{}\' forced to return true for {}'.format(self.re_string, thread))
             return True
         else:
-            self.ld('\'{}\' no match regex:\'{}\' thread_id: {} subject {}'.format(self.__clean_text(text), self.re_string, identifier, subject))
+            self.ld('\'{}\' no match regex:\'{}\' {}'.format(self.__clean_text(text), self.re_string, thread))
             return False
 
     def _name(self):
@@ -74,7 +74,7 @@ class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
         super(SubjectMatcher, self).__init__(regex)
 
     def matches(self, thread):
-        return super().matches(thread.subject(), thread.id(), thread.subject())
+        return super().matches(thread.subject(), thread)
 
     def get_matching_groups(self, thread):
         return super().get_matching_groups(thread.subject())
@@ -89,7 +89,7 @@ class BodyMatcher(implements(IMatcher), RegexMatcher, Logger):
         super(BodyMatcher, self).__init__(re_string.lower())
 
     def matches(self, thread):
-        return super().matches(thread.last_message_text().lower(), thread.id(), thread.subject())
+        return super().matches(thread.last_message_text().lower(), thread)
 
     def get_matching_groups(self, thread):
         return super().get_matching_groups(thread.last_message_text().lower())
@@ -104,7 +104,7 @@ class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
 
     def matches(self, thread):
         for label in thread.labels():
-            if super().matches(label, thread.id(), thread.subject()):
+            if super().matches(label, thread):
                 return True
         return False
 
@@ -130,12 +130,12 @@ class ExpressionMatcher(BaseValidator, implements(IMatcher)):
 
     def matches(self, thread):
         if evaluate_expression(self.expression, **locals()):
-            self.ld('{} returns true thread_id: {} subject {}'.format(self.expression, thread.id(), thread.subject()))
+            self.ld('{} returns true {}'.format(self.expression, thread))
             return True
         elif super().force_match():
-            self.ld('\'{}\' forced to return true for thread_id: {} subject {}'.format(self.expression, thread.id(), thread.subject()))
+            self.ld('\'{}\' forced to return true for {}'.format(self.expression, thread))
             return True
-        self.ld('{} returns false thread_id: {} subject {}'.format(self.expression, thread.id(), thread.subject()))
+        self.ld('{} returns false {}'.format(self.expression, thread))
         return False
 
     # Since we aren't doing a regex we don't really have the concept of matching groups
@@ -155,9 +155,9 @@ class ComboMatcher(implements(IMatcher), Logger):
     def matches(self, thread):
         for i, matcher in enumerate(self.matchers):
             if not matcher.matches(thread):
-                self.ld('Returning false when matcher at index {} returns false. thread_id: {} subject: {}'.format(i, thread.id(), thread.subject()))
+                self.ld('Returning false when matcher at index {} returns false. {}'.format(i, thread))
                 return False
-        self.ld('matched {} matchers, returning true for thread_id: {} subject: {}'.format(len(self.matchers), thread.id(), thread.subject()))
+        self.ld('matched {} matchers, returning true for {}'.format(len(self.matchers), thread))
         return True
 
     def get_matching_groups(self, thread):
@@ -177,7 +177,7 @@ class AllMatcher(Logger): # TODO ut
         super(AllMatcher, self).__init__(__class__)
     
     def matches(self, thread):
-        self.li('always returing true for thread_id: {} subject: {}'.format(thread.id(), thread.subject()))
+        self.li('always returing true for {}'.format(thread))
         return True
 
     def get_matching_groups(self, thread):

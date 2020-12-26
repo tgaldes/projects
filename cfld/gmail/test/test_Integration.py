@@ -20,7 +20,7 @@ class IntegrationTest(unittest.TestCase):
         
         email_service = Mock()
         all_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), email_service)]
-        email_service.get_all_threads = MagicMock(return_value=all_threads)
+        email_service.query = MagicMock(return_value=all_threads)
         email_service.get_label_name = MagicMock(return_value='Schools')
         email_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
         email_service.get_user = MagicMock(return_value='tyler')
@@ -69,13 +69,15 @@ class IntegrationTest(unittest.TestCase):
 
         tyler_service = Mock()
         tyler_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/rental_application.txt'), tyler_service)]
-        tyler_service.get_all_threads = MagicMock(return_value=tyler_threads)
+        tyler_service.query = MagicMock(return_value=tyler_threads)
         tyler_service.get_user = MagicMock(return_value='tyler')
         tyler_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
         tyler_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
 
         apply_service = Mock()
         apply_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'), apply_service)]
+        apply_service.query = MagicMock(return_value=apply_threads)
+        # We need to have this mocked so that the apply inbox can be searched
         apply_service.get_all_threads = MagicMock(return_value=apply_threads)
         apply_service.get_user = MagicMock(return_value='apply')
         apply_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
@@ -121,7 +123,7 @@ class IntegrationTest(unittest.TestCase):
 
         apply_service = Mock()
         apply_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'), apply_service)]
-        apply_service.get_all_threads = MagicMock(return_value=apply_threads)
+        apply_service.query = MagicMock(return_value=apply_threads)
         apply_service.get_user = MagicMock(return_value='apply')
         apply_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
         apply_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])

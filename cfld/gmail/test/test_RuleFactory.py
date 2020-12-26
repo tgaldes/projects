@@ -8,13 +8,13 @@ from framework.Matchers import BodyMatcher, ComboMatcher, SubjectMatcher, AllMat
 from framework.Actions import LabelAction, DraftAction, RedirectAction
 
 class RuleFactoryTest(unittest.TestCase):
-    header = ['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group', 'group_type', 'rule_type']
+    header = ['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group', 'group_type', 'rule_type', 'query']
     def test_create_rules(self):
         sheet_data = \
             [RuleFactoryTest.header, \
-             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '0', '', ''], \
-             ['subject match, draft action', 'apply', '', '', 'sregex', '', '', 'draft', 'value expression', '', 'dest expresssion', '1', '', ''], \
-             ['match anything', 'apply', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', '']]
+             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '0', '', '', ''], \
+             ['subject match, draft action', 'apply', '', '', 'sregex', '', '', 'draft', 'value expression', '', 'dest expresssion', '1', '', '', ''], \
+             ['match anything', 'apply', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', '', '']]
 
         rf = RuleFactory(sheet_data)
 
@@ -45,32 +45,32 @@ class RuleFactoryTest(unittest.TestCase):
         # Throw for no inboxes passed when we try to create redirect rules
         sheet_data = \
             [RuleFactoryTest.header, \
-             ['redirect- wont be created since we dont specify inboxes', 'apply', 'tyler', 'automation', '', '', '', 'redirect', 'value_exp', 'finder_expr', 'dest_expr', '1']]
+             ['redirect- wont be created since we dont specify inboxes', 'apply', 'tyler', 'automation', '', '', '', 'redirect', 'value_exp', 'finder_expr', 'dest_expr', '1', '']]
         with self.assertRaises(Exception):
             rf = RuleFactory(sheet_data)
         # Bad action name
         sheet_data = \
             [RuleFactoryTest.header, \
-             ['match anything', 'apply', '', '', '', '', '', 'I dont know how to create an action for this string', 'value expression', '', 'dest expresssion', '2', '', '']]
+             ['match anything', 'apply', '', '', '', '', '', 'I dont know how to create an action for this string', 'value expression', '', 'dest expresssion', '2', '', '', '']]
         with self.assertRaises(Exception):
             rf = RuleFactory(sheet_data)
         # no rule user specified
         sheet_data = \
             [RuleFactoryTest.header, \
-             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', '']]
+             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', '', '']]
         with self.assertRaises(Exception):
             rf = RuleFactory(sheet_data)
         # group number does down 
         sheet_data = \
             [RuleFactoryTest.header, \
              ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2', '', ''], \
-             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '1', '', '']]
+             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '1', '', '', '']]
         with self.assertRaises(Exception):
             rf = RuleFactory(sheet_data)
         # group number not interpretable as float
         sheet_data = \
             [RuleFactoryTest.header, \
-             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2.a', '', '']]
+             ['match anything', '', '', '', '', '', '', 'draft', 'value expression', '', 'dest expresssion', '2.a', '', '', '']]
         with self.assertRaises(Exception):
             rf = RuleFactory(sheet_data)
 
@@ -100,7 +100,7 @@ class RuleFactoryTest(unittest.TestCase):
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '2', '', 'any'], \
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '3', '', ''], \
              ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '4', 'ifelse', ''], \
-             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '4', 'ifelse', '']]
+             ['remove automation', 'apply', '', 'automation', '', '', 'not thread.has_existing_draft()', 'unlabel', '"automation"', '', '', '4', 'ifelse', '', '']]
         # final group sizes should be 3, 2, 1, 2
         # types are ifelse, ifany, single, ifany
 
@@ -119,7 +119,7 @@ class RuleFactoryTest(unittest.TestCase):
     def test_body_regex_matcher(self):
         sheet_data = \
             [RuleFactoryTest.header, \
-             ['remove automation', 'apply', '', '', '', 'body regext', '', 'unlabel', '"automation"', '', '', '0', '', '']]
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'unlabel', '"automation"', '', '', '0', '', '', '']]
 
         rf = RuleFactory(sheet_data)
 
@@ -135,7 +135,7 @@ class RuleFactoryTest(unittest.TestCase):
     def test_prepend_draft_action(self):
         sheet_data = \
             [RuleFactoryTest.header, \
-             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '0', '', '']]
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '0', '', '', '']]
 
         rf = RuleFactory(sheet_data)
 

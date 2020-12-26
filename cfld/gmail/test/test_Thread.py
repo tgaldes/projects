@@ -38,6 +38,7 @@ class ThreadTest(unittest.TestCase):
         self.assertTrue('mockid' in thread.label_ids())
 
         # unset a label
+        mock_service.get_label_name = MagicMock(return_value='test label string')
         thread.set_label('test label string', unset=True)
         mock_service.set_label.assert_called_with(id, 'mockid', True)
         mock_service.get_label_id.assert_called_with('test label string')
