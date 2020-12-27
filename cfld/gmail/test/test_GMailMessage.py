@@ -13,12 +13,12 @@ class GMailMessageTest(unittest.TestCase):
         two = '<tgaldes@gmail.com>'
         three = 'Tyler Galdes, <tgaldes@gmail.com>'
         four = 'Tyler Galdes <tgaldes@gmail.com>, Tyler Galdes <tyler@cf-ld.com>'
-        #five = 'tgaldes@gmail.com, tyler@cf-ld.com'
+        five = 'tgaldes@gmail.com, tyler@cf-ld.com'
         six = '"King, Kristin" <Kristin.King@nemoves.com>'
 
         self.assertEqual(list_one, extract_emails(one))
         self.assertEqual(list_one, extract_emails(two))
         self.assertEqual(list_one, extract_emails(three))
         self.assertEqual([one, 'tyler@cf-ld.com'], extract_emails(four))
-        #self.assertEqual([one, 'tyler@cf-ld.com'], extract_emails(five))
+        self.assertEqual([one, 'tyler@cf-ld.com'], extract_emails(five))
         self.assertEqual(['Kristin.King@nemoves.com'], extract_emails(six))

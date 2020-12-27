@@ -464,3 +464,15 @@ class ThreadTest(unittest.TestCase):
         self.assertTrue(email_two in thread.messages[-1].recipients())
         self.assertTrue(email_three in thread.messages[-1].recipients())
 
+    def test_different_forward_delimiters(self):
+        mock_service = Mock()
+
+        # Uses '_____________________________'
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/different_delimiter_for_forwarded_message_text.txt'), mock_service)
+        expected_last_message ='Thank you, I am free this afternoon and anytime until end of next weekend. My cell: 678-431-8221\r\nBest\r\n\r\n' 
+        self.assertEqual(expected_last_message, thread.last_message_text())
+
+        # Uses '\r\n\r\nOn '
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/first_delimiter_for_forwarded_message_text.txt'), mock_service)
+        expected_last_message ='Hi buddy\r\n\r\n\r\n' 
+        self.assertEqual(expected_last_message, thread.last_message_text())

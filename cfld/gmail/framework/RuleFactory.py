@@ -20,7 +20,7 @@ class RuleFactory(Logger):
         super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
-        RuleTuple = collections.namedtuple('RuleTuple', sheet_data[0])
+        RuleTuple = collections.namedtuple('RuleTuple', [x.split(' ')[0] for x in sheet_data[0]])
         header_size = len(sheet_data[0])
         last_group_index = -1
         # List of [(Group, user)..... so we can process in order of the rule groups
@@ -97,10 +97,10 @@ class RuleFactory(Logger):
 
             # Add the (RuleHolder, type, rule_type) tuple # TODO
             if float(tup.group) == last_group_index:
-                raw_rule_group_tuples[-1][0].append((rh, tup.group_type, tup.rule_type))
-            else: # group of one rule
                 if tup.query:
                     raise Exception('Can only specify a custom query in the first rule of a rule group.')
+                raw_rule_group_tuples[-1][0].append((rh, tup.group_type, tup.rule_type))
+            else: # group of one rule
                 raw_rule_group_tuples.append(([(rh, tup.group_type, tup.rule_type)], tup.email, tup.query))
             last_group_index = float(tup.group)
 

@@ -40,24 +40,29 @@ class GMailService(Logger):
 
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
-        self.all_threads = self.service.users().threads().list(userId='me', maxResults = 20, q='label:INBOX').execute().get('threads', [])
-        #self.all_threads = self.service.users().threads().list(userId='me', maxResults = 1, q='December parking').execute().get('threads', [])
-        self.all_full_threads = []
-        for item in self.all_threads:
+
+        self.default_thread_ids = self.service.users().threads().list(userId='me', maxResults = 20, q='label:INBOX').execute().get('threads', [])
+        #self.default_thread_ids = self.service.users().threads().list(userId='me', maxResults = 1, q='Rent payment reversed').execute().get('threads', [])
+
+
+        # We want to create no more than one Thread instance per thread id
+        # That way we don't need to make a state change on a Thread and also
+        # update the state on all the other Thread instances for the same id
+        self.thread_id_2_full_threads = {}
+        # Map queries to a list of created Thread instances
+        self.full_threads_by_query = {}
+
+        default_threads = []
+        for item in self.default_thread_ids:
             thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
             thread = self.__create_thread_from_raw(thread_map)
+            self.thread_id_2_full_threads[thread.id()] = thread
             '''fn = './test/integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'
             with open(fn, 'w') as f:
                 import json
                 json.dump(thread_map, f, indent=4)'''
-            self.all_full_threads.append(thread)
-        '''self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='label:unread').execute().get('threads', [])
-        self.unread_full_threads = []
-        for item in self.unread_threads:
-            thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
-            self.unread_full_threads.append(thread)'''
-
-
+            default_threads.append(thread)
+        self.full_threads_by_query[''] = default_threads
 
         results = self.service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
@@ -71,8 +76,6 @@ class GMailService(Logger):
                 self.label_id_2_string[label['id']] = label['name']
         self.thread_index = 0
         self.ld('Loaded labels: {}'.format(self.label_string_2_id.keys()))
-        self.full_threads_by_query = {}
-        self.full_threads_by_query[''] = self.all_full_threads
 
     def get_label_id(self, label_string): # TODO: create label on demand? Or force an exception when the desired label doesn't match somehting I've already created
         if label_string in self.label_string_2_id:
@@ -90,20 +93,25 @@ class GMailService(Logger):
     def get_email(self):
         return self.email
 
-    '''def get_unread_threads(self):
-        return self.unread_full_threads'''
-    def get_all_threads(self):
-        return self.all_full_threads
-    
     # Empty q gets us all_full_threads
-    def query(self, q):
-        if query in self.full_threads_by_query:
-            return self.full_threads_by_query[query]
+    def query(self, q, limit):
+        if q in self.full_threads_by_query:
+            return self.full_threads_by_query[q]
         res = []
-        for item in  self.service.users().threads().list(userId='me', maxResults = 99, q='{}'.format(query)).execute().get('threads', []):
-            thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
-            res.append(thread)
-        self.full_threads_by_query[query] = res
+        q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute().get('threads', [])
+        self.ld('Query {} returned {} threads.'.format(q, len(q_result)))
+        for item in q_result:
+            # Before we call the service, check if we already have this thread locally
+            if item['id'] in self.thread_id_2_full_threads:
+                self.ld('Returning existing thread: {}'.format(self.thread_id_2_full_threads[item['id']]))
+                res.append(self.thread_id_2_full_threads[item['id']])
+            else:
+                thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
+                self.thread_id_2_full_threads[item['id']] = thread
+                res.append(thread)
+            # Save this id for future use
+        # Save full result of the query
+        self.full_threads_by_query[q] = res
         return res
 
     def set_label(self, id, label_id, unset=False, userId='me'):

@@ -12,19 +12,16 @@ class Inbox(Logger):
     # return a list of all the threads that have involved a message to or from
     # this email address, ordered by most recent activity first
     # Right now the service get_one_thread isn't neccessarily retuning in order from the inbox
-    def get_threads_from_email_address(self, email):
+    '''def get_threads_from_email_address(self, email):
         res = []
-        for thread in self.service.get_all_threads():
+        for thread in self.service.query(email):
             replies = [x.lower() for x in thread.default_reply()]
             if email.lower() in replies:
                 res.append(thread)
-        return res
+        return res'''
+
+    # Note that current implementation will only pick up preloaded 20 threads
+    # when q == ''
+    def query(self, q, limit=99):
+        return self.service.query(q, limit)
     
-    '''def get_unread_threads(self):
-        return self.service.get_unread_threads()'''
-
-    def get_all_threads(self):
-        return self.service.get_all_threads()
-
-    def query(self, q):
-        return self.service.query(q)

@@ -102,8 +102,7 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup):
 
         if match or super().force_match():
             for i, irule in enumerate(self.any_rules):
-                if not irule.process(thread):
-                    raise Exception('any_rule {} at index {} did not match thread with id: {} subject: {}'.format(irule, i, thread.field('id'), thread.subject())) 
+                irule.process(thread)
 
     def _enums(self):
         return ['ifany']
@@ -118,7 +117,10 @@ class SingleRuleGroup(implements(IRule), RuleGroup):
         self.li('Created SingleRuleGroup')
 
     def _enums(self):
-        return ['']
+    # We are ok with a user specifying they want to create an ifelse rule group
+    # and only having one rule in that group. Single rule group == if else rule
+    # group with one rule
+        return ['', 'ifelse']
 
     def __len__(self):
         return 1

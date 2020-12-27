@@ -15,21 +15,18 @@ class SubjectMatcherTest(unittest.TestCase):
         sm = SubjectMatcher('test subject')
         thread = Mock()
         thread.subject = MagicMock(return_value='')
-        thread.id = MagicMock(return_value='mock id')
         self.assertFalse(sm.matches(thread))
 
     def test_match(self):
         sm = SubjectMatcher('test subject')
         thread = Mock()
         thread.subject = MagicMock(return_value='test subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertTrue(sm.matches(thread))
 
     def test_raise_on_no_matching_groups(self):
         sm = SubjectMatcher('test subject')
         thread = Mock()
         thread.subject = MagicMock(return_value='no match')
-        thread.id = MagicMock(return_value='mock id')
         with self.assertRaises(Exception):
             sm.get_matching_groups({})
 
@@ -44,6 +41,12 @@ class SubjectMatcherTest(unittest.TestCase):
         with self.assertRaises(Exception):
             sm = SubjectMatcher('test subject')
         BaseValidator.set_validate_mode(False)
+
+    def test_force_whole_match(self):
+        sm = SubjectMatcher('test subject')
+        thread = Mock()
+        thread.subject = MagicMock(return_value='test subjectone')
+        self.assertFalse(sm.matches(thread))
         
 
 class LabelMatcherTest(unittest.TestCase):
@@ -56,25 +59,37 @@ class LabelMatcherTest(unittest.TestCase):
         lm = LabelMatcher('automation')
         thread = Mock()
         thread.labels = MagicMock(return_value=['no match', 'automation'])
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertTrue(lm.matches(thread))
         self.assertEqual((), lm.get_matching_groups(thread))
 
         # Now with a regex in our LabelMatcher
         lm = LabelMatcher('automatio(n*)')
         thread.labels = MagicMock(return_value=['no match', 'automation'])
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertTrue(lm.matches(thread))
         self.assertEqual(('n',), lm.get_matching_groups(thread))
+
+    def test_no_false_positive_when_falling_back_to_non_re_match(self):
+        # When we do a cruder regex match, we only should look freely in the haystack
+        # when the regex is preceeded and followed by '.*'
+        lm = LabelMatcher('^automation$')
+        thread = Mock()
+
+        thread.labels = MagicMock(return_value=['no match', 'automation/contact_form'])
+        self.assertFalse(lm.matches(thread))
+
+        lm = LabelMatcher('^automation.*')
+        self.assertTrue(lm.matches(thread))
+
+        lm = LabelMatcher('.*automation$')
+        self.assertFalse(lm.matches(thread))
+        
+        lm = LabelMatcher('.*automation.*')
+        self.assertTrue(lm.matches(thread))
 
     def test_raise_on_no_matching_groups(self):
         lm = LabelMatcher('label')
         thread = Mock()
         thread.labels = MagicMock(return_value=['no match', 'still no match'])
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertFalse(lm.matches(thread))
         with self.assertRaises(Exception):
             lm.get_matching_groups({})
@@ -87,49 +102,27 @@ class BodyMatcherTest(unittest.TestCase):
             bm = BodyMatcher('')
 
     def test_match(self):
-        bm = BodyMatcher('.*automation.*')
+        bm = BodyMatcher('automation')
         thread = Mock()
         thread.last_message_text = MagicMock(return_value='this message has automation in it')
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertTrue(bm.matches(thread))
-        self.assertEqual((), bm.get_matching_groups(thread))
+        self.assertEqual([], bm.get_matching_groups(thread))
 
-        # Now with a regex in our BodyMatcher
-        bm = BodyMatcher('.*automatio(n*).*')
-        thread.last_message_text = MagicMock(return_value='this message also has automation in it')
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
-        self.assertTrue(bm.matches(thread))
-        self.assertEqual(('n',), bm.get_matching_groups(thread))
-
-        # Now with a different case than our regex
-        # Right now we are treating body matches as case insensitive
-        bm = BodyMatcher('.*automatio(n*).*')
-        thread.last_message_text = MagicMock(return_value='this message also has AuTomation in it')
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
-        self.assertTrue(bm.matches(thread))
-        self.assertEqual(('n',), bm.get_matching_groups(thread))
 
     def test_raise_on_no_matching_groups(self):
-        bm = BodyMatcher('.*automation.*')
+        bm = BodyMatcher('automation')
         thread = Mock()
         thread.last_message_text = MagicMock(return_value='this is not the phrase you are looking for')
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertFalse(bm.matches(thread))
         with self.assertRaises(Exception):
             bm.get_matching_groups({})
 
     def test_match_really_big_haystack(self):
-        bm = BodyMatcher('.*additional details.*')
+        bm = BodyMatcher('additional details')
         thread = Mock()
         with open(os.path.join(parent_path, 'matcher_test_inputs/big_haystack.txt'), 'r') as f:
             haystack = str(f.read())
         thread.last_message_text = MagicMock(return_value=haystack)
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertTrue(bm.matches(thread))
         self.assertEqual([], bm.get_matching_groups(thread))
     # TODO: generic rent path message shouldn't math the condidtions we='re using in prod to talk about getting in touch with on site manager
@@ -144,8 +137,6 @@ class ExpressionMatcherTest(unittest.TestCase):
 
     def test_all(self):
         thread = Mock()
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
 
         em = ExpressionMatcher('False')
         self.assertFalse(em.matches(thread))
@@ -197,8 +188,6 @@ class ComboMatcherTest(unittest.TestCase):
         mock_m_2.get_matching_groups = MagicMock(return_value=l2)
         cm = ComboMatcher([mock_m_1, mock_m_2])
         thread = Mock()
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertTrue(cm.matches(thread))
         self.assertEqual(['match 1', 'match 2', 'match 3'], cm.get_matching_groups(thread))
 
@@ -218,8 +207,6 @@ class ComboMatcherTest(unittest.TestCase):
         mock_m_2.get_matching_groups = MagicMock()
         cm = ComboMatcher([mock_m_1, mock_m_2])
         thread = Mock()
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertFalse(cm.matches(thread))
         with self.assertRaises(Exception):
             cm.get_matching_groups({})
@@ -240,8 +227,6 @@ class ComboMatcherTest(unittest.TestCase):
         mock_m_2.get_matching_groups = MagicMock()
         cm = ComboMatcher([mock_m_1, mock_m_2])
         thread = Mock()
-        thread.subject = MagicMock(return_value='mock subject')
-        thread.id = MagicMock(return_value='mock id')
         self.assertFalse(cm.matches(thread))
         with self.assertRaises(Exception):
             cm.get_matching_groups({})

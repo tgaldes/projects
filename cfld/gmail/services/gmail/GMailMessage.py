@@ -12,6 +12,11 @@ def extract_emails(emails_string):
         return []
     if len(emails_string.split('@')) == 2 and len(emails_string.split(' ')) == 1:
         return [emails_string.strip('<').strip('>')]
+    # pick up a string like 'email@one.com, email@two.com'
+    elif emails_string.find('<') == -1 \
+            and emails_string.find('>') == -1 \
+            and emails_string.find('"') == -1:
+        return [x.strip() for x in emails_string.split(',')]
     insert_mode = False
     res = []
     current_email = ''
@@ -137,10 +142,11 @@ class GMailMessage(Logger):
         if not ignore_old_messages:
             return ret
         # Here we'll filter out all the b.s. that we get in gmail when we hit 'reply'
-        delimiter = '\r\n\r\nOn '
-        index = ret.find(delimiter)
-        if index > 0:
-            return ret[:index]
+        delimiters = ['\r\n\r\nOn ', '________________________________']
+        for delimiter in delimiters:
+            index = ret.find(delimiter)
+            if index > 0:
+                return ret[:index]
         return ret
 
     # return a list of all the (attachment data, filename), empty if no attachments

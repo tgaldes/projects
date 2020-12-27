@@ -8,49 +8,36 @@ from framework.util import evaluate_expression, class_to_string
 from framework.Logger import Logger
 
 
+def clean_text(text):
+    text = text.replace('\n', '<br>')
+    if len(text) > 100:
+        return text[:99] + '...'
+    return text
+
 class RegexMatcher(BaseValidator):
     def __init__(self, re_string):
         super(RegexMatcher, self).__init__(self._name())
         self.re_string = re_string
         if not self.re_string:
             raise Exception('Cannot create with empty re_string: {}'.format(self.re_string))
+        # Force the regexes to match the entire expression
+        if self.re_string[0] != '^':
+            self.re_string = '^' + self.re_string
+        if self.re_string[-1] != '$':
+            self.re_string = self.re_string + '$'
+
         self.re = re.compile(self.re_string)
         self.ld('Created: re_string={}'.format(self.re_string))
 
-    # re struggles with really large haystacks and greedy matching
-    # since the BodyMatcher will be using a lot of .*text.* regexes
-    # and won't usually care about groups, we can use a simpler method
-    def __try_non_re_match(self, text): # TODO: ut
-        trimmed_re_string = self.re_string
-        if self.re_string[:2] == '.*':
-            trimmed_re_string = trimmed_re_string[2:]
-        if self.re_string[-2:] == '.*':
-            trimmed_re_string = trimmed_re_string[:-2]
-
-        if text.find(trimmed_re_string) >= 0:
-            return True
-        return False
-
-    def __clean_text(self, text):
-        text = text.replace('\n', '<br>')
-        if len(text) > 100:
-            return text[:99]
-        return text
-
     def matches(self, text, thread):
         if self.re.match(text):
-            self.ld('\'{}\' matches regex:\'{}\' {}'.format(self.__clean_text(text), self.re_string, thread))
-            return True
-        r = self.__try_non_re_match(text)
-        if r:
-            self.ld('\'{}\' matches regex:\'{}\' {}'.format(self.__clean_text(text), self.re_string, thread))
+            self.ld('\'{}\' matches regex:\'{}\' {}'.format(clean_text(text), self.re_string, thread))
             return True
         elif super().force_match():
-            # TODO: have a method on thread that will get us what we want the log output to be
             self.ld('\'{}\' forced to return true for {}'.format(self.re_string, thread))
             return True
         else:
-            self.ld('\'{}\' no match regex:\'{}\' {}'.format(self.__clean_text(text), self.re_string, thread))
+            self.ld('\'{}\' no match regex:\'{}\' {}'.format(clean_text(text), self.re_string, thread))
             return False
 
     def _name(self):
@@ -61,8 +48,6 @@ class RegexMatcher(BaseValidator):
         if g:
             self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
             return g.groups()
-        elif self.__try_non_re_match(text):
-            return []
         elif super().force_match():
             return []
         raise Exception('Asked for matching groups when no match. re: {} thread subject: {}'.format(self.re_string, text))
@@ -83,19 +68,33 @@ class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
         return str(self.__class__)
 
 
-class BodyMatcher(implements(IMatcher), RegexMatcher, Logger):
+class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
 
-    def __init__(self, re_string):
-        super(BodyMatcher, self).__init__(re_string.lower())
+    def __init__(self, needle):
+        super(BodyMatcher, self).__init__(__class__)
+        self.needle = needle
+        if not self.needle:
+            raise Exception('Cannot create BodyMatcher with empty needle')
 
     def matches(self, thread):
-        return super().matches(thread.last_message_text().lower(), thread)
+        text = thread.last_message_text().lower()
+        if self.needle in text:
+            self.ld('\'{}\' contains:\'{}\' {}'.format(clean_text(text), self.needle, thread))
+            return True
+        elif super().force_match():
+            self.ld('\'{}\' forced to return true for {}'.format(self.needle, thread))
+            return True
+        else:
+            self.ld('\'{}\' no match regex:\'{}\' {}'.format(clean_text(text), self.needle, thread))
+            return False
 
     def get_matching_groups(self, thread):
-        return super().get_matching_groups(thread.last_message_text().lower())
-
-    def _name(self):
-        return str(self.__class__)
+        text = thread.last_message_text().lower()
+        if self.needle in text:
+            return []
+        else:
+            raise Exception('Asked for matching groups when no match. needle: {} haystack (trimmed): {}'.format(self.needle, clean_text(text)))
+         
 
 class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
 
@@ -172,7 +171,7 @@ class ComboMatcher(implements(IMatcher), Logger):
 # Always match the thread! Created to use as the matcher for the any rules
 # in the IfAnyRuleGroup, that way we don't have to specify .* for one of our
 # regex matchers for all of these rules
-class AllMatcher(Logger): # TODO ut
+class AllMatcher(Logger):
     def __init__(self):
         super(AllMatcher, self).__init__(__class__)
     

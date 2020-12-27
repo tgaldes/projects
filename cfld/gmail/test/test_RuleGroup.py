@@ -116,18 +116,6 @@ class IfAnyRuleGroupTest(unittest.TestCase):
         self.assertEqual(0, mock_irule_4.process.call_count)
         self.assertEqual(0, mock_irule_5.process.call_count)
 
-    def test_throw_if_any_rule_doesnt_match(self):
-        mock_irule_1 = Mock()
-        mock_irule_1.process = MagicMock(return_value=True)
-        mock_irule_2 = Mock()
-        mock_irule_2.process = MagicMock(return_value=False)
-        iag = IfAnyRuleGroup([(mock_irule_1, 'ifany', 'if'), (mock_irule_2, '', 'any')], '')
-        t = {}
-        with self.assertRaises(Exception):
-            iag.process(t)
-        mock_irule_1.process.assert_called_once_with(t)
-        mock_irule_2.process.assert_called_once_with(t)
-
     def test_throw_in_constructor(self):
         mock_irule = Mock()
         # Non enum value
@@ -157,4 +145,18 @@ class SingleRuleGroupTest(unittest.TestCase):
             srg = SingleRuleGroup([(mock_irule, '', ''), (mock_irule, '', '')], '')
         with self.assertRaises(Exception):
             srg = SingleRuleGroup()
+
+    # We are ok with a user specifying they want to create an ifelse rule group
+    # and only having one rule in that group. Single rule group == if else rule
+    # group with one rule
+    def test_ifelse_type_specified(self):
+        mock_irule = Mock()
+        mock_irule.process = MagicMock()
+        t = {}
+        srg = SingleRuleGroup([(mock_irule, 'ifelse', '')], '')
+        srg.process(t)
+        mock_irule.process.assert_called_once_with(t)
+
+
+
 

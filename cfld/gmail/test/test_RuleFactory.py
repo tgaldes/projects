@@ -148,4 +148,18 @@ class RuleFactoryTest(unittest.TestCase):
         self.assertTrue(isinstance(rh.action, DraftAction))
         self.assertTrue(rh.action.prepend)
 
+    def test_only_specify_query_on_first_rule_of_rule_group(self):
+        sheet_data = \
+            [RuleFactoryTest.header, \
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '0', '', '', 'label:automation'], \
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '0', '', '', 'label:automation']]
+        with self.assertRaises(Exception):
+            rf = RuleFactory(sheet_data)
+
+
+
+
+
+
+
 

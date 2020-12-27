@@ -15,8 +15,8 @@ from services.gmail.SheetService import SheetService
 
 class Main:
     def __init__(self, mail_services, logger, config):
-        framework.globals.init(config)
         self.logger = logger
+        framework.globals.init(config, self.logger)
         self.mail_services = mail_services
         self.config = config
 
