@@ -4,7 +4,7 @@ import os
 
 import framework.globals
 
-from orgs.cfld.util import signature, get_new_application_email, short_name_from_thread
+from orgs.cfld.util import signature, get_new_application_email, short_name_from_thread, get_new_application_name
 
 
 class CfldTest(unittest.TestCase):
@@ -43,6 +43,16 @@ class CfldTest(unittest.TestCase):
         mock_thread.last_message_text = MagicMock(return_value='we can\'t find the delimiter in {} this string'.format(target_email))
         with self.assertRaises(Exception):
             get_new_application_email(mock_thread)
+
+    def test_new_application_name(self):
+        target_name = 'tyler galdes'
+        mock_thread = Mock()
+        mock_thread.last_message_text = MagicMock(return_value='some garbage etc etc etc <tr><th>Applicant:</th><td>{}<more formatting> some more text etc etc'.format(target_name))
+        self.assertEqual(target_name, get_new_application_name(mock_thread))
+
+        mock_thread.last_message_text = MagicMock(return_value='we can\'t find the delimiter in {} this string'.format(target_name))
+        with self.assertRaises(Exception):
+            get_new_application_name(mock_thread)
 
     def test_thread_short_name(self):
         mock_thread = Mock()

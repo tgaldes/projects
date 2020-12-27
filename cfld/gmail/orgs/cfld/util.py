@@ -11,6 +11,15 @@ def get_new_application_email(thread):
     end_index = decoded_html[start_index:].index('<') + start_index
     return decoded_html[start_index:end_index]
 
+def get_new_application_name(thread):
+    decoded_html = thread.last_message_text()
+    substring = '<tr><th>Applicant:</th><td>'
+    start_index = decoded_html.find(substring) + len(substring)
+    if start_index == -1:
+        raise Exception('Could not find the substring: {} in the first message of the thread.'.format(substring))
+    end_index = decoded_html[start_index:].index('<') + start_index
+    return decoded_html[start_index:end_index]
+
 # Since this is an org specific implementation we can have a hardcoded name mapping
 def signature(thread):
     my_message_count = thread.get_user_message_count()
