@@ -31,7 +31,7 @@ class Main:
             for rule_group, user in self.rule_factory.get_rule_groups():
                 inbox = self.inboxes[user]
                 for thread in inbox.query('label:automation/dev_test_case/validate'):
-                    self.logger.li('Processing thread id: {} in validate mode'.format(thread.id()))
+                    self.logger.li('Processing user {} thread {} in validate mode'.format(thread, user))
                     rule_group.process(thread)
             BaseValidator.set_validate_mode(False)
 
@@ -40,7 +40,7 @@ class Main:
             inbox = self.inboxes[user]
             threads = inbox.query(rule_group.get_query())
             for thread in threads:
-                self.logger.li('Processing thread id: {}'.format(thread.id()))
+                self.logger.li('Processing user {} thread {}'.format(user, thread))
                 rule_group.process(thread)
                 count += 1
         self.logger.li('Processed a rule group on an email {} times'.format(count))
