@@ -1,7 +1,7 @@
 {
     "type" : "gmail",
     "domains" : ["cleanfloorslockingdoors.com", "cf-ld.com"],
-    "emails" : ["tyler@cleanfloorslockingdoors.com", "apply@cleanfloorslockingdoors.com"],
+    "emails" : ["apply@cleanfloorslockingdoors.com"],
     "org_init_import": "from orgs.cfld.CfldOrg import org_init",
     "org" :
     {

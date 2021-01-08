@@ -3,36 +3,51 @@ import unittest
 from framework.Inbox import Inbox
 
 
-# Right now the inbox is only being used as a wrapper to the service,
-# so I've disabled these tests
-'''class InboxTest(unittest.TestCase):
+class InboxTest(unittest.TestCase):
     
-    def test_get_threads_from_email_address(self):
+    def test_query(self):
         mock_service = Mock()
-        email_one, email_two = 'one@a.com', 'two@a.com'
-        mock_thread_one, mock_thread_two, mock_thread_three = Mock(), Mock(), Mock()
-        mock_thread_one.default_reply = MagicMock(return_value=[email_one])
-        mock_thread_two.default_reply = MagicMock(return_value=[email_two])
-        mock_service.get_unread_threads = MagicMock(return_value=[])
-        mock_service.get_all_threads = MagicMock(return_value=[mock_thread_one, mock_thread_two])
+        mock_threads = []
+        history = {}
+        second_history = {}
+        for i in range(5):
+            t = Mock()
+            t.id = MagicMock(return_value=i)
+            mock_threads.append(t)
+            history[i] = 100
+            second_history[i] = 111
 
-        i = Inbox(mock_service)
+        mock_service.query = MagicMock(return_value=mock_threads)
+        mock_service.get_history_id = MagicMock(return_value=100)
+        inbox = Inbox(mock_service)
 
-        email_one_matches = i.get_threads_from_email_address(email_one)
-        self.assertEqual(1, len(email_one_matches))
-        self.assertEqual(mock_thread_one, email_one_matches[0])
+        self.assertEqual(5, len(inbox.query('')))
 
-        email_two_matches = i.get_threads_from_email_address(email_two)
-        self.assertEqual(1, len(email_two_matches))
-        self.assertEqual(mock_thread_two, email_two_matches[0])
+        # Now we'll finalize the history ids of the mock threads
+        mock_service.get_all_history_ids = MagicMock(return_value=history)
+        mock_service.refresh = MagicMock()
+        inbox.refresh()
 
-        # Now a test where we'll get back multiple threads
+        # Add in a new thread, it will be the only one returned
+        t = Mock()
+        t.id = MagicMock(return_value=6)
+        history[6] = 100
+        second_history[6] = 111
+        mock_threads.append(t)
+        self.assertEqual(1, len(inbox.query('')))
 
-        email_three = email_one
-        mock_thread_three.default_reply = MagicMock(return_value=[email_three])
-        mock_service.get_all_threads = MagicMock(return_value=[mock_thread_one, mock_thread_two, mock_thread_three])
-        i = Inbox(mock_service)
-        email_multiple_matches = i.get_threads_from_email_address(email_one)
-        self.assertEqual(2, len(email_multiple_matches))
-        self.assertEqual(mock_thread_one, email_multiple_matches[0])
-        self.assertEqual(mock_thread_three, email_multiple_matches[1])'''
+        # Now update the history id that the mock service returns for one of the threads, and we should get that thread and the new thread back
+
+        mock_service.get_history_id.side_effect = [101, 100, 100, 100, 100, 100]
+        self.assertEqual(2, len(inbox.query('')))
+
+        mock_service.get_all_history_ids = MagicMock(return_value=second_history)
+        mock_service.get_history_id = MagicMock(return_value=111)
+        inbox.refresh()
+        self.assertEqual(0, len(inbox.query('')))
+        
+
+
+
+
+

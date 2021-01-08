@@ -34,7 +34,8 @@ class IntegrationTest(unittest.TestCase):
         logger = Logger('TestIntegration')
         m = Main([email_service], logger, config)
 
-        m.run()
+        m.setup()
+        m.run_one()
 
         # We'll process one email, add a label, and add a greeting and signature as a draft based on that label
         self.assertTrue('Schools' in all_threads[0].labels())
@@ -92,7 +93,8 @@ class IntegrationTest(unittest.TestCase):
         logger = Logger('TestIntegration')
         m = Main([tyler_service, apply_service], logger, config)
 
-        m.run()
+        m.setup()
+        m.run_one()
         mime_multipart, thread_id, called_draft_id = apply_service.append_or_create_draft.call_args[0]
         self.assertIsNone(called_draft_id)
         self.assertEqual('apply@cleanfloorslockingdoors.com', mime_multipart['from'])
@@ -139,7 +141,8 @@ class IntegrationTest(unittest.TestCase):
         config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
         m = Main([apply_service], logger, config)
 
-        m.run()
+        m.setup()
+        m.run_one()
         mime_multipart, thread_id, called_draft_id = apply_service.append_or_create_draft.call_args[0]
         self.assertIsNone(called_draft_id)
         self.assertEqual('apply@cleanfloorslockingdoors.com', mime_multipart['from'])
