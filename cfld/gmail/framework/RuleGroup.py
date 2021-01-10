@@ -5,13 +5,14 @@ import pdb
 from framework.RuleHolder import RuleHolder
 from framework.Interfaces import IRule
 from framework.Logger import Logger
+from framework.BaseValidator import BaseValidator
 
 
 # When we have more enum type values we can extract them somewhere else
 if_any_rule_types = ['if', 'any']
 
-class RuleGroup(Logger):
-    def __init__(self, rules_tup, child):
+class RuleGroup(BaseValidator):
+    def __init__(self, rules_tup, child, query):
         super(RuleGroup, self).__init__(child)
         enums = copy.copy(self._enums())
         for i, (_, group_type, unused) in enumerate(rules_tup):
@@ -19,15 +20,19 @@ class RuleGroup(Logger):
                 enums.append('')
             if group_type not in enums:
                 raise Exception('group_type: {} passed in error'.format(group_type))
+        self.query = query
 
     def _enums(self):
         raise Exception('Implement _enums in child RuleGroup')
         # REFACTOR: overriding functions should be returning enum values
 
+    def get_query(self):
+        return self.query
+
 # When the first irule matches the thread, we break
-class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
-    def __init__(self, rules_tup):
-        super(IfElseRuleGroup, self).__init__(rules_tup, __class__)
+class IfElseRuleGroup(implements(IRule), RuleGroup):
+    def __init__(self, rules_tup, query):
+        super(IfElseRuleGroup, self).__init__(rules_tup, __class__, query)
         self.rules = []
         for irule, _, rule_type in rules_tup:
             self.rules.append(irule)
@@ -45,7 +50,11 @@ class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
 
     def process(self, thread):
         for irule in self.rules:
-            if irule.process(thread):
+            rule_match = irule.process(thread)
+            # in validate mode we want to pass the thread to every rule
+            if super().force_match():
+                continue
+            elif rule_match:
                 break
 
     def _enums(self):
@@ -54,9 +63,9 @@ class IfElseRuleGroup(implements(IRule), RuleGroup, Logger):
 
 # Do the if actions until one returns true
 # If any if actions returned true, do all the then actions
-class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
-    def __init__(self, rules_tup):
-        super(IfAnyRuleGroup, self).__init__(rules_tup, __class__)
+class IfAnyRuleGroup(implements(IRule), RuleGroup):
+    def __init__(self, rules_tup, query):
+        super(IfAnyRuleGroup, self).__init__(rules_tup, __class__, query)
         self.if_rules = []
         self.any_rules = []
         for irule, _, rule_type in rules_tup:
@@ -85,24 +94,33 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup, Logger):
         for irule in self.if_rules:
             if irule.process(thread):
                 match = True
-                break
+                # in validate mode we want to pass the thread to every rule
+                if super().force_match():
+                    continue
+                elif match:
+                    break
 
-        if match:
+        if match or super().force_match():
             for i, irule in enumerate(self.any_rules):
-                if not irule.process(thread):
-                    raise Exception('any_rule {} at index {} did not match thread with id: {} subject: {}'.format(irule, i, thread.field('id'), thread.subject())) 
+                irule.process(thread)
 
     def _enums(self):
         return ['ifany']
 
 
-class SingleRuleGroup(implements(IRule), Logger):
-    def __init__(self, rules_tup):
-        super(SingleRuleGroup, self).__init__(__class__)
+class SingleRuleGroup(implements(IRule), RuleGroup):
+    def __init__(self, rules_tup, query):
+        super(SingleRuleGroup, self).__init__(rules_tup, __class__, query)
         if len(rules_tup) != 1:
             raise Exception('Cannot create with rule list of size != 1: {}'.format(rules_tup))
         self.rule = rules_tup[0][0]
         self.li('Created SingleRuleGroup')
+
+    def _enums(self):
+    # We are ok with a user specifying they want to create an ifelse rule group
+    # and only having one rule in that group. Single rule group == if else rule
+    # group with one rule
+        return ['', 'ifelse']
 
     def __len__(self):
         return 1

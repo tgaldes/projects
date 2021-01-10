@@ -38,6 +38,7 @@ class ThreadTest(unittest.TestCase):
         self.assertTrue('mockid' in thread.label_ids())
 
         # unset a label
+        mock_service.get_label_name = MagicMock(return_value='test label string')
         thread.set_label('test label string', unset=True)
         mock_service.set_label.assert_called_with(id, 'mockid', True)
         mock_service.get_label_id.assert_called_with('test label string')
@@ -68,10 +69,12 @@ class ThreadTest(unittest.TestCase):
         # Nor should we get the text of the draft
         self.assertEqual('first message\r\n<div dir="ltr">first message</div>\r\n', thread.last_message_text())
 
-        # try to set a label that doesn't exist, we want an exception
-        with self.assertRaises(Exception):
-            mock_service.get_label_id = MagicMock(return_value=None)
-            thread.set_label('this label doesn\'t exist')
+        # try to set a label that doesn't exist, we want to do nothing
+        mock_service.get_label_id = MagicMock(return_value=None)
+        nonexistent_label = 'doesnt exist'
+        thread.set_label(nonexistent_label)
+        self.assertFalse(nonexistent_label in thread.labels())
+
 
     def test_last_ts(self):
         mock_service = Mock()
@@ -461,3 +464,15 @@ class ThreadTest(unittest.TestCase):
         self.assertTrue(email_two in thread.messages[-1].recipients())
         self.assertTrue(email_three in thread.messages[-1].recipients())
 
+    def test_different_forward_delimiters(self):
+        mock_service = Mock()
+
+        # Uses '_____________________________'
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/different_delimiter_for_forwarded_message_text.txt'), mock_service)
+        expected_last_message ='Thank you, I am free this afternoon and anytime until end of next weekend. My cell: 678-431-8221\r\nBest\r\n\r\n' 
+        self.assertEqual(expected_last_message, thread.last_message_text())
+
+        # Uses '\r\n\r\nOn '
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/first_delimiter_for_forwarded_message_text.txt'), mock_service)
+        expected_last_message ='Hi buddy\r\n\r\n\r\n' 
+        self.assertEqual(expected_last_message, thread.last_message_text())

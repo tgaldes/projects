@@ -1,13 +1,16 @@
 {
     "type" : "gmail",
     "domains" : ["cleanfloorslockingdoors.com", "cf-ld.com"],
-    "emails" : ["tyler@cleanfloorslockingdoors.com", "apply@cleanfloorslockingdoors.com"],
+    "emails" : ["apply@cleanfloorslockingdoors.com"],
     "org_init_import": "from orgs.cfld.CfldOrg import org_init",
     "org" :
     {
         "name" : "cfld",
         "imports" : ["from orgs.cfld.CfldOrg import run_new_submission_handler", 
                      "from orgs.cfld.util import get_new_application_email", 
+                     "from orgs.cfld.util import get_new_application_name", 
+                     "from orgs.cfld.util import get_approved_application_email", 
+                     "from orgs.cfld.util import get_approved_application_name", 
                      "from orgs.cfld.util import signature",
                      "from orgs.cfld.CfldOrg import lookup_info",
                      "from orgs.cfld.CfldOrg import short_name_from_address",

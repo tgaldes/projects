@@ -40,25 +40,23 @@ class GMailService(Logger):
 
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
-        self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 20, q='label:INBOX').execute().get('threads', [])
-        #self.all_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='New submission for USC').execute().get('threads', [])
-        self.all_full_threads = []
-        for item in self.all_threads:
-            thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
-            thread = self.__create_thread_from_raw(thread_map)
-            '''fn = './test/integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'
-            with open(fn, 'w') as f:
-                import json
-                json.dump(thread_map, f, indent=4)'''
-            self.all_full_threads.append(thread)
 
-        self.unread_threads = self.service.users().threads().list(userId='me', labelIds=('INBOX'), maxResults = 1, q='label:unread').execute().get('threads', [])
-        self.unread_full_threads = []
-        for item in self.unread_threads:
-            thread = self.__create_thread_from_raw(self.service.users().threads().get(userId='me', id=item['id'], format='full').execute())
-            self.unread_full_threads.append(thread)
+        self.default_limit = 20
+        self.default_query = ''
+        #self.default_limit = 1
+        #self.default_query = 'test subject'
 
 
+        # We want to create no more than one Thread instance per thread id
+        # That way we don't need to make a state change on a Thread and also
+        # update the state on all the other Thread instances for the same id
+        self.thread_id_2_full_threads = {}
+        # Map queries to a list of created Thread instances
+        self.full_threads_by_query = {}
+        # Map the thread id to the latest historyId (basically latest state) that we have seen on the thread
+        self.thread_id_2_history_id = {}
+
+        self.__populate_query_result(self.default_query, self.default_limit)
 
         results = self.service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
@@ -73,6 +71,37 @@ class GMailService(Logger):
         self.thread_index = 0
         self.ld('Loaded labels: {}'.format(self.label_string_2_id.keys()))
 
+    def get_history_id(self, thread_id):
+        if thread_id in self.thread_id_2_history_id:
+            return int(self.thread_id_2_history_id[thread_id])
+        return 0
+    def get_all_history_ids(self):
+        return self.thread_id_2_history_id
+
+    def __populate_query_result(self, q, limit):
+        res = []
+        q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute().get('threads', [])
+        self.ld('Query {} returned {} threads.'.format(q, len(q_result)))
+        for item in q_result:
+            # Before we call the service, check if we already have this thread locally
+            if item['id'] in self.thread_id_2_full_threads:
+                self.ld('Returning existing thread: {}'.format(self.thread_id_2_full_threads[item['id']]))
+                res.append(self.thread_id_2_full_threads[item['id']])
+            else:
+                thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
+                thread = self.__create_thread_from_raw(thread_map)
+                # Save this id for future use
+                self.thread_id_2_full_threads[item['id']] = thread
+                self.__update_history_id(thread.id(), thread_map['historyId'])
+                res.append(thread)
+        # Save full result of the query
+        self.full_threads_by_query[q] = res
+
+    def __update_history_id(self, thread_id, history_id=None):
+        if history_id is None:
+            history_id = self.service.users().threads().get(userId='me', id=thread_id, format='full').execute()['historyId']
+        self.thread_id_2_history_id[thread_id] = history_id
+                
     def get_label_id(self, label_string): # TODO: create label on demand? Or force an exception when the desired label doesn't match somehting I've already created
         if label_string in self.label_string_2_id:
             return self.label_string_2_id[label_string]
@@ -89,10 +118,20 @@ class GMailService(Logger):
     def get_email(self):
         return self.email
 
-    def get_unread_threads(self):
-        return self.unread_full_threads
-    def get_all_threads(self):
-        return self.all_full_threads
+    def refresh(self):
+        self.full_threads_by_query = {}
+        self.thread_id_2_full_threads = {}
+        self.__populate_query_result(self.default_query, self.default_limit)
+        self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
+
+    # Empty q gets us all_full_threads
+    def query(self, q, limit):
+        if q in self.full_threads_by_query:
+            return self.full_threads_by_query[q]
+        elif q == '':
+            return self.full_threads_by_query[self.default_query]
+        self.__populate_query_result(q, limit)
+        return self.full_threads_by_query[q]
 
     def set_label(self, id, label_id, unset=False, userId='me'):
 # TODO: same expo backoff function as v1
@@ -106,15 +145,26 @@ class GMailService(Logger):
         resp = self.service.users().threads().modify(userId=userId,
                                               id=id,
                                               body=payload).execute()
+        self.__update_history_id(resp['id'], history_id=None)
         if 'labelIds' in resp:
             return resp['labelIds']
+        elif 'messages' in resp:
+            return resp['messages'][0]['labelIds']
+        self.lw('No labelIds in response to set_label call for label_id: {} label_string: {}'.format(label_id, label_id_2_string[label_id]))
         return []
 
     def get_drafts(self):
         return self.drafts
 
     def delete_draft(self, draft_id, userId='me'):
-        return self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
+        # find the thread id
+        for draft in self.drafts:
+            if draft['id'] == draft_id:
+                thread_id = draft['message']['threadId']
+                break
+        ret = self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
+        self.__update_history_id(thread_id, history_id=None)
+        return ret
 
     def get_attachment(self, attachment_id, message_id):
         return self.service.users().messages().attachments().get(userId='me', messageId=message_id, id=attachment_id).execute()
@@ -134,6 +184,7 @@ class GMailService(Logger):
             self.li('Created new draft with id: {}'.format(draft['id']))
         self.__update_drafts(draft)
         message_data = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
+        self.__update_history_id(message_data['threadId'], message_data['historyId'])
         return GMailMessage(message_data, self)
 
 

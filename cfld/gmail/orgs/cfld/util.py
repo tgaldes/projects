@@ -1,15 +1,36 @@
 import pdb
 
+
+
+def get_substring_after_delim(haystack, delimiter, end_delimiter='<'):
+    start_index = haystack.find(delimiter) + len(delimiter)
+    if start_index == -1:
+        raise Exception('Could not find the delimiter: {} in {}'.format(delimiter, haystack))
+    end_index = haystack[start_index:].index(end_delimiter) + start_index
+    return haystack[start_index:end_index]
+
+
 # parse the thread created when a tenant submits their application 
 # and return the tenant email address
 def get_new_application_email(thread):
     decoded_html = thread.last_message_text()
     substring = '<tr><th>Email:</th><td>'
-    start_index = decoded_html.find(substring) + len(substring)
-    if start_index == -1:
-        raise Exception('Could not find the substring: {} in the first message of the thread.'.format(substring))
-    end_index = decoded_html[start_index:].index('<') + start_index
-    return decoded_html[start_index:end_index]
+    return get_substring_after_delim(decoded_html, substring)
+
+def get_new_application_name(thread):
+    decoded_html = thread.last_message_text()
+    substring = '<tr><th>Applicant:</th><td>'
+    return get_substring_after_delim(decoded_html, substring)
+
+def get_approved_application_name(thread):
+    decoded_html = thread.last_message_text()
+    substring = '<tr><th>Applicant name:</th><td>'
+    return get_substring_after_delim(decoded_html, substring)
+
+def get_approved_application_email(thread):
+    decoded_html = thread.last_message_text()
+    substring = '<tr><th>Applicant email:</th><td>'
+    return get_substring_after_delim(decoded_html, substring)
 
 # Since this is an org specific implementation we can have a hardcoded name mapping
 def signature(thread):

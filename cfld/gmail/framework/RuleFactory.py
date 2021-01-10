@@ -20,12 +20,14 @@ class RuleFactory(Logger):
         super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
-        RuleTuple = collections.namedtuple('RuleTuple', sheet_data[0])
+        RuleTuple = collections.namedtuple('RuleTuple', [x.split(' ')[0] for x in sheet_data[0]])
         header_size = len(sheet_data[0])
         last_group_index = -1
         # List of [(Group, user)..... so we can process in order of the rule groups
         raw_rule_group_tuples = []
+        count = 1
         for rule_row in sheet_data[1:]:
+            count += 1
             if row_is_empty(rule_row):
                 continue
             log_msg = 'Created: '
@@ -34,6 +36,7 @@ class RuleFactory(Logger):
             rule_row.extend(['' for x in range(header_size - len(rule_row))])
 
             tup = RuleTuple(*rule_row)
+            name = tup.name
             if not tup.group or not (float(tup.group) == last_group_index or last_group_index < float(tup.group)):
                 raise Exception('Cannot specify a group index of {} when last group index was {}. tup: {}'.format(tup.group, last_group_index, tup))
             if not tup.email:
@@ -91,15 +94,17 @@ class RuleFactory(Logger):
 
             # Create the rule holder
             if len(matchers) == 1:
-                rh = RuleHolder(action, matchers[0])
+                rh = RuleHolder(action, matchers[0], name, count)
             else:
-                rh = RuleHolder(action, ComboMatcher(matchers))
+                rh = RuleHolder(action, ComboMatcher(matchers), name, count)
 
             # Add the (RuleHolder, type, rule_type) tuple # TODO
             if float(tup.group) == last_group_index:
+                if tup.query:
+                    raise Exception('Can only specify a custom query in the first rule of a rule group.')
                 raw_rule_group_tuples[-1][0].append((rh, tup.group_type, tup.rule_type))
             else: # group of one rule
-                raw_rule_group_tuples.append(([(rh, tup.group_type, tup.rule_type)], tup.email))
+                raw_rule_group_tuples.append(([(rh, tup.group_type, tup.rule_type)], tup.email, tup.query))
             last_group_index = float(tup.group)
 
             log_msg += ', Group #{}'.format(tup.group)
@@ -110,17 +115,17 @@ class RuleFactory(Logger):
         self.__create_rule_groups(raw_rule_group_tuples, self.all_rule_groups)
 
     def __create_rule_groups(self, tups, target_list):         
-        for raw_rule_group, user in tups:
+        for raw_rule_group, user, query in tups:
             if not raw_rule_group:
                 raise Exception('raw_rule_group of size 0')
             if len(raw_rule_group) == 1:
-                target_list.append((SingleRuleGroup(raw_rule_group), user))
+                target_list.append((SingleRuleGroup(raw_rule_group, query), user))
             # Default multi rule group is ifelse
             elif raw_rule_group[0][1] == '' \
                     or raw_rule_group[0][1].lower() == 'ifelse': # REFACTOR these enums should live in one spot, we also reference then in RuleGroup.py
-                target_list.append((IfElseRuleGroup(raw_rule_group), user))
+                target_list.append((IfElseRuleGroup(raw_rule_group, query), user))
             elif raw_rule_group[0][1].lower() == 'ifany':
-                target_list.append((IfAnyRuleGroup(raw_rule_group), user))
+                target_list.append((IfAnyRuleGroup(raw_rule_group, query), user))
             else:
                 self.le('Not processing rule group with type: {}'.format(raw_rule_group[0][1]))
    
@@ -134,6 +139,18 @@ class RuleFactory(Logger):
             if rule_user == user:
                 ret.append(rule_group)
         return ret
+
+    # at the framework level we want to always remove the 'automation' label from
+    # any thread that doesn't end with a draft
+    def get_rule_groups_for_clean_up(self):
+        matcher = LabelMatcher('automation')
+        ematcher = ExpressionMatcher('not thread.has_draft()')
+        cmatcher = ComboMatcher([matcher, ematcher])
+        action = LabelAction('"automation"', unset=True)
+        rh = RuleHolder(action, cmatcher)
+        rg = SingleRuleGroup([[rh]])
+        return rg
+
 
 
 

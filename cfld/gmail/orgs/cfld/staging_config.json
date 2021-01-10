@@ -8,6 +8,9 @@
         "name" : "cfld",
         "imports" : ["from orgs.cfld.CfldOrg import run_new_submission_handler", 
                      "from orgs.cfld.util import get_new_application_email", 
+                     "from orgs.cfld.util import get_new_application_name", 
+                     "from orgs.cfld.util import get_approved_application_email", 
+                     "from orgs.cfld.util import get_approved_application_name", 
                      "from orgs.cfld.util import signature",
                      "from orgs.cfld.CfldOrg import lookup_info",
                      "from orgs.cfld.CfldOrg import short_name_from_address",
@@ -17,6 +20,7 @@
     "sheet_service_email" : "tyler@cleanfloorslockingdoors.com",
     "secret_path" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json",
     "client_token_dir" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/",
-    "sheet_name" : "staging_rules"
+    "sheet_name" : "staging_rules",
+    "validate" : 0
 }
 

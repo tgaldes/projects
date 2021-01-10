@@ -101,7 +101,9 @@ class AttachmentAction(Logger):
 
     def process(self, thread, matches):
         destinations = evaluate_expression(self.destinations, **locals())
-        thread.add_attachment_to_draft(*thread.last_attachment(), destinations) 
+        last_attachment = thread.last_attachment()
+        if len(last_attachment) == 2:
+            thread.add_attachment_to_draft(*last_attachment, destinations) 
         
 class ShellAction(Logger):
     def __init__(self, command):
@@ -122,4 +124,3 @@ class ShellAction(Logger):
             self.le('subprocess failed.\nstdout: {}\n\nstderr: {}\n\nrc: {}'.format(out, error, rc))
         return rc
 
-        
