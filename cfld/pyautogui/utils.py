@@ -1,15 +1,28 @@
 import pyautogui as pag
 import pdb
 from time import sleep
-from constants import * # TODO refactor three
 import os
+from constants import coords, colors
+
+def init(constant_coords, constant_colors):
+    global application_coords
+    application_coords = constant_coords
+    global application_colors
+    application_colors = constant_colors
 
 def mouse_click(item, sleep_secs=0):
-    pag.click(*coords[item])
+    if item in application_coords:
+        pag.click(*application_coords[item])
+    else:
+        pag.click(*coords[item])
+
     sleep(sleep_secs)
     pass
 def move_to(item):
-    pag.moveTo(*coords[item])
+    if item in application_coords:
+        pag.moveTo(*application_coords[item])
+    else:
+        pag.click(*coords[item])
 def keyboard(s):
     pag.typewrite(s)
 def press(*keys):
@@ -40,14 +53,17 @@ def clean_up():
     mouse_click('close_chrome')
 
 # return True on match/no match, false if we timed out
-def wait_for_screen_general(loc_on_screen, # a string that we look up in coords, or a tuple in form (x, y)
-                            target_color, # the color we will be looking for at loc_on_screen
+def wait_for_screen_general(loc_on_screen, # a string that we look up in application_coords, or a tuple in form (x, y)
+                            target_color, # the color we will be looking for at loc_on_screen (coords or a list of coords)
                             match = True, # True -> return when loc_on_screen matches target_color, False -> return when they don't match
                             callback = lambda : None, # function we will run each time before we check the pixel match
                             timeout_seconds = 120,
                             ):
     if type(loc_on_screen) == str:
-        x, y = coords[loc_on_screen]
+        if loc_on_screen in application_coords:
+            x, y = application_coords[loc_on_screen]
+        else:
+            x, y = coords[loc_on_screen]
     else:
         x, y = loc_on_screen
     count = 0
@@ -69,33 +85,54 @@ def wait_for_screen_general(loc_on_screen, # a string that we look up in coords,
             return False
         count += 1
 
+def get_target_colors(loc_on_screen_name, target_color_names=[]):
+    inner_tc_names = []
+    if not target_color_names:
+        inner_tc_names.append(loc_on_screen_name)
+    else:
+        for item in target_color_names:
+            inner_tc_names.append(item)
+    target_colors = []
+    for target_color_name in inner_tc_names:
+        if target_color_name in application_colors:
+            target_colors.append(application_colors[target_color_name])
+        else:
+            target_colors.append(colors[target_color_name])
+    return target_colors
+
 # if we time out, run the supplied clean up func and exit
-def wait_for_screen_or_clean_up(loc_on_screen, target_color, match = True, x = lambda : None, timeout_seconds = 120, clean_func = clean_up):
-    res = wait_for_screen_general(loc_on_screen, target_color, match, x, timeout_seconds)
+def wait_for_screen_or_clean_up(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 120, clean_func = clean_up):
+    tcs = get_target_colors(loc_on_screen_name, target_color_names)
+    res = wait_for_screen_general(loc_on_screen_name, tcs, match, x, timeout_seconds)
     if res:
         return True
-    clean_up()
+    print(error_msg)
+    clean_func()
     return False
-def open_buy_sell_window(nt):
-    count = 0
-    while True:
-        move_to(buy_sell_name_mapping[nt.group_name_length])
-        # we need to move the mouse off the button in case the page loads with the cursor already on the screen
-        screen = pag.screenshot()
-        # wait to see if the grayed out 'Next' button appears
-        if pag.pixelMatchesColor(*coords[buy_sell_name_mapping[nt.group_name_length]], sell_something_button_mouseover):
-            mouse_click(buy_sell_name_mapping[nt.group_name_length])
-            return wait_for_buy_sell_to_load(nt)
-        print('pixel {} coords {} matching {} actual {}'.format(coords[buy_sell_name_mapping[nt.group_name_length]], sell_something_button_mouseover, True, screen.getpixel(coords[buy_sell_name_mapping[nt.group_name_length]])))
-        count += 1
-        if count > 120:
-            return False
+
 
 # if we time out, print a message and exit
-def wait_for_screen_or_exit(loc_on_screen, target_color, match = True, x = lambda : None, timeout_seconds = 120):
-    res = wait_for_screen_general(loc_on_screen, target_color, match, x, timeout_seconds)
+def wait_for_screen_or_exit(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 120):
+    tcs = get_target_colors(loc_on_screen_name, target_color_names)
+    res = wait_for_screen_general(loc_on_screen_name, tcs, match, x, timeout_seconds)
     if res:
         return True
-    print('wait_for_screen returned false, exiting.')
-    print('Goodbye :)')
+    print(error_msg)
     exit(1)
+
+def wait_for_screen_then_click_or_exit(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 120, clean_func = clean_up):
+    tcs = get_target_colors(loc_on_screen_name, target_color_names)
+    res = wait_for_screen_general(loc_on_screen_name, tcs, match, x, timeout_seconds)
+    if res:
+        mouse_click(loc_on_screen_name)
+        return True
+    print(error_msg)
+    exit(1)
+
+# Open chrome and click on the url bar
+def open_chrome():
+    mouse_click('menu')
+    keyboard('Chrome')
+    wait_for_screen_then_click_or_exit('chrome_icon_in_linux_menu', 'chrome did not pop up from linux menu.')
+    wait_for_screen_then_click_or_exit('url_bar', 'url_bar did not pop up from chrome', target_color_names=['url_bar', 'url_bar_gray_color', 'url_bar_dark_color'])
+    

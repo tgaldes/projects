@@ -5,15 +5,28 @@ pag.FAILSAFE = True
 from time import sleep
 import os
 
-from inputs import all_groups, all_buy_sells
-from constants import * # TODO refactor three
+from facebook.inputs import all_groups, all_buy_sells
+from facebook.constants import * # TODO refactor three
 from utils import * # TODO: refactor three
 
 
 
+def open_buy_sell_window(nt):
+    count = 0
+    while True:
+        move_to(buy_sell_name_mapping[nt.group_name_length])
+        # we need to move the mouse off the button in case the page loads with the cursor already on the screen
+        screen = pag.screenshot()
+        # wait to see if the grayed out 'Next' button appears
+        if pag.pixelMatchesColor(*coords[buy_sell_name_mapping[nt.group_name_length]], sell_something_button_mouseover):
+            mouse_click(buy_sell_name_mapping[nt.group_name_length])
+            return wait_for_buy_sell_to_load(nt)
+        print('pixel {} coords {} matching {} actual {}'.format(coords[buy_sell_name_mapping[nt.group_name_length]], sell_something_button_mouseover, True, screen.getpixel(coords[buy_sell_name_mapping[nt.group_name_length]])))
+        count += 1
+        if count > 120:
+            return False
 
 # refactor one: one function running a while loop waiting on pixels scrolling clicking etc
-
 def run_buy_sell_group(nt):
     print(nt)
     mouse_click('menu')
@@ -159,12 +172,12 @@ def run_group(nt): #google_doc_link, folder_path, group_tup, post_coords):
     sleep(1)
     clean_up()
 
-def test(x):
-    print('calling')
-    x()
 if __name__=='__main__':
     schools = ['USC']
     selections = ['buy_sell', 'group']
+
+    # Set the util class to use the coordinates of facebook buttons
+    init(coords)
 
     if 'buy_sell' in selections:
         for data in all_buy_sells:
