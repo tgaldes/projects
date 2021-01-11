@@ -28,7 +28,21 @@ all_coords = {
         'login_background' : (564, 129),
         'login_with_google' : (555, 601),
         'login_as_tyler_icon' : (1151, 806),
-    
+        
+        # getting credit check results
+        'move_in' : (958, 375),
+        'credit_report_link' : (761, 695),
+        'credit_report' : (1056, 415),
+        'criminal_report_link' : (862, 697),
+        'criminal_report' : (1021, 414),
+        'evictions_report_link' : (993, 696),
+        'evictions_report' : (743, 283),
+        'bottom_right' : (2555, 1583),
+        'bottom_right' : (2555, 1583),
+        'bottom_right_down_button' : (2555, 1593),
+        'no_bottom_right_scroll_bar' : (2555, 1593),
+        'scroll_click_count' : 35,
+        'back_on_browser' : (92, 73),
     }
 }
 colors = {
@@ -55,6 +69,15 @@ colors = {
     # logging into buildium
     'login_background' : (38, 61, 87),
     'login_with_google' : (255, 255, 255),
-    'login_as_tyler_icon' : (124, 155, 65)
+    'login_as_tyler_icon' : (124, 155, 65),
+    'bottom_right' : (193, 193, 193), # color of the scroll bar 
+    'no_bottom_right_scroll_bar' : (255, 255, 255),
+
+    # getting credit check results
+    'move_in' : (112, 143, 104),
+    # blue areas so we know we loaded the page
+    'credit_report' : (216, 237, 254),
+    'criminal_report' : (216, 237, 254),
+    'evictions_report' : (25, 25, 25),
 }
 coords = all_coords['m']

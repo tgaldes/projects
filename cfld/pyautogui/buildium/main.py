@@ -15,7 +15,7 @@ def open_buildium():
     wait_for_screen_or_exit('homepage', 'buildium homepage not loaded')
     print('buildium opened successfully')
 
-def process_application(args):
+def open_applicant(args):
     open_buildium()
     wait_for_screen_then_click_or_exit('leasing', 'failed to open buildium leasing tab')
     wait_for_screen_then_click_or_exit('applicants', 'failed to open buildium applicants tab',
@@ -39,15 +39,11 @@ def process_application(args):
                                     pag.moveRel(1, 1, .1),
                                     pag.moveRel(-1, -1, .1)])
 
-    if len(args) < 3:
-        print('No first and last name passed to process_application.')
-        exit(1)
     wait_for_screen_then_click_or_exit('filter_by_applicant', 'failed to click on applicant under add filter option dropdown',
                                 x = lambda : [
                                     move_to('filter_by_applicant'),
                                     pag.moveRel(1, 1, .1),
                                     pag.moveRel(-1, -1, .1)])
-    first, last = args[1], args[2]
     sleep(1)
     keyboard(first)
     keyboard(' ')
@@ -60,7 +56,73 @@ def process_application(args):
                                     pag.moveRel(1, 1, .1),
                                     pag.moveRel(-1, -1, .1)])
 
+# return a list of file names that we saved the screenshots in
+def take_screenshots(first, last, start_fn_index = 0):
+    clicks = coords['scroll_click_count']
+    
+    count = start_fn_index
+    extension = '.png'
+    base_fn = '{}_{}'.format(first, last)
+    folder = '/home/tgaldes/Pictures/'
+    breaking = False
+    fns = []
+    while True: # TODO: look for bar in lower right corner all the way at the bottom
+        screen = pag.screenshot()
+        fn = folder + base_fn + '_' + str(count) + extension
+        screen.save(fn)
+        fns.append(fn)
+        count += 1
+        for i in range(clicks):
+            mouse_click('bottom_right_down_button')
+        if breaking:
+            break
+        if wait_for_screen_or_clean_up('bottom_right', 'still not done taking screenshots', clean_func = lambda : None, timeout_seconds = 1):
+            breaking = True
+        elif wait_for_screen_or_clean_up('no_bottom_right_scroll_bar', 'there is a scroll bar', clean_func = lambda : None, timeout_seconds = 1):
+            break
+    return fns
 
+def get_screening(first, last):
+    #open_applicant(first, last)
+    sleep(2)
+    wait_for_screen_then_click_or_exit('tenant_screening', 'could not click on first screening button',
+                                x = lambda : [
+                                    move_to('tenant_screening'),
+                                    pag.moveRel(1, 1, .1),
+                                    pag.moveRel(-1, -1, .1)])
+
+    sleep(5)
+    start_fn_index = 0
+    all_fns = []
+    for page_link, page in [('credit_report_link', 'credit_report'), ('criminal_report_link', 'criminal_report'), ('evictions_report_link', 'evictions_report')]:
+        # load the landing page
+        wait_for_screen_or_exit('move_in', 'could not load page with credit screening',
+                                    x = lambda : [
+                                        move_to('move_in'),
+                                        pag.moveRel(1, 1, .1),
+                                        pag.moveRel(-1, -1, .1)])
+        # click on the page we want
+        mouse_click(page_link)
+        # let that page load (look for light blue areas)
+        wait_for_screen_or_exit(page, 'could not load {}'.format(page),
+                                    x = lambda : [
+                                        move_to(page),
+                                        pag.moveRel(1, 1, .1),
+                                        pag.moveRel(-1, -1, .1)])
+        fns = take_screenshots(first, last, start_fn_index)
+        all_fns.extend(fns)
+        start_fn_index += len(fns)
+        print(all_fns)
+        mouse_click('back_on_browser')
+    print(all_fns)
+    return all_fns
+
+
+    
+
+
+def process_application(first, last):
+    open_applicant(first, last)
     # Charge their credit card
     wait_for_screen_then_click_or_exit('process_fee', 'failed to find process fee button at start of credit card screening',
                                 x = lambda : [
@@ -127,6 +189,13 @@ def process_application(args):
 
 
 if __name__=='__main__':
+    if len(sys.argv) < 3:
+        print('No first and last name passed to process_application.')
+        exit(1)
+    first, last = sys.argv[1], sys.argv[2]
+
     init(coords, colors) # give constants to utils
     
-    process_application(sys.argv)
+    #process_application(first, last)
+    #take_screenshots(first, last)
+    get_screening(first, last)
