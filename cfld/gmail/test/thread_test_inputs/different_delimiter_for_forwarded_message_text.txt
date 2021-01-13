@@ -1,0 +1,1329 @@
+{
+    "historyId": "1685896",
+    "id": "1768e0994ff77b52",
+    "messages": [
+        {
+            "historyId": "1685305",
+            "labelIds": [
+                "Label_1123330971938313999",
+                "Label_3080413087857546516",
+                "IMPORTANT",
+                "Label_2644406121295839557",
+                "TRASH",
+                "CATEGORY_PERSONAL"
+            ],
+            "internalDate": "1608700760000",
+            "sizeEstimate": 4686,
+            "threadId": "1768e0994ff77b52",
+            "payload": {
+                "mimeType": "text/plain",
+                "body": {
+                    "data": "RW1haWw6IGxndTMzQHdpc2MuZWR1DQpOYW1lOiBMaXl1YW4gR3UNClNjaG9vbDogU0pTVQ0KUm9vbTogU2luZ2xlLCBEb3VibGUNCk1vdmUgSW46IDIwMjEtMDEtMTANCk1vdmUgT3V0OiAyMDIxLTA1LTMxDQpHZW5kZXI6IE1hbGUNClF1ZXN0aW9uczogDQoNCg==",
+                    "size": 148
+                },
+                "partId": "",
+                "headers": [
+                    {
+                        "name": "Delivered-To",
+                        "value": "apply@cf-ld.com"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by 2002:a19:ac49:0:0:0:0:0 with SMTP id r9csp3232990lfc;        Tue, 22 Dec 2020 21:19:21 -0800 (PST)"
+                    },
+                    {
+                        "name": "X-Google-Smtp-Source",
+                        "value": "ABdhPJyyCjOIlnE12fQO9+0GUm9ooonU5pGV0A69xFcw4sTKhnSaHmMkBVgrf4+OjWBNxluF8qZD"
+                    },
+                    {
+                        "name": "X-Received",
+                        "value": "by 2002:aca:ebd0:: with SMTP id j199mr16382128oih.155.1608700761308;        Tue, 22 Dec 2020 21:19:21 -0800 (PST)"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=1; a=rsa-sha256; t=1608700761; cv=none;        d=google.com; s=arc-20160816;        b=K8tyS1/YKkPZhc5YHBmqgu9NoWKzIsPUvzxxf4Xgu6demoHuNcxq5+OHLPwkHW5Gv4         b+R5Lc+r0IWbsntpKzag5aWkE0n2IPYMGt7adMipyJCuT4ffy2DOn540fwNzc/S1qdP0         8iooAWK17b3A2cUnaFezZbLWDPHT8d+mCWniF8d34uJ2qAlBUKp/KRlW5XNK63tOjBj/         eB0np6AVXdlKNNEqdnfbMe4WE/i9ZhNMkuzA7VxkYxnivanuz9NI0yBNrTxLsSaunju9         lUtQ5Dj17FZ79sVDvBx/NZWMeAmfN+37tIczQL2qplnnWhaHgehFzLN8fXIENJkrQYCw         7jtg=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=mime-version:message-id:subject:reply-to:from:to:date         :dkim-signature:sender;        bh=s58L4/M7Pi1xkCRQLFOEU4tnTKNm/Li0NEPq3SsbN+0=;        b=t50Uq6DfPdGd8jbS585T8gTjQrxQgJ8Vo6ntLicomoZS2D5wTHVyMSBEFfdgcV1oJx         Vwd3S81GX0i3GlJJxbmXnQfC64u0hDSRrtZSFHYs5A8oOkTYEGhc4BS2/e7OhgIYEbma         RO1RBfPKXXNc0sUNVfRCRYAg2MtcM9mckU5Nv3wsN9gOYJUS59mqTtvgiy+Y7gUCAkoy         M2G1+ANTWEivBxvTFn2Oa9rnUByZ6cNSEfaLZsY4GNA94hwHaTTOvSTJdpngJbuhrPAi         8GmhalU1mblBqkq6DoLe33VTaFXHvUh4iCrUClQBXXk8gVyHjkOA0kl2ZLtxLjFarrHJ         1FLA=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=1; mx.google.com;       dkim=pass header.i=@b.atomicsites.net header.s=atomic1 header.b=Kk6ILjX7;       spf=pass (google.com: domain of bounce+wordpress=cleanfloorslockingdoors.com@b.atomicsites.net designates 103.115.9.249 as permitted sender) smtp.mailfrom=\"bounce+wordpress=cleanfloorslockingdoors.com@b.atomicsites.net\""
+                    },
+                    {
+                        "name": "Return-Path",
+                        "value": "<bounce+wordpress=cleanfloorslockingdoors.com@b.atomicsites.net>"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from smtp2-1.dfw.atomicsites.net (smtp2-1.dfw.atomicsites.net. [103.115.9.249])        by mx.google.com with ESMTPS id h15si10821361otq.47.2020.12.22.21.19.20        for <apply@cf-ld.com>        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);        Tue, 22 Dec 2020 21:19:21 -0800 (PST)"
+                    },
+                    {
+                        "name": "Received-SPF",
+                        "value": "pass (google.com: domain of bounce+wordpress=cleanfloorslockingdoors.com@b.atomicsites.net designates 103.115.9.249 as permitted sender) client-ip=103.115.9.249;"
+                    },
+                    {
+                        "name": "Authentication-Results",
+                        "value": "mx.google.com;       dkim=pass header.i=@b.atomicsites.net header.s=atomic1 header.b=Kk6ILjX7;       spf=pass (google.com: domain of bounce+wordpress=cleanfloorslockingdoors.com@b.atomicsites.net designates 103.115.9.249 as permitted sender) smtp.mailfrom=\"bounce+wordpress=cleanfloorslockingdoors.com@b.atomicsites.net\""
+                    },
+                    {
+                        "name": "X-Spam-Flag",
+                        "value": "NO"
+                    },
+                    {
+                        "name": "X-Spam-Score",
+                        "value": "1.223"
+                    },
+                    {
+                        "name": "X-Spam-Level",
+                        "value": "*"
+                    },
+                    {
+                        "name": "X-Spam-Status",
+                        "value": "No, score=1.223 tagged_above=-9999 required=5 tests=[CK_HELO_GENERIC=0.249, DKIM_SIGNED=0.1, DKIM_VALID=-0.1, SPF_HELO_NONE=0.001, SPF_SOFTFAIL=0.972, URIBL_BLOCKED=0.001] autolearn=disabled"
+                    },
+                    {
+                        "name": "Sender",
+                        "value": "bounce+wordpress=cleanfloorslockingdoors.com@b.atomicsites.net"
+                    },
+                    {
+                        "name": "DKIM-Signature",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/simple; d=b.atomicsites.net; s=atomic1; t=1608700760; bh=oGDu9xCswzgcvwdOJIpvZfbMVFkabbY4u2mHXi/sK0U=; h=Date:To:From:Reply-To:Subject:From; b=Kk6ILjX7UMuaBTSj5LRQGbXUyJpKBwA+RtJMFO9qW8TFQOEzyCI0A1f8YVmNuP0Px\t SEi7DWPJnHcK4HjmFNFVtg8N1HD6rlhF8Khw2/gN4QUjc1BYhcFFW8tJuxiYGCsFnM\t j0HrvCyBG0xnRZWy/yyp0qCNqa/1Ka9e8BZZUjFQ="
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from pool3-209-36.bur.atomicsites.net (unknown [103.115.8.2]) by smtp2.atomic.dfw.wordpress.com (Postfix) with ESMTP id 4D11j439qgz1mvBb for <apply@cf-ld.com>; Wed, 23 Dec 2020 05:19:20 +0000 (UTC)"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from cleanfloorslockingdoors.com (localhost.localdomain [127.0.0.1]) (Authenticated sender: cleanfloorslockingdoors.com) by pool3-209-36.bur.atomicsites.net (Postfix) with ESMTPA id 4D11j41q01z3kgcg for <apply@cf-ld.com>; Wed, 23 Dec 2020 05:19:20 +0000 (UTC)"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Wed, 23 Dec 2020 05:19:20 +0000"
+                    },
+                    {
+                        "name": "To",
+                        "value": "apply@cf-ld.com"
+                    },
+                    {
+                        "name": "From",
+                        "value": "WordPress <wordpress@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "Reply-To",
+                        "value": "Liyuan Gu <lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "New submission for SJSU"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<05euj23IE44AkYmeg3bDhXMUSCaEpqyAQJTZZFpD0@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "X-Mailer",
+                        "value": "PHPMailer 6.2.0 (https://github.com/PHPMailer/PHPMailer)"
+                    },
+                    {
+                        "name": "X-Atomic-Tracking",
+                        "value": "149193606:V1BDRjdfTWFpbC0+Y29tcG9zZQ==:1:0:0"
+                    },
+                    {
+                        "name": "X-Atomic-Caller",
+                        "value": "WPCF7_Mail->compose"
+                    },
+                    {
+                        "name": "MIME-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "text/plain; charset=UTF-8"
+                    }
+                ],
+                "filename": ""
+            },
+            "id": "1768e0994ff77b52",
+            "snippet": "Email: lgu33@wisc.edu Name: Liyuan Gu School: SJSU Room: Single, Double Move In: 2021-01-10 Move Out: 2021-05-31 Gender: Male Questions:"
+        },
+        {
+            "historyId": "1685305",
+            "labelIds": [
+                "Label_1123330971938313999",
+                "Label_3080413087857546516",
+                "Label_2644406121295839557",
+                "TRASH",
+                "SENT"
+            ],
+            "internalDate": "1608870078000",
+            "sizeEstimate": 2284,
+            "threadId": "1768e0994ff77b52",
+            "payload": {
+                "parts": [
+                    {
+                        "mimeType": "text/plain",
+                        "body": {
+                            "data": "SGkgTGl5dWFuLA0KDQpXZSBoYWQgYSB0ZW5hbnQgcmVjZW50bHkgZXh0ZW5kIGhpcyBzdGF5IGFuZCBvdXIgZWFybGllc3QgdmFjYW5jeSBpcyBub3cNCkphbnVhcnkgMjR0aCBmb3IgYSBzaW5nbGUgYXQgJDc3NSBhIG1vbnRoLiBMZXQgbWUga25vdyBpZiB0aGF0IGludGVyZXN0cw0KeW91Lg0KDQpCZXN0LA0KVHlsZXINCkNGJkxEDQoNCg0KT24gV2VkLCBEZWMgMjMsIDIwMjAgYXQgMTI6MTkgQU0gV29yZFByZXNzIDwNCndvcmRwcmVzc0BjbGVhbmZsb29yc2xvY2tpbmdkb29ycy5jb20-IHdyb3RlOg0KDQo-IEVtYWlsOiBsZ3UzM0B3aXNjLmVkdQ0KPiBOYW1lOiBMaXl1YW4gR3UNCj4gU2Nob29sOiBTSlNVDQo-IFJvb206IFNpbmdsZSwgRG91YmxlDQo-IE1vdmUgSW46IDIwMjEtMDEtMTANCj4gTW92ZSBPdXQ6IDIwMjEtMDUtMzENCj4gR2VuZGVyOiBNYWxlDQo-IFF1ZXN0aW9uczoNCj4NCj4NCg==",
+                            "size": 457
+                        },
+                        "partId": "0",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"UTF-8\""
+                            }
+                        ],
+                        "filename": ""
+                    },
+                    {
+                        "mimeType": "text/html",
+                        "body": {
+                            "data": "PGRpdiBkaXI9Imx0ciI-PGRpdiBkaXI9Imx0ciI-SGkgTGl5dWFuLDxkaXY-PGJyPjwvZGl2PjxkaXY-V2UgaGFkIGEgdGVuYW50IHJlY2VudGx5IGV4dGVuZCBoaXMgc3RheSBhbmQgb3VyIGVhcmxpZXN0IHZhY2FuY3kgaXMgbm93IEphbnVhcnkgMjR0aCBmb3IgYSBzaW5nbGUgYXQgJDc3NSBhIG1vbnRoLiBMZXQgbWUga25vdyBpZiB0aGF0IGludGVyZXN0cyB5b3UuPC9kaXY-PGRpdj48YnIgY2xlYXI9ImFsbCI-PGRpdj48ZGl2IGRpcj0ibHRyIiBkYXRhLXNtYXJ0bWFpbD0iZ21haWxfc2lnbmF0dXJlIj48ZGl2IGRpcj0ibHRyIj5CZXN0LDxkaXY-VHlsZXI8L2Rpdj48ZGl2PkNGJmFtcDtMRDwvZGl2PjwvZGl2PjwvZGl2PjwvZGl2Pjxicj48L2Rpdj48L2Rpdj48YnI-PGRpdiBjbGFzcz0iZ21haWxfcXVvdGUiPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJnbWFpbF9hdHRyIj5PbiBXZWQsIERlYyAyMywgMjAyMCBhdCAxMjoxOSBBTSBXb3JkUHJlc3MgJmx0OzxhIGhyZWY9Im1haWx0bzp3b3JkcHJlc3NAY2xlYW5mbG9vcnNsb2NraW5nZG9vcnMuY29tIiB0YXJnZXQ9Il9ibGFuayI-d29yZHByZXNzQGNsZWFuZmxvb3JzbG9ja2luZ2Rvb3JzLmNvbTwvYT4mZ3Q7IHdyb3RlOjxicj48L2Rpdj48YmxvY2txdW90ZSBjbGFzcz0iZ21haWxfcXVvdGUiIHN0eWxlPSJtYXJnaW46MHB4IDBweCAwcHggMC44ZXg7Ym9yZGVyLWxlZnQ6MXB4IHNvbGlkIHJnYigyMDQsMjA0LDIwNCk7cGFkZGluZy1sZWZ0OjFleCI-RW1haWw6IDxhIGhyZWY9Im1haWx0bzpsZ3UzM0B3aXNjLmVkdSIgdGFyZ2V0PSJfYmxhbmsiPmxndTMzQHdpc2MuZWR1PC9hPjxicj4NCk5hbWU6IExpeXVhbiBHdTxicj4NClNjaG9vbDogU0pTVTxicj4NClJvb206IFNpbmdsZSwgRG91YmxlPGJyPg0KTW92ZSBJbjogMjAyMS0wMS0xMDxicj4NCk1vdmUgT3V0OiAyMDIxLTA1LTMxPGJyPg0KR2VuZGVyOiBNYWxlPGJyPg0KUXVlc3Rpb25zOiA8YnI-DQo8YnI-DQo8L2Jsb2NrcXVvdGU-PC9kaXY-DQo8L2Rpdj4NCg==",
+                            "size": 1009
+                        },
+                        "partId": "1",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"UTF-8\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "filename": ""
+                    }
+                ],
+                "partId": "",
+                "body": {
+                    "size": 0
+                },
+                "mimeType": "multipart/alternative",
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "MIME-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Thu, 24 Dec 2020 23:21:18 -0500"
+                    },
+                    {
+                        "name": "References",
+                        "value": "<05euj23IE44AkYmeg3bDhXMUSCaEpqyAQJTZZFpD0@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "In-Reply-To",
+                        "value": "<05euj23IE44AkYmeg3bDhXMUSCaEpqyAQJTZZFpD0@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<CAAD9TVXX6nfam4MOQXEM9XajeR88nxgCc5WscmLvCSFXPEDGiQ@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Re: New submission for SJSU"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "Liyuan Gu <lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "multipart/alternative; boundary=\"000000000000a0454a05b742411c\""
+                    }
+                ]
+            },
+            "id": "17698212ee801899",
+            "snippet": "Hi Liyuan, We had a tenant recently extend his stay and our earliest vacancy is now January 24th for a single at $775 a month. Let me know if that interests you. Best, Tyler CF&amp;LD On Wed, Dec 23,"
+        },
+        {
+            "historyId": "1685305",
+            "labelIds": [
+                "Label_1123330971938313999",
+                "Label_3080413087857546516",
+                "IMPORTANT",
+                "Label_2644406121295839557",
+                "TRASH",
+                "CATEGORY_PERSONAL"
+            ],
+            "internalDate": "1608870160000",
+            "sizeEstimate": 13171,
+            "threadId": "1768e0994ff77b52",
+            "payload": {
+                "parts": [
+                    {
+                        "mimeType": "text/plain",
+                        "body": {
+                            "data": "SGkgVHlsZXIsDQpZZXMgdGhhdCB3b3Jrcw0KDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KRnJvbTogQXBwbGljYXRpb24gVGVhbSA8YXBwbHlAY2xlYW5mbG9vcnNsb2NraW5nZG9vcnMuY29tPg0KU2VudDogVGh1cnNkYXksIERlY2VtYmVyIDI0LCAyMDIwIDExOjIxOjE4IFBNDQpUbzogRG9uYWxkIEd1IDxsZ3UzM0B3aXNjLmVkdT4NClN1YmplY3Q6IFJlOiBOZXcgc3VibWlzc2lvbiBmb3IgU0pTVQ0KDQpIaSBMaXl1YW4sDQoNCldlIGhhZCBhIHRlbmFudCByZWNlbnRseSBleHRlbmQgaGlzIHN0YXkgYW5kIG91ciBlYXJsaWVzdCB2YWNhbmN5IGlzIG5vdyBKYW51YXJ5IDI0dGggZm9yIGEgc2luZ2xlIGF0ICQ3NzUgYSBtb250aC4gTGV0IG1lIGtub3cgaWYgdGhhdCBpbnRlcmVzdHMgeW91Lg0KDQpCZXN0LA0KVHlsZXINCkNGJkxEDQoNCg0KT24gV2VkLCBEZWMgMjMsIDIwMjAgYXQgMTI6MTkgQU0gV29yZFByZXNzIDx3b3JkcHJlc3NAY2xlYW5mbG9vcnNsb2NraW5nZG9vcnMuY29tPG1haWx0bzp3b3JkcHJlc3NAY2xlYW5mbG9vcnNsb2NraW5nZG9vcnMuY29tPj4gd3JvdGU6DQpFbWFpbDogbGd1MzNAd2lzYy5lZHU8bWFpbHRvOmxndTMzQHdpc2MuZWR1Pg0KTmFtZTogTGl5dWFuIEd1DQpTY2hvb2w6IFNKU1UNClJvb206IFNpbmdsZSwgRG91YmxlDQpNb3ZlIEluOiAyMDIxLTAxLTEwDQpNb3ZlIE91dDogMjAyMS0wNS0zMQ0KR2VuZGVyOiBNYWxlDQpRdWVzdGlvbnM6DQoNCg==",
+                            "size": 742
+                        },
+                        "partId": "0",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"us-ascii\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "filename": ""
+                    },
+                    {
+                        "mimeType": "text/html",
+                        "body": {
+                            "data": "PGh0bWw-DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXVzLWFzY2lpIj4NCjwvaGVhZD4NCjxib2R5Pg0KPGRpdj4NCjxkaXY-DQo8ZGl2IHN0eWxlPSJkaXJlY3Rpb246IGx0cjsiPkhpIFR5bGVyLDwvZGl2Pg0KPGRpdiBzdHlsZT0iZGlyZWN0aW9uOiBsdHI7Ij5ZZXMgdGhhdCA8c3BhbiBpZD0ibXMtb3V0bG9vay1pb3MtY3Vyc29yIj48L3NwYW4-d29ya3MNCjwvZGl2Pg0KPC9kaXY-DQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGRpdiBjbGFzcz0ibXMtb3V0bG9vay1pb3Mtc2lnbmF0dXJlIj48L2Rpdj4NCjwvZGl2Pg0KPGhyIHN0eWxlPSJkaXNwbGF5OmlubGluZS1ibG9jazt3aWR0aDo5OCUiIHRhYmluZGV4PSItMSI-DQo8ZGl2IGlkPSJkaXZScGx5RndkTXNnIiBkaXI9Imx0ciI-PGZvbnQgZmFjZT0iQ2FsaWJyaSwgc2Fucy1zZXJpZiIgc3R5bGU9ImZvbnQtc2l6ZToxMXB0IiBjb2xvcj0iIzAwMDAwMCI-PGI-RnJvbTo8L2I-IEFwcGxpY2F0aW9uIFRlYW0gJmx0O2FwcGx5QGNsZWFuZmxvb3JzbG9ja2luZ2Rvb3JzLmNvbSZndDs8YnI-DQo8Yj5TZW50OjwvYj4gVGh1cnNkYXksIERlY2VtYmVyIDI0LCAyMDIwIDExOjIxOjE4IFBNPGJyPg0KPGI-VG86PC9iPiBEb25hbGQgR3UgJmx0O2xndTMzQHdpc2MuZWR1Jmd0Ozxicj4NCjxiPlN1YmplY3Q6PC9iPiBSZTogTmV3IHN1Ym1pc3Npb24gZm9yIFNKU1U8L2ZvbnQ-DQo8ZGl2PiZuYnNwOzwvZGl2Pg0KPC9kaXY-DQo8ZGl2Pg0KPGRpdiBkaXI9Imx0ciI-DQo8ZGl2IGRpcj0ibHRyIj5IaSBMaXl1YW4sDQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGRpdj5XZSBoYWQgYSB0ZW5hbnQgcmVjZW50bHkgZXh0ZW5kIGhpcyBzdGF5IGFuZCBvdXIgZWFybGllc3QgdmFjYW5jeSBpcyBub3cgSmFudWFyeSAyNHRoIGZvciBhIHNpbmdsZSBhdCAkNzc1IGEgbW9udGguIExldCBtZSBrbm93IGlmIHRoYXQgaW50ZXJlc3RzIHlvdS48L2Rpdj4NCjxkaXY-PGJyIGNsZWFyPSJhbGwiPg0KPGRpdj4NCjxkaXYgZGlyPSJsdHIiPg0KPGRpdiBkaXI9Imx0ciI-QmVzdCwNCjxkaXY-VHlsZXI8L2Rpdj4NCjxkaXY-Q0YmYW1wO0xEPC9kaXY-DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY-DQo8YnI-DQo8L2Rpdj4NCjwvZGl2Pg0KPGJyPg0KPGRpdiBjbGFzcz0ieF9nbWFpbF9xdW90ZSI-DQo8ZGl2IGRpcj0ibHRyIiBjbGFzcz0ieF9nbWFpbF9hdHRyIj5PbiBXZWQsIERlYyAyMywgMjAyMCBhdCAxMjoxOSBBTSBXb3JkUHJlc3MgJmx0OzxhIGhyZWY9Im1haWx0bzp3b3JkcHJlc3NAY2xlYW5mbG9vcnNsb2NraW5nZG9vcnMuY29tIiB0YXJnZXQ9Il9ibGFuayI-d29yZHByZXNzQGNsZWFuZmxvb3JzbG9ja2luZ2Rvb3JzLmNvbTwvYT4mZ3Q7IHdyb3RlOjxicj4NCjwvZGl2Pg0KPGJsb2NrcXVvdGUgY2xhc3M9InhfZ21haWxfcXVvdGUiIHN0eWxlPSJtYXJnaW46MHB4IDBweCAwcHggMC44ZXg7IGJvcmRlci1sZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIwNCwyMDQpOyBwYWRkaW5nLWxlZnQ6MWV4Ij4NCkVtYWlsOiA8YSBocmVmPSJtYWlsdG86bGd1MzNAd2lzYy5lZHUiIHRhcmdldD0iX2JsYW5rIj5sZ3UzM0B3aXNjLmVkdTwvYT48YnI-DQpOYW1lOiBMaXl1YW4gR3U8YnI-DQpTY2hvb2w6IFNKU1U8YnI-DQpSb29tOiBTaW5nbGUsIERvdWJsZTxicj4NCk1vdmUgSW46IDIwMjEtMDEtMTA8YnI-DQpNb3ZlIE91dDogMjAyMS0wNS0zMTxicj4NCkdlbmRlcjogTWFsZTxicj4NClF1ZXN0aW9uczogPGJyPg0KPGJyPg0KPC9ibG9ja3F1b3RlPg0KPC9kaXY-DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ib2R5Pg0KPC9odG1sPg0K",
+                            "size": 1830
+                        },
+                        "partId": "1",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"us-ascii\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "filename": ""
+                    }
+                ],
+                "partId": "",
+                "body": {
+                    "size": 0
+                },
+                "mimeType": "multipart/alternative",
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "Delivered-To",
+                        "value": "apply@cleanfloorslockingdoors.com"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by 2002:a19:ac49:0:0:0:0:0 with SMTP id r9csp4773170lfc;        Thu, 24 Dec 2020 21:03:05 -0800 (PST)"
+                    },
+                    {
+                        "name": "X-Google-Smtp-Source",
+                        "value": "ABdhPJyj5HVvpa/SU+elnrG6+NNwbwVlwbYU3IjWvfnr0fKX3oKnbjiS/cRyv6X5oJt/GItZD4pV"
+                    },
+                    {
+                        "name": "X-Received",
+                        "value": "by 2002:a5d:928d:: with SMTP id s13mr27444868iom.47.1608872585030;        Thu, 24 Dec 2020 21:03:05 -0800 (PST)"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=2; a=rsa-sha256; t=1608872585; cv=pass;        d=google.com; s=arc-20160816;        b=MDg0N0ALKb2vxxo+Gsu3agH4aUwZsk3mH0IaArVxmU+uL+K4V/+Xpct2W5KuNxp+OT         GcyORcD2jqE9DSXNDKQrDLIMeJYjcBktY6X7B20P6rUHFA9EZT+LI8WRY7ZBHFfv94Nl         etsNI/KktaoZu/sAs/C+K0ytUKh8JTyqyAu1rhPnFyPk+AwDESIBnVqfPZwPkmeoIUWw         3fUa+7tcpJ+L+pNqteOx+Kxs1JD7W7S73JxYM9QyHtrXEyAv6lljro7r/5Pg20VHU0Py         PxIe/mwKkNR5vKtqJNO4fTNitAdVtDqFvSil+FyL7lM2+EBo34Rqkwg1rqQtaHAJVSug         yQzQ=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=mime-version:content-language:accept-language:in-reply-to         :references:message-id:date:thread-index:thread-topic:subject:to         :from:dkim-signature;        bh=2ROqxowZs9tvHlOMmYxO8+vNxL2wcqR8xJkEEEjUrAg=;        b=n7g6prFUOp9LbU/vwt1zvTlAQTbYtVtLtW9p++yZP08wOtBVxZyp/4Rvq6EyGLEoTa         Zs/0K91626xk3I2/tZ69EtgjYUOtgY9Ep+45zKr9CsK9PdUAlzwsKa571BRQlZaefiwA         0PwwaQDNZ9alkBDnn4Mnv+BVE0FtzXY451EXUSJ3rR1eB0SJ8zE2Yb3r2XwJ6VR1W0RP         +3aQgk8L1z57WxiX76dmvUt7i8gW3+KvFfxeuhUyZgMWMm50D7ODLbP2hcAvPEja3X4n         +nx79sHxxcdMT4Ij805CU1+DPYIyw1qNJuCFpHyqIjEmfWdp7BBgmR2l28DI3+rD5tBg         jFHg=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=2; mx.google.com;       dkim=pass header.i=@wisc.edu header.s=selector2 header.b=wNDqtDzZ;       arc=pass (i=1 spf=pass spfdomain=wisc.edu dkim=pass dkdomain=wisc.edu dmarc=pass fromdomain=wisc.edu);       spf=pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.226 as permitted sender) smtp.mailfrom=lgu33@wisc.edu;       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=wisc.edu"
+                    },
+                    {
+                        "name": "Return-Path",
+                        "value": "<lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from wmauth3.doit.wisc.edu (wmauth3.doit.wisc.edu. [144.92.197.226])        by mx.google.com with ESMTPS id d13si42136903iow.14.2020.12.24.21.03.04        for <apply@cleanfloorslockingdoors.com>        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);        Thu, 24 Dec 2020 21:03:05 -0800 (PST)"
+                    },
+                    {
+                        "name": "Received-SPF",
+                        "value": "pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.226 as permitted sender) client-ip=144.92.197.226;"
+                    },
+                    {
+                        "name": "Authentication-Results",
+                        "value": "mx.google.com;       dkim=pass header.i=@wisc.edu header.s=selector2 header.b=wNDqtDzZ;       arc=pass (i=1 spf=pass spfdomain=wisc.edu dkim=pass dkdomain=wisc.edu dmarc=pass fromdomain=wisc.edu);       spf=pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.226 as permitted sender) smtp.mailfrom=lgu33@wisc.edu;       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=wisc.edu"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176]) by smtpauth3.wiscmail.wisc.edu (Oracle Communications Messaging Server 8.0.2.4.20190812 64bit (built Aug 12 2019)) with ESMTPS id <0QLV00B4BO5TWA00@smtpauth3.wiscmail.wisc.edu> for apply@cleanfloorslockingdoors.com; Thu, 24 Dec 2020 22:22:42 -0600 (CST)"
+                    },
+                    {
+                        "name": "X-Spam-Report",
+                        "value": "AuthenticatedSender=yes, SenderIP=[104.47.57.176]"
+                    },
+                    {
+                        "name": "X-Wisc-Env-From-B64",
+                        "value": "bGd1MzNAd2lzYy5lZHU="
+                    },
+                    {
+                        "name": "X-Spam-PmxInfo",
+                        "value": "Server=avs-3, Version=6.4.7.2805085, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2020.12.25.41217, AntiVirus-Engine: 5.79.0, AntiVirus-Data: 2020.12.13.5790000, SenderIP=[104.47.57.176]"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none; b=ARdJ4FaITG+J7Evl/jCQ8eKs8HIE/1iOb1SLBIOCsvqTihxPm87+HRpxY9I1BxRe0Z9PRU0hfa3UzBckrTkxY48uoXUMhDMD5gJSbSnC+My3syyVym3fobnyTox0lmYfIHoD+HBlQR7CFF1F0slKxmhJi99HwxNQCc8STHvpJhHFs+ZxuW+xrRmanXbuQzwn4Xee9qas+B7yfaD6Xec6RGLeAJuJ3QA7zh8f07usUrN3sUW8AKZOdRmcChY6rOP1oh8N6s2VG5mX9CfL4sigdt6yZzhK3zYRna7B1mPXcyAaQPzi7UMScSmsFbUQruCapwigG46KmOp/7DIcPLZ0tQ=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck; bh=2ROqxowZs9tvHlOMmYxO8+vNxL2wcqR8xJkEEEjUrAg=; b=ma10XTwcJvfLV6MW+Htjx85pej/oW7aZR3yIdEDkZBCtqPa9slSUzyL/joIYzO5j7W0z2XyF7dem3M8cfSmna5EBIrGxgV4sea8wV2X+mU2I/a1+kxe4dfrGmHnNBXgB3ngoH5fN8evMx0zHyTX0DRRsdIj28pgnvJfCOi7PdtmZE8Xz6FPUt8+T6JI38eldw5d7bhDZFEWZ7EPlPJmsCFKqF/0qd3ewtMOpQ5W0mqIfn16xHgBHxdtbln9T6wNRvhagfOEKpxu33gySCnhPb+ntte9FpTvK8lQeccL/NFRVI+BgQnXe6RJr1Hlf5xs8AMvobB0ygI5QcIwvyQzBpQ=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=1; mx.microsoft.com 1; spf=pass smtp.mailfrom=wisc.edu; dmarc=pass action=none header.from=wisc.edu; dkim=pass header.d=wisc.edu; arc=none"
+                    },
+                    {
+                        "name": "DKIM-Signature",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=wisc.edu; s=selector2; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck; bh=2ROqxowZs9tvHlOMmYxO8+vNxL2wcqR8xJkEEEjUrAg=; b=wNDqtDzZ0gx91zMG1PIEf4VAfkXSZY+VMu6NCA8PvMZXohw0LIotCAK1tBleLPq5DS0Fs3Ll/xUIhH3WJfKKuipHwwiYOCHFuhAp0v52i1K0w58cSA8FWuFg+ckEdLOgQqdZ+4YS2YBBvcWvMYmGxfyvTGsA9dfRrdxK8+z++yg="
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from DM6PR06MB5723.namprd06.prod.outlook.com (2603:10b6:5:1ab::18) by DM6PR06MB4233.namprd06.prod.outlook.com (2603:10b6:5:25::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3676.31; Fri, 25 Dec 2020 04:22:40 +0000"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from DM6PR06MB5723.namprd06.prod.outlook.com ([fe80::4a7:a769:827:d10f]) by DM6PR06MB5723.namprd06.prod.outlook.com ([fe80::4a7:a769:827:d10f%5]) with mapi id 15.20.3676.034; Fri, 25 Dec 2020 04:22:40 +0000"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Donald Gu <lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Re: New submission for SJSU"
+                    },
+                    {
+                        "name": "Thread-topic",
+                        "value": "New submission for SJSU"
+                    },
+                    {
+                        "name": "Thread-index",
+                        "value": "AQHW2nVuvbByFEKLckO6LUC53fMt9KoHNiiY"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Fri, 25 Dec 2020 04:22:40 +0000"
+                    },
+                    {
+                        "name": "Message-id",
+                        "value": "<DM6PR06MB57233D086C7EF9FCDF7D341DD0DC0@DM6PR06MB5723.namprd06.prod.outlook.com>"
+                    },
+                    {
+                        "name": "References",
+                        "value": "<05euj23IE44AkYmeg3bDhXMUSCaEpqyAQJTZZFpD0@cleanfloorslockingdoors.com>, <CAAD9TVXX6nfam4MOQXEM9XajeR88nxgCc5WscmLvCSFXPEDGiQ@mail.gmail.com>"
+                    },
+                    {
+                        "name": "In-reply-to",
+                        "value": "<CAAD9TVXX6nfam4MOQXEM9XajeR88nxgCc5WscmLvCSFXPEDGiQ@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Accept-Language",
+                        "value": "en-US"
+                    },
+                    {
+                        "name": "Content-language",
+                        "value": "en-US"
+                    },
+                    {
+                        "name": "X-MS-Has-Attach",
+                        "value": ""
+                    },
+                    {
+                        "name": "X-MS-TNEF-Correlator",
+                        "value": ""
+                    },
+                    {
+                        "name": "X-Originating-IP",
+                        "value": "[99.99.45.45]"
+                    },
+                    {
+                        "name": "x-ms-publictraffictype",
+                        "value": "Email"
+                    },
+                    {
+                        "name": "x-ms-office365-filtering-ht",
+                        "value": "Tenant"
+                    },
+                    {
+                        "name": "x-ms-office365-filtering-correlation-id",
+                        "value": "37b5a33e-1d51-4688-35d5-08d8a88cb78e"
+                    },
+                    {
+                        "name": "x-ms-traffictypediagnostic",
+                        "value": "DM6PR06MB4233:"
+                    },
+                    {
+                        "name": "x-microsoft-antispam-prvs",
+                        "value": "<DM6PR06MB42338504B36E096B329E1529D0DC0@DM6PR06MB4233.namprd06.prod.outlook.com>"
+                    },
+                    {
+                        "name": "x-ms-oob-tlc-oobclassifiers",
+                        "value": "OLM:792;"
+                    },
+                    {
+                        "name": "x-ms-exchange-senderadcheck",
+                        "value": "1"
+                    },
+                    {
+                        "name": "x-microsoft-antispam",
+                        "value": "BCL:0;"
+                    },
+                    {
+                        "name": "x-microsoft-antispam-message-info",
+                        "value": "UwdX8vHO4hs0mAzMZ5VhE4KyuEqOAavI41kRxWnS5l8cRXUUu+6iToLtmIzzqW+heP1p0QOInp5HWxpLTGg0RHVx8i50Tgbviw4nfTQ7XSsjyWnZdEmlJoQz3xWhATJvGw/MD2BETTUbYArG4ub4qWAiSVPI9uHv5t0nqKu1TLjUGWW6xkn7+pOCV3SAXDreWoSuavmok19CsKAttIFHCbJGBJhsHdt+fDM1pHTqrFfF+MSCK1kXjGjQMJJU5hKqVgEJCRlXdnxKX1oZBxk0BE+Aek+vgu4QOi6yST7KRhNOET88o2/km4JS/txaBDNJZXi8JJVk+E+3fw5Gr3tjnzZ3zmV2OUVvgzH5joWGecJofRNL2LNtf/vx/YopjmAidonApYH0Z6gec3/dGystUQ=="
+                    },
+                    {
+                        "name": "X-Forefront-Antispam-Report",
+                        "value": "CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR06MB5723.namprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(376002)(346002)(136003)(39860400002)(366004)(52536014)(9686003)(86362001)(5660300002)(66476007)(6506007)(2906002)(478600001)(76116006)(8936002)(55016002)(26005)(3480700007)(71200400001)(4744005)(6916009)(786003)(33656002)(186003)(75432002)(83380400001)(8676002)(66446008)(53546011)(64756008)(316002)(7696005)(66946007)(91956017)(66556008);DIR:OUT;SFP:1101;"
+                    },
+                    {
+                        "name": "x-ms-exchange-antispam-messagedata",
+                        "value": "fN4bN82wp/AXJVMnJYoQTJBPZ3IUebAblp+/OMeu4xNOfDQJ3789mSgHjWdIkvmCrlVT255ZHXH7vBq2PvohcanpEaulRmQu/XR18WcDI7TK9ZRrhrpYrhOWUPzx8tQKL+Gu29vW+9vwaYVqohH1ZSjnprZ3uEf+8AFe6t0LbSoFXrcw/U0KsNNYUoiXQYf2/1aYTyFXaGjhc1/+WMoM/nmtaKMUYHiUQy3zE4ZCGySRzWgk9o2X732GFNu3RMs7ZAkn5YmBNMhqXtL8M5j5DMe3rT+FB6rM9qPC6rwtiWIAwqLt35ZTdm6B7nj2iJV1JlnTSxNkyTedQT4YoWstU6IQdH4bc66MPF8sm13CWKzkpm8gE1eMbruyvhPCAthd9TC6U1jYdxaF3AHpt4y4i/B9rLVSMqYgosqNBTlOwXx7HiTKNN0BB/0e/B/Pgs8aDE03TTcwBfL/eRA1ZUwbIt1zllVpI3i9hiGFAvTIqt5dPWh0lHm3Hal0/aaTPfwK5bzmJDPKBIpL5o6uEhBRz632aFt3P3C5mZfSNu2+0HHQJmPakNMfoA/nl4MqfEQarGV+oo00rsNSNmXzDp2R3N4XhekMRZE2UFdPTzj+OeymRYgfyWFro1kE+qLd3N6kQMBlP2VtEqgSkM7tZ6J7XZ0Dwo5M6oOK8xbg2Va337RqXu3FMSzysdSbXFAt2rBXlYeyq9RAmoQX2/x7oypzbWoD4j3ipulCVkVmzacs+z3aFfJq139NLMGQ/TquCXgcIvtvYsXHFk8sJrDXNbspV1aP57XmwTaTWnqJK0YfhQIik1qQ6jgkVEBkYIbJ7JfRNetriXondJHXXrLA4fm4AxtUsUYAS9b0QMEMiS6DdZyYb01rCR76uX+XaPwS5+sRGiQovUcjB2MuK5+2S8LB/c8sYoK91dM23mlRDqWK75erdh6Ez2q54sH7IZbIZwfenVFgcb5wf94Ff1z0Bh4oPXaqOhKM6O1GD6qV02focBjtC1tbrfS8I/NjmaCd04hL"
+                    },
+                    {
+                        "name": "x-ms-exchange-transport-forked",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Content-type",
+                        "value": "multipart/alternative; boundary=\"_000_DM6PR06MB57233D086C7EF9FCDF7D341DD0DC0DM6PR06MB5723namp_\""
+                    },
+                    {
+                        "name": "MIME-version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "X-OriginatorOrg",
+                        "value": "wisc.edu"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-AuthAs",
+                        "value": "Internal"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-AuthSource",
+                        "value": "DM6PR06MB5723.namprd06.prod.outlook.com"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-Network-Message-Id",
+                        "value": "37b5a33e-1d51-4688-35d5-08d8a88cb78e"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-OriginalArrivalTime",
+                        "value": "25 Dec 2020 04:22:40.0563 (UTC)"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-fromentityheader",
+                        "value": "Hosted"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-id",
+                        "value": "2ca68321-0eda-4908-88b2-424a8cb4b0f9"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-mailboxtype",
+                        "value": "HOSTED"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-userprincipalname",
+                        "value": "0TS8ZKeJ9IkuY475p+B1xYv1ThYpSmQ6HQtX5W7kIEFHzdL6Bt9XweiLW0VY1R9h"
+                    },
+                    {
+                        "name": "X-MS-Exchange-Transport-CrossTenantHeadersStamped",
+                        "value": "DM6PR06MB4233"
+                    }
+                ]
+            },
+            "id": "1769847665436232",
+            "snippet": "Hi Tyler, Yes that works From: Application Team &lt;apply@cleanfloorslockingdoors.com&gt; Sent: Thursday, December 24, 2020 11:21:18 PM To: Donald Gu &lt;lgu33@wisc.edu&gt; Subject: Re: New submission"
+        },
+        {
+            "historyId": "1685305",
+            "labelIds": [
+                "Label_1123330971938313999",
+                "Label_3080413087857546516",
+                "Label_2644406121295839557",
+                "TRASH",
+                "SENT"
+            ],
+            "internalDate": "1608909842000",
+            "sizeEstimate": 1255,
+            "threadId": "1768e0994ff77b52",
+            "payload": {
+                "parts": [
+                    {
+                        "mimeType": "text/plain",
+                        "body": {
+                            "data": "SGkgRG9uYWxkLA0KDQpHcmVhdCwgcGxlYXNlIGdvIHRvDQpodHRwczovL2NsZWFuZmxvb3JzYW5kbG9ja2luZ2Rvb3JzaW5jLm1hbmFnZWJ1aWxkaW5nLmNvbS9SZXNpZGVudC9yZW50YWwtYXBwbGljYXRpb24vDQphbmQgY29tcGxldGUgdGhlIG9mZmljaWFsIGFwcGxpY2F0aW9uLiBUaGVyZSBpcyBhICQzNSBmZWUgdXNlZCB0byBjb21wbGV0ZQ0KY3JlZGl0IGFuZCBiYWNrZ3JvdW5kIGNoZWNrcy4NCg0KVHlsZXINCg==",
+                            "size": 238
+                        },
+                        "partId": "0",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"UTF-8\""
+                            }
+                        ],
+                        "filename": ""
+                    },
+                    {
+                        "mimeType": "text/html",
+                        "body": {
+                            "data": "PGRpdiBkaXI9Imx0ciI-SGkgRG9uYWxkLDxkaXY-PGJyPjwvZGl2PjxkaXY-R3JlYXQsIHBsZWFzZSBnbyB0byA8YSBocmVmPSJodHRwczovL2NsZWFuZmxvb3JzYW5kbG9ja2luZ2Rvb3JzaW5jLm1hbmFnZWJ1aWxkaW5nLmNvbS9SZXNpZGVudC9yZW50YWwtYXBwbGljYXRpb24vIiB0YXJnZXQ9Il9ibGFuayI-aHR0cHM6Ly9jbGVhbmZsb29yc2FuZGxvY2tpbmdkb29yc2luYy5tYW5hZ2VidWlsZGluZy5jb20vUmVzaWRlbnQvcmVudGFsLWFwcGxpY2F0aW9uLzwvYT4gYW5kIGNvbXBsZXRlIHRoZSBvZmZpY2lhbCBhcHBsaWNhdGlvbi4gVGhlcmUgaXMgYSAkMzUgZmVlIHVzZWQgdG8gY29tcGxldGUgY3JlZGl0IGFuZCBiYWNrZ3JvdW5kIGNoZWNrcy48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2PlR5bGVyPC9kaXY-PC9kaXY-DQo=",
+                            "size": 416
+                        },
+                        "partId": "1",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"UTF-8\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "filename": ""
+                    }
+                ],
+                "partId": "",
+                "body": {
+                    "size": 0
+                },
+                "mimeType": "multipart/alternative",
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "MIME-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Fri, 25 Dec 2020 10:24:02 -0500"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<CAAD9TVXqWqGuVsH2JvJHR0zxh-VXOYs8xoYA9gobQ3-X=0ks2A@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "New submission for SJSU"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "Liyuan Gu <lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "multipart/alternative; boundary=\"000000000000b2b10405b74b83e8\""
+                    }
+                ]
+            },
+            "id": "1769a7fed9675b95",
+            "snippet": "Hi Donald, Great, please go to https://cleanfloorsandlockingdoorsinc.managebuilding.com/Resident/rental-application/ and complete the official application. There is a $35 fee used to complete credit"
+        },
+        {
+            "historyId": "1685896",
+            "labelIds": [
+                "Label_1123330971938313999",
+                "Label_3080413087857546516",
+                "IMPORTANT",
+                "Label_2644406121295839557",
+                "CATEGORY_PERSONAL",
+                "INBOX"
+            ],
+            "internalDate": "1608938886000",
+            "sizeEstimate": 15424,
+            "threadId": "1768e0994ff77b52",
+            "payload": {
+                "parts": [
+                    {
+                        "mimeType": "text/plain",
+                        "body": {
+                            "data": "SGkgVHlsZXIsDQoNCkkgaGF2ZSBzdWJtaXR0ZWQgdGhlIGFwcGxpY2F0aW9uLiBJcyB0aGVyZSBhbnkgd2F5cyB0byBkbyBhIHZpcnR1YWwgdG91cj8NCg0KVGhhbmtzDQoNCkZyb206IEFwcGxpY2F0aW9uIFRlYW0gPGFwcGx5QGNsZWFuZmxvb3JzbG9ja2luZ2Rvb3JzLmNvbT4NCkRhdGU6IEZyaWRheSwgRGVjZW1iZXIgMjUsIDIwMjAgYXQgOToyNCBBTQ0KVG86IERvbmFsZCBHdSA8bGd1MzNAd2lzYy5lZHU-DQpTdWJqZWN0OiBOZXcgc3VibWlzc2lvbiBmb3IgU0pTVQ0KDQpIaSBEb25hbGQsDQoNCkdyZWF0LCBwbGVhc2UgZ28gdG8gaHR0cHM6Ly9jbGVhbmZsb29yc2FuZGxvY2tpbmdkb29yc2luYy5tYW5hZ2VidWlsZGluZy5jb20vUmVzaWRlbnQvcmVudGFsLWFwcGxpY2F0aW9uLyBhbmQgY29tcGxldGUgdGhlIG9mZmljaWFsIGFwcGxpY2F0aW9uLiBUaGVyZSBpcyBhICQzNSBmZWUgdXNlZCB0byBjb21wbGV0ZSBjcmVkaXQgYW5kIGJhY2tncm91bmQgY2hlY2tzLg0KDQpUeWxlcg0K",
+                            "size": 507
+                        },
+                        "partId": "0",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"utf-8\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "base64"
+                            }
+                        ],
+                        "filename": ""
+                    },
+                    {
+                        "mimeType": "text/html",
+                        "body": {
+                            "data": "PGh0bWwgeG1sbnM6bz0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6b2ZmaWNlIiB4bWxuczp3PSJ1cm46c2NoZW1hcy1taWNyb3NvZnQtY29tOm9mZmljZTp3b3JkIiB4bWxuczptPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL29mZmljZS8yMDA0LzEyL29tbWwiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy9UUi9SRUMtaHRtbDQwIj4NCjxoZWFkPg0KPG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0L2h0bWw7IGNoYXJzZXQ9dXRmLTgiPg0KPG1ldGEgbmFtZT0iR2VuZXJhdG9yIiBjb250ZW50PSJNaWNyb3NvZnQgV29yZCAxNSAoZmlsdGVyZWQgbWVkaXVtKSI-DQo8c3R5bGU-PCEtLQ0KLyogRm9udCBEZWZpbml0aW9ucyAqLw0KQGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseToiQ2FtYnJpYSBNYXRoIjsNCglwYW5vc2UtMToyIDQgNSAzIDUgNCA2IDMgMiA0O30NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6RGVuZ1hpYW47DQoJcGFub3NlLTE6MiAxIDYgMCAzIDEgMSAxIDEgMTt9DQpAZm9udC1mYWNlDQoJe2ZvbnQtZmFtaWx5OkNhbGlicmk7DQoJcGFub3NlLTE6MiAxNSA1IDIgMiAyIDQgMyAyIDQ7fQ0KQGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseToiXEBEZW5nWGlhbiI7DQoJcGFub3NlLTE6MiAxIDYgMCAzIDEgMSAxIDEgMTt9DQovKiBTdHlsZSBEZWZpbml0aW9ucyAqLw0KcC5Nc29Ob3JtYWwsIGxpLk1zb05vcm1hbCwgZGl2Lk1zb05vcm1hbA0KCXttYXJnaW46MGluOw0KCWZvbnQtc2l6ZToxMS4wcHQ7DQoJZm9udC1mYW1pbHk6IkNhbGlicmkiLHNhbnMtc2VyaWY7fQ0KYTpsaW5rLCBzcGFuLk1zb0h5cGVybGluaw0KCXttc28tc3R5bGUtcHJpb3JpdHk6OTk7DQoJY29sb3I6Ymx1ZTsNCgl0ZXh0LWRlY29yYXRpb246dW5kZXJsaW5lO30NCnNwYW4uRW1haWxTdHlsZTE4DQoJe21zby1zdHlsZS10eXBlOnBlcnNvbmFsLXJlcGx5Ow0KCWZvbnQtZmFtaWx5OiJDYWxpYnJpIixzYW5zLXNlcmlmOw0KCWNvbG9yOndpbmRvd3RleHQ7fQ0KLk1zb0NocERlZmF1bHQNCgl7bXNvLXN0eWxlLXR5cGU6ZXhwb3J0LW9ubHk7DQoJZm9udC1zaXplOjEwLjBwdDt9DQpAcGFnZSBXb3JkU2VjdGlvbjENCgl7c2l6ZTo4LjVpbiAxMS4waW47DQoJbWFyZ2luOjEuMGluIDEuMGluIDEuMGluIDEuMGluO30NCmRpdi5Xb3JkU2VjdGlvbjENCgl7cGFnZTpXb3JkU2VjdGlvbjE7fQ0KLS0-PC9zdHlsZT4NCjwvaGVhZD4NCjxib2R5IGxhbmc9IkVOLVVTIiBsaW5rPSJibHVlIiB2bGluaz0icHVycGxlIiBzdHlsZT0id29yZC13cmFwOmJyZWFrLXdvcmQiPg0KPGRpdiBjbGFzcz0iV29yZFNlY3Rpb24xIj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPkhpIFR5bGVyLCA8bzpwPjwvbzpwPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA-Jm5ic3A7PC9vOnA-PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI-SSBoYXZlIHN1Ym1pdHRlZCB0aGUgYXBwbGljYXRpb24uIElzIHRoZXJlIGFueSB3YXlzIHRvIGRvIGEgdmlydHVhbCB0b3VyPzxvOnA-PC9vOnA-PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI-PG86cD4mbmJzcDs8L286cD48L3A-DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj5UaGFua3M8bzpwPjwvbzpwPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA-Jm5ic3A7PC9vOnA-PC9wPg0KPGRpdiBzdHlsZT0iYm9yZGVyOm5vbmU7Ym9yZGVyLXRvcDpzb2xpZCAjQjVDNERGIDEuMHB0O3BhZGRpbmc6My4wcHQgMGluIDBpbiAwaW4iPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI-PGI-PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMi4wcHQ7Y29sb3I6YmxhY2siPkZyb206IDwvc3Bhbj48L2I-PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMi4wcHQ7Y29sb3I6YmxhY2siPkFwcGxpY2F0aW9uIFRlYW0gJmx0O2FwcGx5QGNsZWFuZmxvb3JzbG9ja2luZ2Rvb3JzLmNvbSZndDs8YnI-DQo8Yj5EYXRlOiA8L2I-RnJpZGF5LCBEZWNlbWJlciAyNSwgMjAyMCBhdCA5OjI0IEFNPGJyPg0KPGI-VG86IDwvYj5Eb25hbGQgR3UgJmx0O2xndTMzQHdpc2MuZWR1Jmd0Ozxicj4NCjxiPlN1YmplY3Q6IDwvYj5OZXcgc3VibWlzc2lvbiBmb3IgU0pTVTxvOnA-PC9vOnA-PC9zcGFuPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA-Jm5ic3A7PC9vOnA-PC9wPg0KPC9kaXY-DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI-SGkgRG9uYWxkLDxvOnA-PC9vOnA-PC9wPg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA-Jm5ic3A7PC9vOnA-PC9wPg0KPC9kaXY-DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI-R3JlYXQsIHBsZWFzZSBnbyB0byA8YSBocmVmPSJodHRwczovL2NsZWFuZmxvb3JzYW5kbG9ja2luZ2Rvb3JzaW5jLm1hbmFnZWJ1aWxkaW5nLmNvbS9SZXNpZGVudC9yZW50YWwtYXBwbGljYXRpb24vIiB0YXJnZXQ9Il9ibGFuayI-DQpodHRwczovL2NsZWFuZmxvb3JzYW5kbG9ja2luZ2Rvb3JzaW5jLm1hbmFnZWJ1aWxkaW5nLmNvbS9SZXNpZGVudC9yZW50YWwtYXBwbGljYXRpb24vPC9hPiBhbmQgY29tcGxldGUgdGhlIG9mZmljaWFsIGFwcGxpY2F0aW9uLiBUaGVyZSBpcyBhICQzNSBmZWUgdXNlZCB0byBjb21wbGV0ZSBjcmVkaXQgYW5kIGJhY2tncm91bmQgY2hlY2tzLjxvOnA-PC9vOnA-PC9wPg0KPC9kaXY-DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI-PG86cD4mbmJzcDs8L286cD48L3A-DQo8L2Rpdj4NCjxkaXY-DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj5UeWxlcjxvOnA-PC9vOnA-PC9wPg0KPC9kaXY-DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ib2R5Pg0KPC9odG1sPg0K",
+                            "size": 2829
+                        },
+                        "partId": "1",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"utf-8\""
+                            },
+                            {
+                                "name": "Content-ID",
+                                "value": "<6F1F270D539F594EB6FBDD7508CDD0DC@namprd06.prod.outlook.com>"
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "base64"
+                            }
+                        ],
+                        "filename": ""
+                    }
+                ],
+                "partId": "",
+                "body": {
+                    "size": 0
+                },
+                "mimeType": "multipart/alternative",
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "Delivered-To",
+                        "value": "apply@cleanfloorslockingdoors.com"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by 2002:a19:ac49:0:0:0:0:0 with SMTP id r9csp5292021lfc;        Fri, 25 Dec 2020 15:28:12 -0800 (PST)"
+                    },
+                    {
+                        "name": "X-Google-Smtp-Source",
+                        "value": "ABdhPJxCP3tB+1LOjLSa2sQnTltbRetJq9vRp1CxMGGmZ7ek/RmCjSpGVE3ZyAaX5ApPTpJSt8rg"
+                    },
+                    {
+                        "name": "X-Received",
+                        "value": "by 2002:a05:6e02:168a:: with SMTP id f10mr33264048ila.70.1608938892031;        Fri, 25 Dec 2020 15:28:12 -0800 (PST)"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=2; a=rsa-sha256; t=1608938892; cv=pass;        d=google.com; s=arc-20160816;        b=J70HSq+vB77dhV888sw+fNxCurKZy0A1aUonwYrsco1bvT6Ysnk84ZrnC8RybVskry         ALnqMHwdI/Bp/s+fZvHYWYHqanOdqRfAchp/hYVE+0irhCOdduATjTISrlU6zn+DjcIL         TbyrAWHHJuegr6Te6OSKTFwNud5sI/2a1VfQHfgfJXOc0R3NjIBhxa6Tf20dvlizdInd         QEXs6QwN42g274UdSyLHs42404luJDdboNj6L6kWmP5mDR+pUlVEMuV1wJ6KlA9x39LI         sFiNCgTfjeI19mCIVmR/IjVrLWNqpqUrL47EzlPBYy0po77eNl+ao1TMzSAaaRZlPuuG         1BSA=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=mime-version:content-language:accept-language:in-reply-to         :references:message-id:date:thread-index:thread-topic:subject:to         :from:dkim-signature;        bh=luiORfv9lTlFoe2cS54WFrq4/jiv1uPUraJt6+UlLtQ=;        b=RbqM2NIDeQmn0Hb8fvXDM4E7g/2APewTY5tJioql5lIzwu5KwQnBmlyFhKot6k+blY         XFHyWaa0935nxcLH2vdYS4PXa7m7p3DUYlQJUaby5TCGZwjYSzaJq52Ln21392W7I6aT         9Kv6sU2tv/j+nrVSTF6D2ALat4LY8Y7GdjWub6GPw3HBdMdePEMfJ2ZiajUCNHF2Gujk         VkQ1bXDjddlh7QF5Y3f008JyxnI3BZkOsmH2pWxkaiLAPRZN/H48mdz6BUgF1BnUNytJ         29tjInuInivFLovU4BsUCftw0fyHTUnsKfSADT71DCqR4K47Y76k3flb9Q3StdGT6NvF         FQ0Q=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=2; mx.google.com;       dkim=pass header.i=@wisc.edu header.s=selector2 header.b=MqgGDf03;       arc=pass (i=1 spf=pass spfdomain=wisc.edu dkim=pass dkdomain=wisc.edu dmarc=pass fromdomain=wisc.edu);       spf=pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.222 as permitted sender) smtp.mailfrom=lgu33@wisc.edu;       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=wisc.edu"
+                    },
+                    {
+                        "name": "Return-Path",
+                        "value": "<lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from wmauth2.doit.wisc.edu (wmauth2.doit.wisc.edu. [144.92.197.222])        by mx.google.com with ESMTPS id g13si22242537ilq.12.2020.12.25.15.28.11        for <apply@cleanfloorslockingdoors.com>        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);        Fri, 25 Dec 2020 15:28:12 -0800 (PST)"
+                    },
+                    {
+                        "name": "Received-SPF",
+                        "value": "pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.222 as permitted sender) client-ip=144.92.197.222;"
+                    },
+                    {
+                        "name": "Authentication-Results",
+                        "value": "mx.google.com;       dkim=pass header.i=@wisc.edu header.s=selector2 header.b=MqgGDf03;       arc=pass (i=1 spf=pass spfdomain=wisc.edu dkim=pass dkdomain=wisc.edu dmarc=pass fromdomain=wisc.edu);       spf=pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.222 as permitted sender) smtp.mailfrom=lgu33@wisc.edu;       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=wisc.edu"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from NAM02-CY1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2054.outbound.protection.outlook.com [104.47.37.54]) by smtpauth2.wiscmail.wisc.edu (Oracle Communications Messaging Server 8.0.2.4.20190812 64bit (built Aug 12 2019)) with ESMTPS id <0QLX00LZC56Y7U10@smtpauth2.wiscmail.wisc.edu> for apply@cleanfloorslockingdoors.com; Fri, 25 Dec 2020 17:28:11 -0600 (CST)"
+                    },
+                    {
+                        "name": "X-Spam-Report",
+                        "value": "AuthenticatedSender=yes, SenderIP=[104.47.37.54]"
+                    },
+                    {
+                        "name": "X-Wisc-Env-From-B64",
+                        "value": "bGd1MzNAd2lzYy5lZHU="
+                    },
+                    {
+                        "name": "X-Spam-PmxInfo",
+                        "value": "Server=avs-2, Version=6.4.7.2805085, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2020.12.25.231818, AntiVirus-Engine: 5.79.0, AntiVirus-Data: 2020.11.17.5790001, SenderIP=[104.47.37.54]"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none; b=kF2saEoAqt2u0boG0GB77HtwJbbkl2YKEB5ZfMkh03cntPLG2lF0O+9WauVV+17l9mjrmCb5Bel2ahql/rAQ5oHCynHw4unk0SjIeFzjd+D8i2nGX6uIrgEL0LdK4awnGjko2vRgWLe+D8itwPt3Z2Uf2cQR2fHV2hirspGVrCTa3Tr5whCgTmk+AkFZ69iwxAmsz1jmWcKTqmvQ7MCqcSF/EQR2G9dw353P3V5RfHmRtoceJBe1ZAkvxmBoM2x53YgCSl7DdXWY709K+KlKdlkF7o+8tbnTOrvnWZxpIcuw3UoRgSbEJQnNRnfKkLszZbomkCcBqvAFMKZMBZnW5w=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck; bh=luiORfv9lTlFoe2cS54WFrq4/jiv1uPUraJt6+UlLtQ=; b=KQ8bgdUXhW3LzpYaYd1QHaC4vIQwahXM1Rnb/Ar2fTKpAloQkLNCq9B4gUZZTUcXanLpCDBbSucpu2iLctmqlb4VWyZuo8aU1/Fj9lC3yZgzRdeQodd01GXagnyrUm1s10h/pyGfP+flSm1FPrgcnn6dD9HxuZWBbvLRrdyAVztjUDeLFRqBe8b27hqEtlQcP8Lp/9/fxtXOQWLLtm0ifAysecBOo1C2ZPFq/TCGEuKvykw+WLgDmVD2mTGeLzW9ba60lXjNK7ddr09Ikp+C6jYrm3b+s/vo0NQpM9ZaoldpSnmHWT+yjkhDPtaT3zcwitAnKvUI5VYOMKiRJI1gZg=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=1; mx.microsoft.com 1; spf=pass smtp.mailfrom=wisc.edu; dmarc=pass action=none header.from=wisc.edu; dkim=pass header.d=wisc.edu; arc=none"
+                    },
+                    {
+                        "name": "DKIM-Signature",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=wisc.edu; s=selector2; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck; bh=luiORfv9lTlFoe2cS54WFrq4/jiv1uPUraJt6+UlLtQ=; b=MqgGDf031NNMWO05B/lJqc2NpnMDmUT79liYOEUR4/DZMfo9dQPFWCUKRTYq7hzdi1R+wB0ckAxris31gL9fvSymLhtoTkVEqRD5UE5K7zI7yPdsBRlprzWkX4sC1n4jMeYbx/klUy9ZjRtBvTU0kMOnnY4SUhdfICX0NAFqlmQ="
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from DM6PR06MB5723.namprd06.prod.outlook.com (2603:10b6:5:1ab::18) by DM6PR06MB6300.namprd06.prod.outlook.com (2603:10b6:5:12f::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3700.28; Fri, 25 Dec 2020 23:28:06 +0000"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from DM6PR06MB5723.namprd06.prod.outlook.com ([fe80::4a7:a769:827:d10f]) by DM6PR06MB5723.namprd06.prod.outlook.com ([fe80::4a7:a769:827:d10f%5]) with mapi id 15.20.3676.034; Fri, 25 Dec 2020 23:28:06 +0000"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Donald Gu <lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Re: New submission for SJSU"
+                    },
+                    {
+                        "name": "Thread-topic",
+                        "value": "New submission for SJSU"
+                    },
+                    {
+                        "name": "Thread-index",
+                        "value": "AQHW2tIDW7X3F7B+/Eu5WYv1sJD4uKoIEPgA"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Fri, 25 Dec 2020 23:28:06 +0000"
+                    },
+                    {
+                        "name": "Message-id",
+                        "value": "<AFCD446E-4374-4BF9-8055-7B81CB56FB9E@wisc.edu>"
+                    },
+                    {
+                        "name": "References",
+                        "value": "<CAAD9TVXqWqGuVsH2JvJHR0zxh-VXOYs8xoYA9gobQ3-X=0ks2A@mail.gmail.com>"
+                    },
+                    {
+                        "name": "In-reply-to",
+                        "value": "<CAAD9TVXqWqGuVsH2JvJHR0zxh-VXOYs8xoYA9gobQ3-X=0ks2A@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Accept-Language",
+                        "value": "en-US"
+                    },
+                    {
+                        "name": "Content-language",
+                        "value": "en-US"
+                    },
+                    {
+                        "name": "X-MS-Has-Attach",
+                        "value": ""
+                    },
+                    {
+                        "name": "X-MS-TNEF-Correlator",
+                        "value": ""
+                    },
+                    {
+                        "name": "X-Originating-IP",
+                        "value": "[99.99.45.45]"
+                    },
+                    {
+                        "name": "x-ms-publictraffictype",
+                        "value": "Email"
+                    },
+                    {
+                        "name": "x-ms-office365-filtering-ht",
+                        "value": "Tenant"
+                    },
+                    {
+                        "name": "x-ms-office365-filtering-correlation-id",
+                        "value": "d53d6abc-de22-4e02-f5d7-08d8a92cbbc2"
+                    },
+                    {
+                        "name": "x-ms-traffictypediagnostic",
+                        "value": "DM6PR06MB6300:"
+                    },
+                    {
+                        "name": "x-microsoft-antispam-prvs",
+                        "value": "<DM6PR06MB63007E4FBB7BCF159E79C653D0DC0@DM6PR06MB6300.namprd06.prod.outlook.com>"
+                    },
+                    {
+                        "name": "x-ms-oob-tlc-oobclassifiers",
+                        "value": "OLM:6790;"
+                    },
+                    {
+                        "name": "x-ms-exchange-senderadcheck",
+                        "value": "1"
+                    },
+                    {
+                        "name": "x-microsoft-antispam",
+                        "value": "BCL:0;"
+                    },
+                    {
+                        "name": "x-microsoft-antispam-message-info",
+                        "value": "/ubayW6oKLxDmWsujbYYqislBtd7BDDwzOsVo0Dd35Y6NGG0ruEE+CMOJ4L3YNbX5CdrbrVYJo2e5BzG3S7fE/bbv4YYlj/mjnxu4Qss0I2zlCC/R4sH7B15u5qh3kepMXXB62jJFSDndwhLpvCjYGs98rXwA6ndGJkwutL4SaVvCKfMq5c72FJMpJXUYLr7PAzXk+lBA+NTidEqM6gczoTsZqiEEuaU3RSLFbtf9K4AkdK9FNH08GVynKvskmuyj/073UuGJzigDo63mBjSz6psgqJ5ztQn4fq16RIJiJr8iVZKu4KslQhNCAJnGG/pjygSZmb+6Y1bQ9HIWWckPxJX7dKUVr9+TbV7szqTNmV0Fg7Sy1Sjg8rbkfajPwOR2QYJz+5uKC8NTDdxnUbL7zPru73jl3PBRP3WgQKVM7tOuJU2JEj7AP51WPxnb3Za6BPdAAC943Yr32SrqqzRhPYc7L/Q031xsmSQje145MU="
+                    },
+                    {
+                        "name": "X-Forefront-Antispam-Report",
+                        "value": "CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR06MB5723.namprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(366004)(39860400002)(346002)(376002)(136003)(6512007)(8676002)(33656002)(6486002)(2616005)(966005)(86362001)(91956017)(8936002)(316002)(786003)(5660300002)(71200400001)(6916009)(76116006)(26005)(2906002)(64756008)(66476007)(3480700007)(4744005)(66946007)(83380400001)(66446008)(186003)(9326002)(166002)(53546011)(6506007)(75432002)(66556008)(36756003)(478600001)(45980500001);DIR:OUT;SFP:1101;"
+                    },
+                    {
+                        "name": "x-ms-exchange-antispam-messagedata",
+                        "value": "IELC2iXq89A4rLJG/rV2ugm+reWXRlmzyUCeerZ20qdRa+rZuHpFy+CphzwmAvmtjbWavSshvGryIKw47EAJhDTJzXZV4unCFw3/0JEUg7hipeTfowrAWYdFOylqZHZ+1Pz7EpptNheRBCXUgKZPDtCnGhx9+mHPkW4vKd8uHz6NuKBzJuWB0PTrF1FYw4k1M4EGm+l4hdfMmJ3AVSU00orExV6UXKCAXMIpm7qa1/qU5SoYJULalSwbP6sw5MWiPFm0cQWhgJ9nDJzt1uE+/RjTcy47ozOemoAuyhOrgsbBMOrh0DxjG5XCwmUJ1mP9vwTxDPnAu2q+DW9/1nCdJNesxqsPMNqw/K+4N0DCat7vqKcty/7toJjGGuuScFbN4jmBjq2YMwzL/rLYM3rjnWpVTHevRBlSK4b9xC7JYjCLiowrnKXMs2+gdKwPgzka6pEt5VnEY0NHP6QMvkBaf4r/xQJH/Ct8vlEfE+uyk6alm5uKeb/hHTh37T2XcEPpSsWgoEck4Y+Hi+c8WzYjbaPinzt4bEYHwbGcIjD6nTUZq1ttH2lKJv9sEHkm8JUaTSQ+6SEA6L/nOAAsGlzsG+XG43JAnYbWyEy/8jaq5ccUos0zpO4oqLRTz43sIOkCSkXyOXRi11S3NVFxOltkbGbJdUMs0LqwFGbHFT2e64NykgdO26b+STE4sIpXfx5eEjdBT2Yj5lfd+0f7OpGBtD2A0tPJ34C98hkRy5QxjSFUiViZ57/F6dOyaxQ+hRquTuyX0ZhaN2M6xVzheBjtSOGxUJFhEEl879g3RgsEl4aOVm9MZIyy2ywUoTkT4zqczdS/PBAqaniuk2l/JWVqOtnXrqXh9pTWZyLmkg/66HLzHreT45a35emnaPM4OSd6+SA5AkNaepdEwo7IPYcu5D1KkEh5/mLow/PTU8nkNj7BUXcNejO9XuA20nO7Lq99R3jpco2x4kfOlu8DTqieYCWaBBcJEIVM+LC5sAqcmFFq1b901MZathh4VMjPXeJC"
+                    },
+                    {
+                        "name": "x-ms-exchange-transport-forked",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Content-type",
+                        "value": "multipart/alternative; boundary=\"_000_AFCD446E43744BF980557B81CB56FB9Ewiscedu_\""
+                    },
+                    {
+                        "name": "MIME-version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "X-OriginatorOrg",
+                        "value": "wisc.edu"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-AuthAs",
+                        "value": "Internal"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-AuthSource",
+                        "value": "DM6PR06MB5723.namprd06.prod.outlook.com"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-Network-Message-Id",
+                        "value": "d53d6abc-de22-4e02-f5d7-08d8a92cbbc2"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-OriginalArrivalTime",
+                        "value": "25 Dec 2020 23:28:06.5857 (UTC)"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-fromentityheader",
+                        "value": "Hosted"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-id",
+                        "value": "2ca68321-0eda-4908-88b2-424a8cb4b0f9"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-mailboxtype",
+                        "value": "HOSTED"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-userprincipalname",
+                        "value": "YdJ3lYjbEaCTSHuT+wKuUxlAdNEqu+nsg56mLH8q5TGqULt8T4c49EuJGg21U3/z"
+                    },
+                    {
+                        "name": "X-MS-Exchange-Transport-CrossTenantHeadersStamped",
+                        "value": "DM6PR06MB6300"
+                    }
+                ]
+            },
+            "id": "1769c3b2b22819cd",
+            "snippet": "Hi Tyler, I have submitted the application. Is there any ways to do a virtual tour? Thanks From: Application Team &lt;apply@cleanfloorslockingdoors.com&gt; Date: Friday, December 25, 2020 at 9:24 AM To"
+        },
+        {
+            "historyId": "1685896",
+            "labelIds": [
+                "Label_3080413087857546516",
+                "SENT"
+            ],
+            "internalDate": "1609001009000",
+            "sizeEstimate": 972,
+            "threadId": "1768e0994ff77b52",
+            "payload": {
+                "parts": [
+                    {
+                        "mimeType": "text/plain",
+                        "body": {
+                            "data": "SGkgRG9uYWxkLA0KDQpJJ20gYWRkaW5nIG9uZSBvZiB0aGUgb3duZXJzIFRpbSB0byB0aGUgZW1haWwgdG8gY29vcmRpbmF0ZSBhIHZpcnR1YWwgdG91ci4NCg0KVGltLCBEb25hbGQgd291bGQgbW92ZSBpbiBvbiB0aGUgMjV0aCB0byB0YWtlIEZlcm5hbmRvJ3MgcGxhY2UuDQoNCkJlc3QsDQpUeWxlcg0K",
+                            "size": 174
+                        },
+                        "partId": "0",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"UTF-8\""
+                            }
+                        ],
+                        "filename": ""
+                    },
+                    {
+                        "mimeType": "text/html",
+                        "body": {
+                            "data": "PGRpdiBkaXI9Imx0ciI-SGkgRG9uYWxkLDxicj48YnI-SSYjMzk7bSBhZGRpbmcgb25lIG9mIHRoZSBvd25lcnMgVGltIHRvIHRoZSBlbWFpbCB0byBjb29yZGluYXRlIGEgdmlydHVhbCB0b3VyLjxkaXY-PGJyPjwvZGl2PjxkaXY-VGltLCBEb25hbGQgd291bGQgbW92ZSBpbiBvbiB0aGUgMjV0aCB0byB0YWtlIEZlcm5hbmRvJiMzOTtzIHBsYWNlLjxicj48YnI-QmVzdCw8YnI-VHlsZXI8YnI-PC9kaXY-PC9kaXY-DQo=",
+                            "size": 239
+                        },
+                        "partId": "1",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"UTF-8\""
+                            }
+                        ],
+                        "filename": ""
+                    }
+                ],
+                "partId": "",
+                "body": {
+                    "size": 0
+                },
+                "mimeType": "multipart/alternative",
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "MIME-Version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Sat, 26 Dec 2020 11:43:29 -0500"
+                    },
+                    {
+                        "name": "Message-ID",
+                        "value": "<CAAD9TVVZigX9dKWYsVY0NgNpf4B8=SoKBm5tAZcJS8aeR70pBA@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "New submission for SJSU"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "tim@overdrivenotes.com, Liyuan Gu <lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "multipart/alternative; boundary=\"000000000000a87d2305b760bd66\""
+                    }
+                ]
+            },
+            "id": "1769fef04800100a",
+            "snippet": "Hi Donald, I&#39;m adding one of the owners Tim to the email to coordinate a virtual tour. Tim, Donald would move in on the 25th to take Fernando&#39;s place. Best, Tyler"
+        },
+        {
+            "historyId": "1685896",
+            "labelIds": [
+                "Label_3080413087857546516",
+                "IMPORTANT",
+                "CATEGORY_PERSONAL",
+                "INBOX"
+            ],
+            "internalDate": "1609001357000",
+            "sizeEstimate": 12266,
+            "threadId": "1768e0994ff77b52",
+            "payload": {
+                "parts": [
+                    {
+                        "mimeType": "text/plain",
+                        "body": {
+                            "data": "VGhhbmsgeW91LCBJIGFtIGZyZWUgdGhpcyBhZnRlcm5vb24gYW5kIGFueXRpbWUgdW50aWwgZW5kIG9mIG5leHQgd2Vla2VuZC4gTXkgY2VsbDogNjc4LTQzMS04MjIxDQpCZXN0DQoNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQpGcm9tOiBBcHBsaWNhdGlvbiBUZWFtIDxhcHBseUBjbGVhbmZsb29yc2xvY2tpbmdkb29ycy5jb20-DQpTZW50OiBTYXR1cmRheSwgRGVjZW1iZXIgMjYsIDIwMjAgMTE6NDM6MjkgQU0NClRvOiB0aW1Ab3ZlcmRyaXZlbm90ZXMuY29tIDx0aW1Ab3ZlcmRyaXZlbm90ZXMuY29tPjsgRG9uYWxkIEd1IDxsZ3UzM0B3aXNjLmVkdT4NClN1YmplY3Q6IE5ldyBzdWJtaXNzaW9uIGZvciBTSlNVDQoNCkhpIERvbmFsZCwNCg0KSSdtIGFkZGluZyBvbmUgb2YgdGhlIG93bmVycyBUaW0gdG8gdGhlIGVtYWlsIHRvIGNvb3JkaW5hdGUgYSB2aXJ0dWFsIHRvdXIuDQoNClRpbSwgRG9uYWxkIHdvdWxkIG1vdmUgaW4gb24gdGhlIDI1dGggdG8gdGFrZSBGZXJuYW5kbydzIHBsYWNlLg0KDQpCZXN0LA0KVHlsZXINCg==",
+                            "size": 538
+                        },
+                        "partId": "0",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain; charset=\"us-ascii\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "filename": ""
+                    },
+                    {
+                        "mimeType": "text/html",
+                        "body": {
+                            "data": "PGh0bWw-DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXVzLWFzY2lpIj4NCjwvaGVhZD4NCjxib2R5Pg0KPGRpdj4NCjxkaXY-DQo8ZGl2IHN0eWxlPSJkaXJlY3Rpb246IGx0cjsiPlRoYW5rIHlvdSwgSSBhbSBmcmVlIHRoaXMgYWZ0ZXJub29uIGFuZCBhbnl0aW1lIHVudGlsIGVuZCBvZiBuZXh0IHdlZWtlbmQuIE15IGNlbGw6IDY3OC00MzEtODIyMQ0KPC9kaXY-DQo8ZGl2IHN0eWxlPSJkaXJlY3Rpb246IGx0cjsiPkJlc3Q8c3BhbiBpZD0ibXMtb3V0bG9vay1pb3MtY3Vyc29yIj48L3NwYW4-PC9kaXY-DQo8L2Rpdj4NCjxkaXY-PGJyPg0KPC9kaXY-DQo8ZGl2IGNsYXNzPSJtcy1vdXRsb29rLWlvcy1zaWduYXR1cmUiPjwvZGl2Pg0KPC9kaXY-DQo8aHIgc3R5bGU9ImRpc3BsYXk6aW5saW5lLWJsb2NrO3dpZHRoOjk4JSIgdGFiaW5kZXg9Ii0xIj4NCjxkaXYgaWQ9ImRpdlJwbHlGd2RNc2ciIGRpcj0ibHRyIj48Zm9udCBmYWNlPSJDYWxpYnJpLCBzYW5zLXNlcmlmIiBzdHlsZT0iZm9udC1zaXplOjExcHQiIGNvbG9yPSIjMDAwMDAwIj48Yj5Gcm9tOjwvYj4gQXBwbGljYXRpb24gVGVhbSAmbHQ7YXBwbHlAY2xlYW5mbG9vcnNsb2NraW5nZG9vcnMuY29tJmd0Ozxicj4NCjxiPlNlbnQ6PC9iPiBTYXR1cmRheSwgRGVjZW1iZXIgMjYsIDIwMjAgMTE6NDM6MjkgQU08YnI-DQo8Yj5Ubzo8L2I-IHRpbUBvdmVyZHJpdmVub3Rlcy5jb20gJmx0O3RpbUBvdmVyZHJpdmVub3Rlcy5jb20mZ3Q7OyBEb25hbGQgR3UgJmx0O2xndTMzQHdpc2MuZWR1Jmd0Ozxicj4NCjxiPlN1YmplY3Q6PC9iPiBOZXcgc3VibWlzc2lvbiBmb3IgU0pTVTwvZm9udD4NCjxkaXY-Jm5ic3A7PC9kaXY-DQo8L2Rpdj4NCjxkaXY-DQo8ZGl2IGRpcj0ibHRyIj5IaSBEb25hbGQsPGJyPg0KPGJyPg0KSSdtIGFkZGluZyBvbmUgb2YgdGhlIG93bmVycyBUaW0gdG8gdGhlIGVtYWlsIHRvIGNvb3JkaW5hdGUgYSB2aXJ0dWFsIHRvdXIuDQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGRpdj5UaW0sIERvbmFsZCB3b3VsZCBtb3ZlIGluIG9uIHRoZSAyNXRoIHRvIHRha2UgRmVybmFuZG8ncyBwbGFjZS48YnI-DQo8YnI-DQpCZXN0LDxicj4NClR5bGVyPGJyPg0KPC9kaXY-DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ib2R5Pg0KPC9odG1sPg0K",
+                            "size": 1179
+                        },
+                        "partId": "1",
+                        "headers": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/html; charset=\"us-ascii\""
+                            },
+                            {
+                                "name": "Content-Transfer-Encoding",
+                                "value": "quoted-printable"
+                            }
+                        ],
+                        "filename": ""
+                    }
+                ],
+                "partId": "",
+                "body": {
+                    "size": 0
+                },
+                "mimeType": "multipart/alternative",
+                "filename": "",
+                "headers": [
+                    {
+                        "name": "Delivered-To",
+                        "value": "apply@cleanfloorslockingdoors.com"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "by 2002:a19:ac49:0:0:0:0:0 with SMTP id r9csp5769325lfc;        Sat, 26 Dec 2020 09:05:25 -0800 (PST)"
+                    },
+                    {
+                        "name": "X-Google-Smtp-Source",
+                        "value": "ABdhPJx85WWyV/+wE3cf/anP29MqWXTIY0OneMi74hMX/E7GLAC7JrylRa1h7ee+ry59elJYVmbF"
+                    },
+                    {
+                        "name": "X-Received",
+                        "value": "by 2002:a6b:6f09:: with SMTP id k9mr31245522ioc.30.1609002325454;        Sat, 26 Dec 2020 09:05:25 -0800 (PST)"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=2; a=rsa-sha256; t=1609002325; cv=pass;        d=google.com; s=arc-20160816;        b=0iDsxb5ZjaIgM4/L3mJYW69wOy9pjJKMKxd9igF4vHhyFp5WDiq2gVfjm3lGH/Zacc         3cbwjNHk2LhdWK6of2fS9GF/3sEjhaQagRHn8TgQ/QH/on7TXH+JlWQT8NJ7mHJ+QGmP         NiU2Bt77jOjr51RBBSqX9C+9fcdBf/OGDMDMX3aWHIYdeA3UQH9h1VlSuMwAJBIi4by1         PWrC2KcTgAIe8MypoT15Vu8ipU9FaVg/L2tmBB3aNtbfhfhBb9yrtAVxVA2xNry9xMFc         SHcEsaDXJ9Dqynez8mkUqdBWO2bvfOIp9uRroUZRs1O53enzerCZ+MNNrUPuv8q9dl5E         4gUQ=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=mime-version:content-language:accept-language:in-reply-to         :references:message-id:date:thread-index:thread-topic:subject:to         :from:dkim-signature;        bh=TIOwuljd4OEbYOEY6PZbY0zeYWaXd5GcRePSA5ySetw=;        b=ynSlkTFHp6D0p3ZEggHq6mDkHUHv1ejBxGxz4Scew2ZFvQeCht7vIqTx67N0RdGOfp         YnC02wCdaseMQawsbP4Acw4iDasqbLD9G1NpRKX2yCfgV6+psZGCj4GNyjmaNhp1IIp8         9J+DvWt54sGNrrqjU9xuNLPsgbHuhnnXllC1JU1xpXqBB9Raty+LLlYtx6q5a5jr4a8F         0Bupi5h8p1ZMXe0P3CqAXwH5CA6AjoRXrojFWvTBiYPRhug4lycQg4tTJzrVgyYG9DK/         xRnCqHy6Hd3BwAcObj5PAi5w8z0uF394o+5OqYw6nwSYPruQG76wC+87jv5O6tBbfKYh         i+TQ=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=2; mx.google.com;       dkim=pass header.i=@wisc.edu header.s=selector2 header.b=BMBmnZvt;       arc=pass (i=1 spf=pass spfdomain=wisc.edu dkim=pass dkdomain=wisc.edu dmarc=pass fromdomain=wisc.edu);       spf=pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.226 as permitted sender) smtp.mailfrom=lgu33@wisc.edu;       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=wisc.edu"
+                    },
+                    {
+                        "name": "Return-Path",
+                        "value": "<lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from wmauth3.doit.wisc.edu (wmauth3.doit.wisc.edu. [144.92.197.226])        by mx.google.com with ESMTPS id w12si21077540jai.109.2020.12.26.09.05.25        for <apply@cleanfloorslockingdoors.com>        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);        Sat, 26 Dec 2020 09:05:25 -0800 (PST)"
+                    },
+                    {
+                        "name": "Received-SPF",
+                        "value": "pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.226 as permitted sender) client-ip=144.92.197.226;"
+                    },
+                    {
+                        "name": "Authentication-Results",
+                        "value": "mx.google.com;       dkim=pass header.i=@wisc.edu header.s=selector2 header.b=BMBmnZvt;       arc=pass (i=1 spf=pass spfdomain=wisc.edu dkim=pass dkdomain=wisc.edu dmarc=pass fromdomain=wisc.edu);       spf=pass (google.com: domain of lgu33@wisc.edu designates 144.92.197.226 as permitted sender) smtp.mailfrom=lgu33@wisc.edu;       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=wisc.edu"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2108.outbound.protection.outlook.com [104.47.70.108]) by smtpauth3.wiscmail.wisc.edu (Oracle Communications Messaging Server 8.0.2.4.20190812 64bit (built Aug 12 2019)) with ESMTPS id <0QLY006KNHE61M10@smtpauth3.wiscmail.wisc.edu> for apply@cleanfloorslockingdoors.com; Sat, 26 Dec 2020 10:49:19 -0600 (CST)"
+                    },
+                    {
+                        "name": "X-Spam-Report",
+                        "value": "AuthenticatedSender=yes, SenderIP=[104.47.70.108]"
+                    },
+                    {
+                        "name": "X-Wisc-Env-From-B64",
+                        "value": "bGd1MzNAd2lzYy5lZHU="
+                    },
+                    {
+                        "name": "X-Spam-PmxInfo",
+                        "value": "Server=avs-3, Version=6.4.7.2805085, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2020.12.26.164217, AntiVirus-Engine: 5.79.0, AntiVirus-Data: 2020.12.13.5790000, SenderIP=[104.47.70.108]"
+                    },
+                    {
+                        "name": "ARC-Seal",
+                        "value": "i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none; b=BLWwMjGTWAQOUGSHet2aALr1qBB35yC7a526OA4kAzrqBXLKTYFtzzTEYcfMQbi/Qo4/6LTIHIbnFHr9W+RVzuhpS3tU3Z9tRpvah5bZFe/RP87ux9efOQD6FL1NmyqgG0tE8EwzO+zEeQGxHtL3mxgh3DJHRwyidXK0M/NuukBsXn6XBPMO6lUIRKyjVaCM4vF8rK40IJymxncL/tc+D2PY0wwfFARbXqRSeYaMpbSHigHm5rELJ+OjBr/1/NiO1bnPNATFTfB2ILvpALbcZnfGjqdkzPsLHkyt82B488B6R8w1gsvnqdgTLXxztrSvCPmoiAm8jvcyjKXRs4ScQQ=="
+                    },
+                    {
+                        "name": "ARC-Message-Signature",
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck; bh=TIOwuljd4OEbYOEY6PZbY0zeYWaXd5GcRePSA5ySetw=; b=WbCFPXvsRjti6Nh2Pikj2M8tYMdzdezJkddoBOLmDDXfCml/Mk6DbYOFfybVigpPLHMdP/b5W0IXLUMMa89cS2XQs+n9QDh7A1QzuL8ORJINqSdvBxP/maJR6kS5PdC2x6R1X4rzpNUbYyUjrXCAgal0u7U7UHB+ndTMm2FC4Y1QWxwqXQC8IZVlXvgZ2bettKoL3B/9wf2XyQICvRwzj1RvF5+8MvrCS0p/JXpuI0d47JgkKihXLlGmwTZt4LcfbnBr716s7pdSSg/Zbn/Ay7bq57bqWG74kB/n2ZCmsWAb1dfDdDKBiiEUYM7hDFS37Tnygm7m2dDUYnrHQKVgAA=="
+                    },
+                    {
+                        "name": "ARC-Authentication-Results",
+                        "value": "i=1; mx.microsoft.com 1; spf=pass smtp.mailfrom=wisc.edu; dmarc=pass action=none header.from=wisc.edu; dkim=pass header.d=wisc.edu; arc=none"
+                    },
+                    {
+                        "name": "DKIM-Signature",
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=wisc.edu; s=selector2; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck; bh=TIOwuljd4OEbYOEY6PZbY0zeYWaXd5GcRePSA5ySetw=; b=BMBmnZvtYPrcgqvvBYLLyCoEpaSNWo6bO8hnP315x8/9ud/JTmyWxgavvFSbwGF748AoES1KxxXUYBZiOzrd6Hb1IM5nUxzGEAbP17QMnJASp4hvQVYAX4FTWWBuW8eoTH/5NahhNECJhcObrTDBe4YAO9K37y0PIaqGZFyT/p8="
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from BYAPR06MB5717.namprd06.prod.outlook.com (2603:10b6:a03:159::11) by BYAPR06MB5143.namprd06.prod.outlook.com (2603:10b6:a03:cf::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3676.33; Sat, 26 Dec 2020 16:49:17 +0000"
+                    },
+                    {
+                        "name": "Received",
+                        "value": "from BYAPR06MB5717.namprd06.prod.outlook.com ([fe80::5190:346d:ac90:ea22]) by BYAPR06MB5717.namprd06.prod.outlook.com ([fe80::5190:346d:ac90:ea22%7]) with mapi id 15.20.3700.029; Sat, 26 Dec 2020 16:49:17 +0000"
+                    },
+                    {
+                        "name": "From",
+                        "value": "Donald Gu <lgu33@wisc.edu>"
+                    },
+                    {
+                        "name": "To",
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>, \"tim@overdrivenotes.com\" <tim@overdrivenotes.com>"
+                    },
+                    {
+                        "name": "Subject",
+                        "value": "Re: New submission for SJSU"
+                    },
+                    {
+                        "name": "Thread-topic",
+                        "value": "New submission for SJSU"
+                    },
+                    {
+                        "name": "Thread-index",
+                        "value": "AQHW26ZJbnWPzqUPzkSOgeVQlzYpUqoJlju7"
+                    },
+                    {
+                        "name": "Date",
+                        "value": "Sat, 26 Dec 2020 16:49:17 +0000"
+                    },
+                    {
+                        "name": "Message-id",
+                        "value": "<BYAPR06MB571765D28A3F8632D8332D4FD0DB0@BYAPR06MB5717.namprd06.prod.outlook.com>"
+                    },
+                    {
+                        "name": "References",
+                        "value": "<CAAD9TVVZigX9dKWYsVY0NgNpf4B8=SoKBm5tAZcJS8aeR70pBA@mail.gmail.com>"
+                    },
+                    {
+                        "name": "In-reply-to",
+                        "value": "<CAAD9TVVZigX9dKWYsVY0NgNpf4B8=SoKBm5tAZcJS8aeR70pBA@mail.gmail.com>"
+                    },
+                    {
+                        "name": "Accept-Language",
+                        "value": "en-US"
+                    },
+                    {
+                        "name": "Content-language",
+                        "value": "en-US"
+                    },
+                    {
+                        "name": "X-MS-Has-Attach",
+                        "value": ""
+                    },
+                    {
+                        "name": "X-MS-TNEF-Correlator",
+                        "value": ""
+                    },
+                    {
+                        "name": "X-Originating-IP",
+                        "value": "[99.99.45.45]"
+                    },
+                    {
+                        "name": "x-ms-publictraffictype",
+                        "value": "Email"
+                    },
+                    {
+                        "name": "x-ms-office365-filtering-ht",
+                        "value": "Tenant"
+                    },
+                    {
+                        "name": "x-ms-office365-filtering-correlation-id",
+                        "value": "88ef7e91-4e5b-4562-cf80-08d8a9be2f43"
+                    },
+                    {
+                        "name": "x-ms-traffictypediagnostic",
+                        "value": "BYAPR06MB5143:"
+                    },
+                    {
+                        "name": "x-microsoft-antispam-prvs",
+                        "value": "<BYAPR06MB514394F61E12EB7817AAFEDBD0DB0@BYAPR06MB5143.namprd06.prod.outlook.com>"
+                    },
+                    {
+                        "name": "x-ms-oob-tlc-oobclassifiers",
+                        "value": "OLM:6430;"
+                    },
+                    {
+                        "name": "x-ms-exchange-senderadcheck",
+                        "value": "1"
+                    },
+                    {
+                        "name": "x-microsoft-antispam",
+                        "value": "BCL:0;"
+                    },
+                    {
+                        "name": "x-microsoft-antispam-message-info",
+                        "value": "fUe9fartWghlWK1g0wb76sgPqTD4QAJgt9sEC7pY/cdckuKpyBuRruNkYtYnuPtbVzGKNrj8ogQ7bnmf2CwdMy5Z+Drxxax2NoD/ENHOV2Sdd+Cuiqfck5jkkoZAcGWP6RCqFA33FrNbs6/KB79R2YnfQAzlYqgk7G3E+t0pgGvApPQbJ78x7+fzu7dCj8lFt+zViHFU/YuN7aAUupC+NyU/pV1h+P1e2/l5USMsUKa3RRDnyX8nuiyhUYIIIEg+vPht9XsMgtHYj9NYe82hVGPI44sBiwtIk9nEkE1g6MyFIwPCD83oP8CGqBqPJmZfQxP7mOcpShfs+Sb2aFMDu/rB/RCTc2bv8hvD8udE+1DbhZ0VDRtCCZU30aao/tVzZYF5J2J4qFPMScsU+ogSOg=="
+                    },
+                    {
+                        "name": "X-Forefront-Antispam-Report",
+                        "value": "CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR06MB5717.namprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(136003)(396003)(366004)(346002)(376002)(71200400001)(186003)(9686003)(478600001)(26005)(52536014)(7696005)(83380400001)(786003)(6506007)(76116006)(316002)(3480700007)(2906002)(110136005)(53546011)(55016002)(75432002)(8676002)(64756008)(4744005)(66476007)(8936002)(66446008)(5660300002)(66946007)(86362001)(66556008)(33656002)(91956017);DIR:OUT;SFP:1101;"
+                    },
+                    {
+                        "name": "x-ms-exchange-antispam-messagedata",
+                        "value": "r5NyzIbVXxDF+g0t3URNQjyZhcO9irFrXBL1lG34CAfWgT7YkrPSMrWRZ83wZ/n7zwkKfLcnVL0WdgQ1/ZBf+OiJxqLMXjrfsfnuEo3xJ4b4RRICgDTIaVOyD6VTfsTqoa0ukdMBM0P8Vw+WDBN396hJzgJDSeByMbu1KaGM3HtKedIGC6F1KNGIEFXEYbZzimghD9zw+M6oMsFqqLvuGDUJW0tx1MDxF9VhZzgh6z8CqbMZw1QLdl1NZbFvLMNKgS+OAC9t867UObVd/hBds7Grffiri/NIAYW5nMmUsTTuXFGYwwrdYtcYLv6jMTO7BS6lc2FcGOeZJKJv1dhEZkVmgNTUjww89EUsqXTskrAtZEK3OPGvr5dgI8Aa197OhZ2pmpxEnIto3V4XIHJg65rWGn97cKTLfhubtueyAZxfgJx9inf7rk32N3PMzxRHhk0NzmXGH2ZA3sTLjBJwHwiERCIXdXjV6eQj5BywVo5y53efhMBnIUimZW0kRbIVEV5l1lqy6lqf9dnXxyMwXy+oRx0umdd6+DrX6FXiVgYLTCVD6XGq93x4NS9epovvtRe6cCPHFhS4HNfThsF5vF3RBxB4vIuaNjJMwQoRC+VzDv1YpKdmJerizBzXDyIU5QQrrXdI4IRlWhQX/Zd71pesftWZyFKRkATFhF9aNFBnjYREt3U6ElbmRk2VOEdqkri14XVwjRXTCCVnVOPul5cNCrLMGoi/O7PQnzqMUDksgjjS4Pq0MUAZlZyUJeCBtiqSGD0kCQpYbaeNpQlIj7wYMC6mvIV+nRxvLF4X94m5ki81q5TIArsIIHKYO1qcQOqe5RewNJvKkZCThr7duqZsLylOgpRo1jFp9eUHRv7tDpNc4rZ3S2XaxoLS5k/MVe4hTymBZlzQ12xG4N/Ds5Us1Gwmv8JWTAJt3Qw/e0ocNmMFBJ/ldz7bDw/grYo96WgRsGdg/gPCjIMuQKJf5y527dSYTfxYP80SKJ4MseXwi3fNc/sY1dpNOJxJdJfw"
+                    },
+                    {
+                        "name": "x-ms-exchange-transport-forked",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Content-type",
+                        "value": "multipart/alternative; boundary=\"_000_BYAPR06MB571765D28A3F8632D8332D4FD0DB0BYAPR06MB5717namp_\""
+                    },
+                    {
+                        "name": "MIME-version",
+                        "value": "1.0"
+                    },
+                    {
+                        "name": "X-OriginatorOrg",
+                        "value": "wisc.edu"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-AuthAs",
+                        "value": "Internal"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-AuthSource",
+                        "value": "BYAPR06MB5717.namprd06.prod.outlook.com"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-Network-Message-Id",
+                        "value": "88ef7e91-4e5b-4562-cf80-08d8a9be2f43"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-OriginalArrivalTime",
+                        "value": "26 Dec 2020 16:49:17.4418 (UTC)"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-fromentityheader",
+                        "value": "Hosted"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-id",
+                        "value": "2ca68321-0eda-4908-88b2-424a8cb4b0f9"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-mailboxtype",
+                        "value": "HOSTED"
+                    },
+                    {
+                        "name": "X-MS-Exchange-CrossTenant-userprincipalname",
+                        "value": "nG06ywP4rB/Ebl8YlkvLDpWDcUjnTpo1pWO69inwRCwleVBUh7Ln+UtCrIGipH4Y"
+                    },
+                    {
+                        "name": "X-MS-Exchange-Transport-CrossTenantHeadersStamped",
+                        "value": "BYAPR06MB5143"
+                    }
+                ]
+            },
+            "id": "176a00314951b70c",
+            "snippet": "Thank you, I am free this afternoon and anytime until end of next weekend. My cell: 678-431-8221 Best From: Application Team &lt;apply@cleanfloorslockingdoors.com&gt; Sent: Saturday, December 26, 2020"
+        }
+    ]
+}
