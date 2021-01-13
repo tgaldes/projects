@@ -5,7 +5,7 @@ import test.TestConfig
 from framework.RuleFactory import RuleFactory
 from framework.RuleGroup import IfElseRuleGroup, IfAnyRuleGroup, SingleRuleGroup
 from framework.Matchers import BodyMatcher, ComboMatcher, SubjectMatcher, AllMatcher, LabelMatcher
-from framework.Actions import LabelAction, DraftAction, RedirectAction
+from framework.Actions import LabelAction, DraftAction, RedirectAction, AttachmentAction, LabelLookupAction, ForwardAttachmentAction
 
 class RuleFactoryTest(unittest.TestCase):
     header = ['name', 'email', 'dest_email', 'label_regex', 'subject_regex', 'body_regex', 'expression_match', 'action', 'value', 'finder', 'destinations', 'group', 'group_type', 'rule_type', 'query']
@@ -147,6 +147,33 @@ class RuleFactoryTest(unittest.TestCase):
         self.assertTrue(isinstance(rh.matcher, BodyMatcher))
         self.assertTrue(isinstance(rh.action, DraftAction))
         self.assertTrue(rh.action.prepend)
+
+    def test_attachement_forward_attachement_label_lookup_creation(self):
+        sheet_data = \
+            [RuleFactoryTest.header, \
+            # basic attachment with a filename
+             ['attachment', 'apply', '', '', '', 'body regext', '', 'attachment', '/home/tgaldes/Pictures/*txt', '', 'destination_email', '0', '', '', ''], \
+            # attach from existing thread attachments
+             ['forward attachment', 'apply', '', '', '', 'body regext', '', 'forward_attachment', '', '', 'destination_email', '0', '', '', ''], \
+            # label lookup
+             ['remove automation', 'apply', 'tyler', '', '', 'body regext', '', 'label_lookup', 'Schools/.*', 'inbox.query(get_approved_application_name(thread))', '', '0', '', '', '']]
+
+        inboxes = {'apply' : 'apply_inbox', 'tyler' : 'tyler_inbox'}
+        rf = RuleFactory(sheet_data, inboxes)
+
+        rule_groups = rf.get_rule_groups_for_user('apply')
+        self.assertEqual(1, len(rule_groups))
+        group = rule_groups[0]
+        self.assertEqual(3, len(group))
+        rh = group[0]
+        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.action, AttachmentAction))
+        rh = group[1]
+        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.action, ForwardAttachmentAction))
+        rh = group[2]
+        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.action, LabelLookupAction))
 
     def test_only_specify_query_on_first_rule_of_rule_group(self):
         sheet_data = \

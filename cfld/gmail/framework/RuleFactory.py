@@ -82,9 +82,17 @@ class RuleFactory(Logger):
             elif tup.action == 'empty':
                 action = EmptyAction()
                 log_msg += 'EmptyAction'
+            elif tup.action == 'forward_attachment':
+                action = ForwardAttachmentAction(tup.destinations)
+                log_msg += 'ForwardAttachmentAction'
             elif tup.action == 'attachment':
-                action = AttachmentAction(tup.destinations)
+                action = AttachmentAction(tup.value, tup.destinations)
                 log_msg += 'AttachmentAction'
+            elif tup.action == 'label_lookup':
+                if tup.dest_email not in inboxes:
+                    raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))
+                action = LabelLookupAction(inboxes[tup.dest_email], tup.finder, tup.value)
+                log_msg += 'LabelLookupAction'
             elif tup.action == 'shell':
                 action = AttachmentAction(tup.value)
                 log_msg += 'ShellAction'

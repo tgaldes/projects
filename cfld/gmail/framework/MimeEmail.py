@@ -13,9 +13,16 @@ def create_multipart(destinations, from_email, subject, in_reply_to, references,
     multipart.attach(mimetext)
     for attachment_data, fn in attachments:
         # Refactor- if we want to support multiple file formats in the future we can get the subtype from the filename
-        attachment = MIMEApplication(attachment_data, _subtype='pdf')
-        attachment.add_header('Content-Disposition', 'attachment', filename=fn)
-        multipart.attach(attachment)
+        if fn[-3:] == 'pdf':
+            attachment = MIMEApplication(attachment_data, _subtype='pdf')
+            attachment.add_header('Content-Disposition', 'attachment', filename=fn)
+            multipart.attach(attachment)
+        elif fn[-3:] == 'png':
+            #attachment = MIMEApplication(attachment_data, _subtype='png')
+            attachment = MIMEImage(attachment_data)
+            attachment.add_header('Content-Disposition', 'attachment', filename=fn)
+            multipart.attach(attachment)
+        # TODO: how to log error here?
 
     email_string = list_of_emails_to_string_of_emails(destinations)
     if email_string:
