@@ -94,7 +94,7 @@ class RuleFactory(Logger):
                 action = LabelLookupAction(inboxes[tup.dest_email], tup.finder, tup.value)
                 log_msg += 'LabelLookupAction'
             elif tup.action == 'shell':
-                action = AttachmentAction(tup.value)
+                action = ShellAction(tup.value)
                 log_msg += 'ShellAction'
             else:
                     print(tup)

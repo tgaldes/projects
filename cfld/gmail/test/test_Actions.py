@@ -220,6 +220,7 @@ class ForwardAttachmentActionTest(unittest.TestCase):
 
     def test_basic(self):
         eval_dest = 'tgaldes@gmail.com,another@asdf.com'
+        eval_list = eval_dest.split(',')
         dest = '"' + eval_dest + '"'
         fa = ForwardAttachmentAction(dest)
         thread = Mock()
@@ -229,7 +230,7 @@ class ForwardAttachmentActionTest(unittest.TestCase):
         thread.last_attachment = MagicMock(return_value=(attachment_data, attachment_fn))
         thread.add_attachment_to_draft = MagicMock()
         fa.process(thread, ())
-        thread.add_attachment_to_draft.assert_called_once_with(attachment_data, attachment_fn, eval_dest)
+        thread.add_attachment_to_draft.assert_called_once_with(attachment_data, attachment_fn, eval_list)
 
 
 def initialize():
