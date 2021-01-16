@@ -25,12 +25,14 @@ all_coords = {
         'place_order' : (864, 699),
 
         # logging into buildium
-        'login_background' : (564, 129),
+        'login_background' : (1179, 1015),
         'login_with_google' : (555, 601),
         'login_as_tyler_icon' : (1151, 806),
         
         # getting credit check results
-        'move_in' : (958, 375),
+        #'move_in' : (958, 375),
+        'conditional' : (926, 573),
+        'decline' : (914, 573),
         'credit_report_link' : (761, 695),
         'credit_report' : (1056, 415),
         'criminal_report_link' : (862, 697),
@@ -45,7 +47,7 @@ all_coords = {
         'back_on_browser' : (92, 73),
     }
 }
-colors = {
+application_colors = {
     # general buildium buttons
     'homepage' : (38, 61, 87),
     'leasing' : (255, 255, 255),
@@ -74,10 +76,12 @@ colors = {
     'no_bottom_right_scroll_bar' : (255, 255, 255),
 
     # getting credit check results
-    'move_in' : (112, 143, 104),
+    #'move_in' : (112, 143, 104),
+    'conditional' : (204, 204, 204),
+    'decline' : (204, 204, 204),
     # blue areas so we know we loaded the page
     'credit_report' : (216, 237, 254),
     'criminal_report' : (216, 237, 254),
     'evictions_report' : (25, 25, 25),
 }
-coords = all_coords['m']
+application_coords = all_coords['m']

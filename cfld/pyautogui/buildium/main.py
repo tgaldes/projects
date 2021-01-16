@@ -1,5 +1,5 @@
 from utils import *
-from buildium.buildium_constants import coords, colors
+from buildium.buildium_constants import application_coords, application_colors
 import sys
 
 def open_buildium():
@@ -15,7 +15,7 @@ def open_buildium():
     wait_for_screen_or_exit('homepage', 'buildium homepage not loaded')
     print('buildium opened successfully')
 
-def open_applicant(args):
+def open_applicant(first, last):
     open_buildium()
     wait_for_screen_then_click_or_exit('leasing', 'failed to open buildium leasing tab')
     wait_for_screen_then_click_or_exit('applicants', 'failed to open buildium applicants tab',
@@ -25,7 +25,7 @@ def open_applicant(args):
                                     pag.moveRel(-1, -1, .1)])
 
     # We might already have a filter, in which case we remove it
-    if wait_for_screen_or_clean_up('clear_existing_filter', 'error while clearing existing filter', timeout_seconds = 30, 
+    if wait_for_screen_or_clean_up('clear_existing_filter', 'no existing filter to clear', timeout_seconds = 15, 
                                 x = lambda : [
                                     move_to('clear_existing_filter'),
                                     pag.moveRel(1, 1, .1),
@@ -58,7 +58,7 @@ def open_applicant(args):
 
 # return a list of file names that we saved the screenshots in
 def take_screenshots(first, last, start_fn_index = 0):
-    clicks = coords['scroll_click_count']
+    clicks = application_coords['scroll_click_count']
     
     count = start_fn_index
     extension = '.png'
@@ -83,24 +83,21 @@ def take_screenshots(first, last, start_fn_index = 0):
     return fns
 
 def get_screening(first, last):
-    #open_applicant(first, last)
-    sleep(2)
+    open_applicant(first, last)
     wait_for_screen_then_click_or_exit('tenant_screening', 'could not click on first screening button',
                                 x = lambda : [
                                     move_to('tenant_screening'),
                                     pag.moveRel(1, 1, .1),
                                     pag.moveRel(-1, -1, .1)])
 
-    sleep(5)
     start_fn_index = 0
     all_fns = []
     for page_link, page in [('credit_report_link', 'credit_report'), ('criminal_report_link', 'criminal_report'), ('evictions_report_link', 'evictions_report')]:
         # load the landing page
-        wait_for_screen_or_exit('move_in', 'could not load page with credit screening',
-                                    x = lambda : [
-                                        move_to('move_in'),
-                                        pag.moveRel(1, 1, .1),
-                                        pag.moveRel(-1, -1, .1)])
+        if not wait_for_screen_or_clean_up('decline', 'could not find gray decline button', clean_func = lambda : None) \
+                and not \
+                wait_for_screen_or_clean_up('conditional', 'could not find gray conditional button'):
+                return
         # click on the page we want
         mouse_click(page_link)
         # let that page load (look for light blue areas)
@@ -115,6 +112,7 @@ def get_screening(first, last):
         print(all_fns)
         mouse_click('back_on_browser')
     print(all_fns)
+    clean_up(0)
     return all_fns
 
 
@@ -135,7 +133,7 @@ def process_application(first, last):
                                     pag.moveRel(1, 1, .1),
                                     pag.moveRel(-1, -1, .1)])
     # Now we expect the charge to be pending
-    wait_for_screen_or_clean_up('pending_process_fee', timeout_seconds = 30, 
+    wait_for_screen_or_clean_up('pending_process_fee', 'fee not marked as pending', timeout_seconds = 30, 
                                 clean_func = lambda : None)
 
     # Do the screening
@@ -185,17 +183,24 @@ def process_application(first, last):
                                     move_to('place_order'),
                                     pag.moveRel(1, 1, .1),
                                     pag.moveRel(-1, -1, .1)])
+    clean_up(0)
 
 
 
 if __name__=='__main__':
-    if len(sys.argv) < 3:
-        print('No first and last name passed to process_application.')
+    if len(sys.argv) < 4:
+        print('No function, first, or last name passed to process_application.')
         exit(1)
-    first, last = sys.argv[1], sys.argv[2]
+    function, first, last = sys.argv[1], sys.argv[2], sys.argv[3]
 
-    init(coords, colors) # give constants to utils
+    init(application_coords, application_colors) # give constants to utils
     
-    #process_application(first, last)
-    #take_screenshots(first, last)
-    get_screening(first, last)
+    if function == 'application':
+        process_application(first, last)
+        exit(0)
+    elif function == 'screening':
+        get_screening(first, last)
+        exit(0)
+    else:
+        print('function {} not supported'.format(function))
+        exit(1)

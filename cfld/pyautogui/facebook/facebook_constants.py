@@ -40,13 +40,20 @@ all_coords = {
             'google_drive_ready' : (949, 286),
             'new_condition' : (1346, 847),
             'condition_selection' : (1292, 802),
+
+# general facebook
+            'facebook_homepage' : (95, 130),
+# responding via messenger
+            'incoming_message' : (2314, 1312),
+            'close_chat' : (2437, 1062),
+            'reply_window' : (2315, 1570),
         }
     }
 mkey = 'm' # TODO
-coords = all_coords[mkey]
+application_coords = all_coords[mkey]
 
 # colors that we want to wait for on screen 
-# TODO: redshift for non gray pixels (might not be needed)
+# TODO: refactor these colors to a map
 facebook_post_pending_color = (246, 246, 246)
 facebook_post_photo_video_color = (122, 183, 103) # green in the button
 facebook_post_photo_video_color_bk = (116, 173, 98) # green in the button
@@ -59,6 +66,13 @@ buy_sell_post_pending_color = (229, 230, 235)
 buy_sell_window_open_color = (229, 230, 235)
 sell_something_button_mouseover = (217, 218, 223)
 new_condition_color = (242, 242, 242)
+
+
+application_colors = {
+    'incoming_message' : (229, 230, 235),
+    'close_chat' : (244, 244, 244),
+    'facebook_homepage' : (88, 150, 240),
+}
 
 
 

@@ -2,6 +2,7 @@ import pyautogui as pag
 import pdb
 from time import sleep
 import os
+import pyperclip
 from constants import coords, colors
 
 def init(constant_coords, constant_colors):
@@ -10,14 +11,14 @@ def init(constant_coords, constant_colors):
     global application_colors
     application_colors = constant_colors
 
-def mouse_click(item, sleep_secs=0):
+def mouse_click(item, sleep_secs=0, n=1):
     if item in application_coords:
-        pag.click(*application_coords[item])
+        pag.click(*application_coords[item], clicks=n)
     else:
-        pag.click(*coords[item])
+        pag.click(*coords[item], clicks=n)
 
     sleep(sleep_secs)
-    pass
+
 def move_to(item):
     if item in application_coords:
         pag.moveTo(*application_coords[item])
@@ -41,15 +42,21 @@ def copy_paste(s, dest, fn='tmp_input.txt'):
     press('ctrl', 'v')
     sleep(.2)
 
+# return the highlighted text as a string
+def copy():
+    press('ctrl', 'c')
+    sleep(.05)
+    return pyperclip.paste()
+
 def open_tab(url):
     copy_paste(url, 'url_bar')
     sleep(1)
     mouse_click('url_bar')
     press('enter')
 
-def clean_up():
-    press('ctrl', 'w')
-    press('ctrl', 'w')
+def clean_up(tabs = 2):
+    for i in range(tabs):
+        press('ctrl', 'w')
     mouse_click('close_chrome')
 
 # return True on match/no match, false if we timed out
@@ -57,7 +64,7 @@ def wait_for_screen_general(loc_on_screen, # a string that we look up in applica
                             target_color, # the color we will be looking for at loc_on_screen (coords or a list of coords)
                             match = True, # True -> return when loc_on_screen matches target_color, False -> return when they don't match
                             callback = lambda : None, # function we will run each time before we check the pixel match
-                            timeout_seconds = 120,
+                            timeout_seconds = 30,
                             ):
     if type(loc_on_screen) == str:
         if loc_on_screen in application_coords:
@@ -101,7 +108,7 @@ def get_target_colors(loc_on_screen_name, target_color_names=[]):
     return target_colors
 
 # if we time out, run the supplied clean up func and exit
-def wait_for_screen_or_clean_up(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 120, clean_func = clean_up):
+def wait_for_screen_or_clean_up(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 30, clean_func = clean_up):
     tcs = get_target_colors(loc_on_screen_name, target_color_names)
     res = wait_for_screen_general(loc_on_screen_name, tcs, match, x, timeout_seconds)
     if res:
@@ -112,7 +119,7 @@ def wait_for_screen_or_clean_up(loc_on_screen_name, error_msg, target_color_name
 
 
 # if we time out, print a message and exit
-def wait_for_screen_or_exit(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 120):
+def wait_for_screen_or_exit(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 30):
     tcs = get_target_colors(loc_on_screen_name, target_color_names)
     res = wait_for_screen_general(loc_on_screen_name, tcs, match, x, timeout_seconds)
     if res:
@@ -120,7 +127,7 @@ def wait_for_screen_or_exit(loc_on_screen_name, error_msg, target_color_names=[]
     print(error_msg)
     exit(1)
 
-def wait_for_screen_then_click_or_exit(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 120, clean_func = clean_up):
+def wait_for_screen_then_click_or_exit(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 30, clean_func = clean_up):
     tcs = get_target_colors(loc_on_screen_name, target_color_names)
     res = wait_for_screen_general(loc_on_screen_name, tcs, match, x, timeout_seconds)
     if res:

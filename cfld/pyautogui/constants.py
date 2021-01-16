@@ -6,8 +6,8 @@ all_coords = {
 # ubuntu
             'menu' : (23, 65),
             'chrome' : (168, 170),
-# chrome
-            'close_chrome' : (91, 46),
+# chrome (fullscreen!)
+            'close_chrome' : (10, 11),
             'url_bar' : (562, 78),
             'tab_one' : (264, 60),
             'tab_two' : (540, 60),
