@@ -280,6 +280,19 @@ class ShellActionTest(unittest.TestCase):
             # file gives us a newline
             self.assertEqual(ret, f.read().strip())
 
+    def test_base_validate(self):
+        initialize()
+        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'error.sh') + '"'
+        sa = ShellAction(command)
+        thread = Mock()
+        thread.default_reply = MagicMock(return_value='')
+        matches = []
+        BaseValidator.set_validate_mode(True)
+        self.assertEqual(0, sa.process(thread, matches))
+        self.assertFalse(os.path.exists(ShellActionTest.output_fn))
+        BaseValidator.set_validate_mode(False)
+        
+
 
 
 

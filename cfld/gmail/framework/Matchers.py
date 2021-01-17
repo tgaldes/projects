@@ -92,6 +92,8 @@ class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
         text = thread.last_message_text().lower()
         if self.needle in text:
             return []
+        elif super().force_match():
+            return []
         else:
             raise Exception('Asked for matching groups when no match. needle: {} haystack (trimmed): {}'.format(self.needle, clean_text(text)))
          

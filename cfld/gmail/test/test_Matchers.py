@@ -116,6 +116,9 @@ class BodyMatcherTest(unittest.TestCase):
         self.assertFalse(bm.matches(thread))
         with self.assertRaises(Exception):
             bm.get_matching_groups({})
+        BaseValidator.set_validate_mode(True)
+        self.assertEqual([], bm.get_matching_groups(thread))
+        BaseValidator.set_validate_mode(False)
 
     def test_match_really_big_haystack(self):
         bm = BodyMatcher('additional details')

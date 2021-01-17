@@ -7,6 +7,7 @@ from glob import glob
 from framework.Interfaces import IAction
 from framework.util import evaluate_expression, get_imports
 from framework.Thread import Thread
+from framework.BaseValidator import BaseValidator
 from framework.Logger import Logger
 
 class LabelAction(implements(IAction), Logger):
@@ -167,6 +168,8 @@ class ShellAction(Logger):
     def process(self, thread, matches):
         evaluated_command = evaluate_expression(self.command, **locals())
         self.ld('Command evaluated to: {}'.format(evaluated_command))
+        if BaseValidator.force_matches:
+            return 0
         child = subprocess.Popen(evaluated_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = child.communicate()
         rc = child.returncode

@@ -1,11 +1,14 @@
 import pdb
-
+from framework.BaseValidator import BaseValidator
 
 
 def get_substring_after_delim(haystack, delimiter, end_delimiter='<'):
     start_index = haystack.find(delimiter) + len(delimiter)
     if start_index == -1:
-        raise Exception('Could not find the delimiter: {} in {}'.format(delimiter, haystack))
+        if not BaseValidator.force_matches:
+            raise Exception('Could not find the delimiter: {} in {}'.format(delimiter, haystack))
+        else:
+            return 'test applicant'
     end_index = haystack[start_index:].index(end_delimiter) + start_index
     return haystack[start_index:end_index]
 
