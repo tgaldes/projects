@@ -1,3 +1,4 @@
+20200115 1.2.0 merge pyautogui reboot, add attachment rules
 20200111 1.1.0 change main to run constantly and use historyid to determine when to reprocess a thread
 20201227 1.0.0
 20201220 0.3.0
