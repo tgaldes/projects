@@ -17,15 +17,23 @@ def get_new_application_email(thread):
     substring = '<tr><th>Email:</th><td>'
     return get_substring_after_delim(decoded_html, substring)
 
-def get_new_application_name(thread):
+def get_new_application_name(thread, return_as_list=False):
     decoded_html = thread.last_message_text()
     substring = '<tr><th>Applicant:</th><td>'
-    return get_substring_after_delim(decoded_html, substring)
+    name = get_substring_after_delim(decoded_html, substring)
+    if not return_as_list:
+        return name
+    else:
+        return name.split()[:2]
 
-def get_approved_application_name(thread):
+def get_approved_application_name(thread, return_as_list=False):
     decoded_html = thread.last_message_text()
     substring = '<tr><th>Applicant name:</th><td>'
-    return get_substring_after_delim(decoded_html, substring)
+    name = get_substring_after_delim(decoded_html, substring)
+    if not return_as_list:
+        return name
+    else:
+        return name.split()[:2]
 
 def get_approved_application_email(thread):
     decoded_html = thread.last_message_text()

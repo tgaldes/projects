@@ -1,0 +1,150 @@
+{
+    "messages": [
+        {
+            "payload": {
+                "filename": "",
+                "parts": [
+                    {
+                        "filename": "",
+                        "headers": [
+                            {
+                                "value": "text/plain; charset=\"UTF-8\"",
+                                "name": "Content-Type"
+                            }
+                        ],
+                        "mimeType": "text/plain",
+                        "body": {
+                            "size": 117,
+                            "data": "SGkgYnVkZHkNCg0KDQoNCg0KT24gRGVjZW1iZXIgYmxhaCBibGFjaA0KDQpIZXJlIGlzIGEgZm9yd2FyZGVkIG1lc3NhZ2Ugd2UgZG9uJ3Qgd2FudCBpbiB0aGUgbGFzdF9tZXNzYWdlX3RleHQgY2FsbA0K"
+                        },
+                        "partId": "0"
+                    },
+                    {
+                        "filename": "",
+                        "headers": [
+                            {
+                                "value": "text/html; charset=\"UTF-8\"",
+                                "name": "Content-Type"
+                            }
+                        ],
+                        "mimeType": "text/html",
+                        "body": {
+                            "size": 225,
+                            "data": "PGRpdiBkaXI9Imx0ciI-SGkgYnVkZHk8ZGl2Pjxicj48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2Pk9uIERlY2VtYmVyIGJsYWggYmxhY2g8L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2PkhlcmUgaXMgYSBmb3J3YXJkZWQgbWVzc2FnZSB3ZSBkb24mIzM5O3Qgd2FudCBpbiB0aGUgbGFzdF9tZXNzYWdlX3RleHQgY2FsbDwvZGl2PjwvZGl2Pg0K"
+                        },
+                        "partId": "1"
+                    }
+                ],
+                "headers": [
+                    {
+                        "value": "apply@cleanfloorslockingdoors.com",
+                        "name": "Delivered-To"
+                    },
+                    {
+                        "value": "by 2002:a19:ac49:0:0:0:0:0 with SMTP id r9csp5791950lfc;        Sat, 26 Dec 2020 09:47:36 -0800 (PST)",
+                        "name": "Received"
+                    },
+                    {
+                        "value": "by 2002:aa7:cf8f:: with SMTP id z15mr36202164edx.17.1609004856762;        Sat, 26 Dec 2020 09:47:36 -0800 (PST)",
+                        "name": "X-Received"
+                    },
+                    {
+                        "value": "i=1; a=rsa-sha256; t=1609004856; cv=none;        d=google.com; s=arc-20160816;        b=Mx2MHzeXnz0oQLuBQPMP8rQbBFQyb4Bw/LVXO0YIu6a3O5cWu6CR3DCDoVV0oKE3Ym         D4Ie6KevRjunZrJUSS0z/jbHwKzbtkOdy3EbicIelBNeychZ4R+la28FxCIwbMdF3Zgl         lucCIaOhqCcpNcijoD6snBMfrY3krCtGG9cp1a4+V8xknjp2QHjkw84zhObW6izf2OfD         Z849i783ha5oZBT7HF4yMWMi88d2KiiGDJsOgui8tK4cnFECgH0FuVE5uB76TMGhTT/+         LESfkdKsRdY41y4TwIaXKf8iFFsxwhRVF/hhxdkuqJgkCciOdC0UGNd3hrNk9w3B8l7b         EuPg==",
+                        "name": "ARC-Seal"
+                    },
+                    {
+                        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;        h=to:subject:message-id:date:from:mime-version:dkim-signature;        bh=LB1V5UXjkRq+EjAeB9SkiTy1++3JR+AomTRP4aPt5kw=;        b=I7NkIundK8j3ox+p0IVqcyfpOYMIikMqr57prCuQ7W3uYdIJddmGiEPXKY/9e7qn0E         OxBqpm18AF/oSJVHJW2W0RJR0/2Fv9kc6IPP8UifCrPJW3TJfa4INNRMuLnafN3d/J6x         P6ew7QC/6xqhZEr2OPvsz1mnW2iZccgD+T0v1leRzmkn1GYF+u2sjO9sVE90N2a1vihy         I3zOAxP2q2JE7i+Az4Au1Bq/GpdingONCajNQO2te+XoHa8ey+/KPQh/ETSOO++IDfcd         jgclyrxKX0X/fpixySE1sxR0ZZJUgm5LQoSzFa/qrCzcaXdbL6MJhnjtHzYI2zgn9U99         ZFfQ==",
+                        "name": "ARC-Message-Signature"
+                    },
+                    {
+                        "value": "i=1; mx.google.com;       dkim=pass header.i=@cleanfloorslockingdoors-com.20150623.gappssmtp.com header.s=20150623 header.b=nKrQTXos;       spf=pass (google.com: domain of tyler@cleanfloorslockingdoors.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=tyler@cleanfloorslockingdoors.com",
+                        "name": "ARC-Authentication-Results"
+                    },
+                    {
+                        "value": "<tyler@cleanfloorslockingdoors.com>",
+                        "name": "Return-Path"
+                    },
+                    {
+                        "value": "from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])        by mx.google.com with SMTPS id p4sor21516113ejj.16.2020.12.26.09.47.36        for <apply@cleanfloorslockingdoors.com>        (Google Transport Security);        Sat, 26 Dec 2020 09:47:36 -0800 (PST)",
+                        "name": "Received"
+                    },
+                    {
+                        "value": "pass (google.com: domain of tyler@cleanfloorslockingdoors.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;",
+                        "name": "Received-SPF"
+                    },
+                    {
+                        "value": "mx.google.com;       dkim=pass header.i=@cleanfloorslockingdoors-com.20150623.gappssmtp.com header.s=20150623 header.b=nKrQTXos;       spf=pass (google.com: domain of tyler@cleanfloorslockingdoors.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=tyler@cleanfloorslockingdoors.com",
+                        "name": "Authentication-Results"
+                    },
+                    {
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=cleanfloorslockingdoors-com.20150623.gappssmtp.com; s=20150623;        h=mime-version:from:date:message-id:subject:to;        bh=LB1V5UXjkRq+EjAeB9SkiTy1++3JR+AomTRP4aPt5kw=;        b=nKrQTXos3oc55oJsHOZgcHQ+DvVkogQ+1ip+kNXGpodv67WW3dT+TfXxQXE9kjXoyi         9NqYNo/YIrdq5OsKkePfWERFeTYEG9HV86q7KXVUcIgxVfnNmuDat/b1TbxGVW4GwiS2         HXWr+FuR/B6xDKov1KF9t5zWwH8zZXsOUYD8QOIHliwVhOCC3UZFLFdB1fDrDBAXDE48         Fb9RdBaon8I8AvsKKw75tZmHddQKys7XnKFVVBFFPNW9zIgF3DAcO16BJkC+/1ldUnMr         7IdtOcWZo8RC6fGC2tC1upGh36Uoh060ydsGdHA3mE/uqrIRFbZEIWd1/NMx/1t/m5RH         Qtnw==",
+                        "name": "DKIM-Signature"
+                    },
+                    {
+                        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=1e100.net; s=20161025;        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;        bh=LB1V5UXjkRq+EjAeB9SkiTy1++3JR+AomTRP4aPt5kw=;        b=m5GK+Em9R3W397RueU3wTqIIyrSoQ0ef0Fn/vOB6bj6SQMShByZXYs3pAf5yOEY0l+         X7hBjX13MzdSNEG0X7HDnlhyDlfFKSJcQt+K2cMEuj82ne6klRcrAvJOn2G5gtf9XbNW         BwjadjkjmoZ331jruO8hTO4jFNGIUoyKbccZ0/RSioNfpbV+PsuRlbFYZ7kkyZjdGWK+         HiOr2FfJRLA97o5jRJANm6l3yiCjedmpmXOXhGVwxrykrK1Czx/DQDVSehrUsNKLPHyo         i9Q0wgRVIed/BX9yFpfQRY5hnJeE+HE5EDAjLT6VFyMiZhTbFtjuvolJV+XkXpip/0bL         y3jA==",
+                        "name": "X-Google-DKIM-Signature"
+                    },
+                    {
+                        "value": "AOAM53193+kJ0iAQlUA668GRo0fZ74Pup40BkGNa4zi1uFkl35lmGMey KggUgKuL+2Md9h3014uML+y9YH0Qkm2bWUY4MnJe0HkaEncpIA==",
+                        "name": "X-Gm-Message-State"
+                    },
+                    {
+                        "value": "ABdhPJxG4uuKb5zmntGPqaqStsbBdXVony5fhGLV1OdW3Vzk67ny1RPQ0js/eLX9ykRLfpfGV8KS4fRf2lqriXwDlf0=",
+                        "name": "X-Google-Smtp-Source"
+                    },
+                    {
+                        "value": "by 2002:a17:906:d8a1:: with SMTP id qc1mr35251734ejb.294.1609004855850; Sat, 26 Dec 2020 09:47:35 -0800 (PST)",
+                        "name": "X-Received"
+                    },
+                    {
+                        "value": "1.0",
+                        "name": "MIME-Version"
+                    },
+                    {
+                        "value": "Tyler Galdes <tyler@cleanfloorslockingdoors.com>",
+                        "name": "From"
+                    },
+                    {
+                        "value": "Sat, 26 Dec 2020 12:47:24 -0500",
+                        "name": "Date"
+                    },
+                    {
+                        "value": "<CAO4d5_y+LVpcpy2_8fq6MjzwnF-mJh_nv9C+8QOKaspQq5X1HA@mail.gmail.com>",
+                        "name": "Message-ID"
+                    },
+                    {
+                        "value": "test delimiter",
+                        "name": "Subject"
+                    },
+                    {
+                        "value": "Application Team <apply@cleanfloorslockingdoors.com>",
+                        "name": "To"
+                    },
+                    {
+                        "value": "multipart/alternative; boundary=\"000000000000e00bea05b761a220\"",
+                        "name": "Content-Type"
+                    }
+                ],
+                "mimeType": "multipart/alternative",
+                "body": {
+                    "size": 0
+                },
+                "partId": ""
+            },
+            "labelIds": [
+                "UNREAD",
+                "IMPORTANT",
+                "CATEGORY_PERSONAL",
+                "INBOX"
+            ],
+            "id": "176a029b42997fad",
+            "internalDate": "1609004844000",
+            "threadId": "176a029b42997fad",
+            "sizeEstimate": 5144,
+            "snippet": "Hi buddy On December blah blach Here is a forwarded message we don&#39;t want in the last_message_text call",
+            "historyId": "1685975"
+        }
+    ],
+    "id": "176a029b42997fad",
+    "historyId": "1685975"
+}

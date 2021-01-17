@@ -4,16 +4,30 @@ pag.PAUSE = 1
 pag.FAILSAFE = True
 from time import sleep
 import os
+import sys
 
-from inputs import all_groups, all_buy_sells
-from constants import * # TODO refactor three
-from utils import * # TODO: refactor three
+from facebook.inputs import all_groups, all_buy_sells
+from facebook.facebook_constants import * # TODO refactor three
+from utils import *
 
 
 
+def open_buy_sell_window(nt):
+    count = 0
+    while True:
+        move_to(buy_sell_name_mapping[nt.group_name_length])
+        # we need to move the mouse off the button in case the page loads with the cursor already on the screen
+        screen = pag.screenshot()
+        # wait to see if the grayed out 'Next' button appears
+        if pag.pixelMatchesColor(*coords[buy_sell_name_mapping[nt.group_name_length]], sell_something_button_mouseover):
+            mouse_click(buy_sell_name_mapping[nt.group_name_length])
+            return wait_for_buy_sell_to_load(nt)
+        print('pixel {} coords {} matching {} actual {}'.format(coords[buy_sell_name_mapping[nt.group_name_length]], sell_something_button_mouseover, True, screen.getpixel(coords[buy_sell_name_mapping[nt.group_name_length]])))
+        count += 1
+        if count > 120:
+            return False
 
 # refactor one: one function running a while loop waiting on pixels scrolling clicking etc
-
 def run_buy_sell_group(nt):
     print(nt)
     mouse_click('menu')
@@ -159,27 +173,75 @@ def run_group(nt): #google_doc_link, folder_path, group_tup, post_coords):
     sleep(1)
     clean_up()
 
-def test(x):
-    print('calling')
-    x()
-if __name__=='__main__':
-    schools = ['USC']
-    selections = ['buy_sell', 'group']
+def open_facebook():
+    open_chrome()
+    keyboard('https://www.facebook.com/marketplace/you')
+    press('enter')
+    wait_for_screen_or_clean_up('facebook_homepage', 'failed_to_load_facebook_homepage')
 
-    if 'buy_sell' in selections:
-        for data in all_buy_sells:
-            if data.short_name in schools:
-                run_buy_sell_group(data)
-            else:
-                print('Skipping {}'.format(data.short_name))
-    else:
-        print('Skipping buy_sell')
-    if 'group' in selections:
-        for data in all_groups:
-            if data.short_name in schools:
-                run_group(data)
-            else:
-                print('Skipping {}'.format(data.short_name))
-    else:
-        print('Skipping normal groups')
+# TODO: if the last message was from us, just close the window
+# TODO: type my response slower
+def answer_via_facebook_messenger(params):
+    response = params[0]
+    open_facebook()
+    default_response_substrings = ['still available', 'interested in', 'condition is', 'you deliver']
+    # open facebook
+    sent_responses = 0
+    # while we have a message aka gray bubble
+    while wait_for_screen_or_clean_up('incoming_message', 'no incoming messages found', timeout_seconds=10):
+        # grab the text
+        mouse_click('incoming_message', n=3)
+        incoming_message = copy().lower()
+        # see if any of the default repsonses are populated in it
+        for default_response_substring in default_response_substrings:
+            if default_response_substring in incoming_message:
+                # send our own default response specified as an argument
+                mouse_click('reply_window')
+                keyboard(response)
+                press('enter')
+                # close the chat
+                wait_for_screen_then_click_or_exit('close_chat', 'couldnt close chat window after sending message',
+                    x = lambda : [
+                        move_to('close_chat'),
+                        pag.moveRel(1, 1, .1),
+                        pag.moveRel(-1, -1, .1)])
+                sent_responses += 1
+                break
+    print('Sent {} responses.'.format(sent_responses))
+    return sent_responses
+    
+
+if __name__=='__main__':
+    # Set the util class to use the coordinates of facebook buttons
+    init(application_coords, application_colors)
+
+    if len(sys.argv) < 3:
+        print('need to specify desired function and arguments to that function')
+        exit(1)
+    function, params = sys.argv[1], sys.argv[2:]
+
+    if function == 'messenger':
+        answer_via_facebook_messenger(params)
+    elif function == 'post':
+
+        schools = ['USC']
+        selections = ['buy_sell', 'group']
+
+
+        if 'buy_sell' in selections:
+            for data in all_buy_sells:
+                if data.short_name in schools:
+                    run_buy_sell_group(data)
+                else:
+                    print('Skipping {}'.format(data.short_name))
+        else:
+            print('Skipping buy_sell')
+        if 'group' in selections:
+            for data in all_groups:
+                if data.short_name in schools:
+                    run_group(data)
+                else:
+                    print('Skipping {}'.format(data.short_name))
+        else:
+            print('Skipping normal groups')
 

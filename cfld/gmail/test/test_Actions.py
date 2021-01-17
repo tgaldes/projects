@@ -1,7 +1,11 @@
 from unittest.mock import MagicMock, Mock
 import unittest
+import os
+
 import test.TestConfig
 from framework.Actions import *
+from TestUtil import parent_path
+
 
 class LabelActionTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -136,6 +140,7 @@ class RedirectActionTest(unittest.TestCase):
     # 3 We find that thread in the apply inbox
     # 4 We send an email to that thread letting them know they need to approve it on their end
     def test_process_new_application(self):
+    # TODO: update with new inbox mocks
         # set up inbox, thread that triggers the action, thread that we'll send a reply to
         mock_input_thread = Mock()
         mock_input_thread.get_new_application_email = MagicMock(return_value='tgaldes@gmail.com')
@@ -152,6 +157,27 @@ class RedirectActionTest(unittest.TestCase):
         mock_input_thread.get_new_application_email.assert_called_once_with()
         mock_inbox.get_threads_from_email_address.assert_called_once_with('tgaldes@gmail.com')
         self.assertEqual(1, mock_output_thread.append_to_draft.call_count)
+
+class LabelLookupTest(unittest.TestCase):
+
+    def test_set_label_from_other_inbox(self):
+        mock_input_thread = Mock()
+        mock_input_thread.get_new_application_name = MagicMock(return_value='Tyler Galdes')
+        mock_inbox = Mock()
+        mock_inbox.get_service = MagicMock(return_value='service')
+        mock_output_thread = Mock()
+        expected_label = 'Schools/USC'
+        mock_output_thread.labels = MagicMock(return_value=['one', 'two', expected_label, 'three'])
+        mock_inbox.query = MagicMock(return_value=[mock_output_thread])
+        finder_expression = 'inbox.query(thread.get_new_application_name())'
+        expression = 'Schools/.*'
+
+        ra = LabelLookupAction(mock_inbox, finder_expression, expression)
+        ra.process(mock_input_thread, ())
+        mock_input_thread.get_new_application_name.assert_called_once_with()
+        mock_inbox.query.assert_called_once_with('Tyler Galdes')
+        mock_input_thread.set_label.assert_called_once_with(expected_label)
+
 
 class RemoveDraftActionTest(unittest.TestCase):
 
@@ -170,13 +196,33 @@ class EmptyActionTest(unittest.TestCase):
         # Do nothing!
         ea.process(None, None)
         
-
+# Attach files based on the name of a glob
 class AttachmentActionTest(unittest.TestCase):
 
     def test_basic(self):
         eval_dest = 'tgaldes@gmail.com,another@asdf.com'
         dest = '"' + eval_dest + '"'
-        fa = AttachmentAction(dest)
+        fns = [os.path.join(parent_path, 'attachments', 'one.png'), os.path.join(parent_path, 'attachments', 'two.png')]
+        val = '"' + os.path.join(parent_path, 'attachments', '*png') + '"'
+        fa = AttachmentAction(val, dest)
+        thread = Mock()
+        fa.process(thread, ())
+        self.assertEqual(2, thread.add_attachment_to_draft.call_count)
+
+        data_one, fn_one, emails = thread.add_attachment_to_draft.call_args_list[0][0]
+        self.assertEqual(fns[0], fn_one)
+        self.assertEqual(b'test one\n', data_one)
+        data_two, fn_two, emails = thread.add_attachment_to_draft.call_args_list[1][0]
+        self.assertEqual(fns[1], fn_two)
+        self.assertEqual(b'test two\n', data_two)
+
+class ForwardAttachmentActionTest(unittest.TestCase):
+
+    def test_basic(self):
+        eval_dest = 'tgaldes@gmail.com,another@asdf.com'
+        eval_list = eval_dest.split(',')
+        dest = '"' + eval_dest + '"'
+        fa = ForwardAttachmentAction(dest)
         thread = Mock()
         last_message = 'last message'
         attachment_data = 'data'
@@ -184,5 +230,57 @@ class AttachmentActionTest(unittest.TestCase):
         thread.last_attachment = MagicMock(return_value=(attachment_data, attachment_fn))
         thread.add_attachment_to_draft = MagicMock()
         fa.process(thread, ())
-        thread.add_attachment_to_draft.assert_called_once_with(attachment_data, attachment_fn, eval_dest)
+        thread.add_attachment_to_draft.assert_called_once_with(attachment_data, attachment_fn, eval_list)
+
+
+def initialize():
+    try:
+        os.remove(ShellActionTest.output_fn)
+    except:
+        pass
+class ShellActionTest(unittest.TestCase):
+    script_dir = 'shell_test_scripts'
+    output_fn = '/tmp/shell_action_test_output.txt'
+    def test_success(self):
+        initialize()
+        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'ok.sh') + '"'
+        sa = ShellAction(command)
+
+        thread = Mock()
+        matches = []
+        self.assertEqual(0, sa.process(thread, matches))
+
+        with open(ShellActionTest.output_fn, 'r') as f:
+            # file gives us a newline
+            self.assertEqual('Hello, world!', f.read().strip())
+
+    # The script we try to run here does have exe perms
+    def test_failure(self):
+        initialize()
+        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'error.sh') + '"'
+        sa = ShellAction(command)
+
+        thread = Mock()
+        matches = []
+        self.assertEqual(13, sa.process(thread, matches))
+            
+    def test_evaluate(self):
+        initialize()
+        ret = 'I expect this in the file'
+        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'evaluate.sh') + ' {}"'.format(ret)
+        sa = ShellAction(command)
+
+        thread = Mock()
+        thread.default_reply = MagicMock(return_value=ret)
+        matches = []
+        self.assertEqual(0, sa.process(thread, matches))
+
+
+        with open(ShellActionTest.output_fn, 'r') as f:
+            # file gives us a newline
+            self.assertEqual(ret, f.read().strip())
+
+
+
+
 
