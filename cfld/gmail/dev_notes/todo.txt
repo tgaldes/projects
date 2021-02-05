@@ -8,3 +8,24 @@ For application approved
 Medium value
 Long term low priority and low value tickets:
 - set the 'automation' label at the message level so our automation won't touch user created drafts, but will instead create it's own drafts in the threads
+
+  File "/cfld/projects/cfld/gmail/framework/main.py", line 81, in <module>
+    m.run()
+  File "/cfld/projects/cfld/gmail/framework/main.py", line 52, in run
+    self.run_one()
+  File "/cfld/projects/cfld/gmail/framework/main.py", line 45, in run_one
+    rule_group.process(thread)
+  File "/cfld/projects/cfld/gmail/framework/RuleGroup.py", line 134, in process
+    self.rule.process(thread)
+  File "/cfld/projects/cfld/gmail/framework/RuleHolder.py", line 23, in process
+    if self.matcher.matches(thread) or super().force_match():
+  File "/cfld/projects/cfld/gmail/framework/Matchers.py", line 158, in matches
+    if not matcher.matches(thread):
+  File "/cfld/projects/cfld/gmail/framework/Matchers.py", line 80, in matches
+    text = thread.last_message_text().lower()
+  File "/cfld/projects/cfld/gmail/framework/Thread.py", line 225, in last_message_text
+    return self.__last_message().content()
+  File "/cfld/projects/cfld/gmail/framework/Thread.py", line 242, in __last_message
+    raise Exception('No non draft messages in thread of length {}'.format(self.__len__()))
+Exception: No non draft messages in thread of length 0
+

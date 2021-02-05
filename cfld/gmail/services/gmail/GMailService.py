@@ -41,8 +41,8 @@ class GMailService(Logger):
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
-        self.default_limit = 20
-        self.default_query = ''
+        self.default_limit = 1
+        self.default_query = 'Signing up'
         #self.default_limit = 1
         #self.default_query = 'test subject'
 
@@ -70,6 +70,7 @@ class GMailService(Logger):
                 self.label_id_2_string[label['id']] = label['name']
         self.thread_index = 0
         self.ld('Loaded labels: {}'.format(self.label_string_2_id.keys()))
+        pdb.set_trace()
 
     def get_history_id(self, thread_id):
         if thread_id in self.thread_id_2_history_id:
@@ -89,11 +90,14 @@ class GMailService(Logger):
                 res.append(self.thread_id_2_full_threads[item['id']])
             else:
                 thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
-                thread = self.__create_thread_from_raw(thread_map)
-                # Save this id for future use
-                self.thread_id_2_full_threads[item['id']] = thread
-                self.__update_history_id(thread.id(), thread_map['historyId'])
-                res.append(thread)
+                try:
+                    thread = self.__create_thread_from_raw(thread_map)
+                    # Save this id for future use
+                    self.thread_id_2_full_threads[item['id']] = thread
+                    self.__update_history_id(thread.id(), thread_map['historyId'])
+                    res.append(thread)
+                except Exception as e:
+                    self.logw('Couldn\'t create thread id {} because of: {}'.format(item['id'], e))
         # Save full result of the query
         self.full_threads_by_query[q] = res
 
@@ -190,6 +194,8 @@ class GMailService(Logger):
 
     def __create_thread_from_raw(self, raw_thread):
         messages = []
+        if len(raw_thread['messages']) == 0:
+            raise Exception('Cannot create thread without any messages.')
         for message in raw_thread['messages']:
             messages.append(GMailMessage(message, self))
         return Thread(raw_thread['id'], messages, self)
