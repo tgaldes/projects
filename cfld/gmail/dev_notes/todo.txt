@@ -2,6 +2,57 @@
 
 
 For application approved
+/usr/local/lib/python3.5/dist-packages/requests/__init__.py:83: RequestsDependencyWarning: Old version of cryptography ([1, 2, 3]) may cause slowdown.
+  warnings.warn(warning, RequestsDependencyWarning)
+Traceback (most recent call last):
+  File "/cfld/projects/cfld/gmail/framework/main.py", line 81, in <module>
+    m.run()
+  File "/cfld/projects/cfld/gmail/framework/main.py", line 52, in run
+    self.run_one()
+  File "/cfld/projects/cfld/gmail/framework/main.py", line 45, in run_one
+    rule_group.process(thread)
+  File "/cfld/projects/cfld/gmail/framework/RuleGroup.py", line 134, in process
+    self.rule.process(thread)
+  File "/cfld/projects/cfld/gmail/framework/RuleHolder.py", line 26, in process
+    self.action.process(thread, match_groups)
+  File "/cfld/projects/cfld/gmail/framework/Actions.py", line 126, in process
+    thread.remove_existing_draft()
+  File "/cfld/projects/cfld/gmail/framework/Thread.py", line 76, in remove_existing_draft
+    self.service.delete_draft(draft_id)
+  File "/cfld/projects/cfld/gmail/services/gmail/GMailService.py", line 165, in delete_draft
+    ret = self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
+  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/_helpers.py", line 134, in positional_wrapper
+    return wrapped(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 901, in execute
+    headers=self.headers,
+  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 204, in _retry_request
+    raise exception
+  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 177, in _retry_request
+    resp, content = http.request(uri, method, *args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/google_auth_httplib2.py", line 198, in request
+    uri, method, body=body, headers=request_headers, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/httplib2/__init__.py", line 1994, in request
+    cachekey,
+  File "/usr/local/lib/python3.5/dist-packages/httplib2/__init__.py", line 1651, in _request
+    conn, request_uri, method, body, headers
+  File "/usr/local/lib/python3.5/dist-packages/httplib2/__init__.py", line 1589, in _conn_request
+    response = conn.getresponse()
+  File "/usr/lib/python3.5/http/client.py", line 1225, in getresponse
+    response.begin()
+  File "/usr/lib/python3.5/http/client.py", line 307, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.5/http/client.py", line 268, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.5/socket.py", line 575, in readinto
+    return self._sock.recv_into(b)
+  File "/usr/lib/python3.5/ssl.py", line 929, in recv_into
+    return self.read(nbytes, buffer)
+  File "/usr/lib/python3.5/ssl.py", line 791, in read
+    return self._sslobj.read(len, buffer)
+  File "/usr/lib/python3.5/ssl.py", line 575, in read
+    v = self._sslobj.read(len, buffer)
+socket.timeout: The read operation timed out
+
 
 
 
