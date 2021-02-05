@@ -209,21 +209,100 @@ def answer_via_facebook_messenger(params):
                 break
     print('Sent {} responses.'.format(sent_responses))
     return sent_responses
+
+
+def delete_post():
+    while True:
+        if not wait_for_screen_then_click('first_delete_button', # loc on screen
+                                'failed while clicking first_delete_button',
+                                ['first_delete_button', 'first_delete_button_alt'],
+                                 x = lambda : [
+                                        move_to('first_delete_button'),
+                                        pag.moveRel(1, 1, .1),
+                                        pag.moveRel(-1, -1, .1)]):
+            return False
+        sleep(3)
+        if not wait_for_screen_then_click('delete_post', # loc on screen
+                                'failed while clicking delete_post',
+                                 x = lambda : [
+                                        move_to('delete_post'),
+                                        pag.moveRel(1, 1, .1),
+                                        pag.moveRel(-1, -1, .1)]):
+            continue # Try again from step one
+        if not wait_for_screen_then_click('confirm_delete', # loc on screen
+                                'failed while clicking confirm_delete',
+                                ['confirm_delete', 'confirm_delete_alt'],
+                                 x = lambda : [
+                                        move_to('confirm_delete'),
+                                        pag.moveRel(1, 1, .1),
+                                        pag.moveRel(-1, -1, .1)]):
+            return False
+        return True
+
+# deletes active posts
+def delete_active_post():
+    while True:
+        sleep(1)
+        mouse_click('active_first_delete_button')
+        sleep(3)
+        if not wait_for_screen_then_click('active_delete_post', # loc on screen
+                                'failed while clicking delete_post',
+                                timeout_seconds=10,
+                                 x = lambda : [
+                                        move_to('active_delete_post'),
+                                        pag.moveRel(1, 1, .1),
+                                        pag.moveRel(-1, -1, .1)]):
+            if not wait_for_screen_then_click('active_delete_post_alt', # loc on screen
+                                    'failed while clicking delete_post',
+                                     x = lambda : [
+                                            move_to('active_delete_post_alt'),
+                                            pag.moveRel(1, 1, .1),
+                                            pag.moveRel(-1, -1, .1)]):
+                continue # Try again from step one
+        if not wait_for_screen_then_click('active_confirm_delete', # loc on screen
+                                'failed while clicking confirm_delete',
+                                ['active_confirm_delete', 'active_confirm_delete_alt'],
+                                 x = lambda : [
+                                        move_to('active_confirm_delete'),
+                                        pag.moveRel(1, 1, .1),
+                                        pag.moveRel(-1, -1, .1)]):
+            return False
+        return True
+
+# for now assumes that we'll open the marketplace page manually
+def delete_posts(active=False):
+    count = 0
+    if active:
+        f = delete_active_post
+    else:
+        f = delete_post
+    while f():
+        count += 1
+        sleep(7) # let facebook remove the one we deleted from the screen
+    print('Deleted {} posts.'.format(count))
     
 
 if __name__=='__main__':
     # Set the util class to use the coordinates of facebook buttons
     init(application_coords, application_colors)
 
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         print('need to specify desired function and arguments to that function')
         exit(1)
-    function, params = sys.argv[1], sys.argv[2:]
+    if len(sys.argv) == 2:
+        function = sys.argv[1]
+    else:
+        function, params = sys.argv[1], sys.argv[2:]
 
     if function == 'messenger':
         answer_via_facebook_messenger(params)
+    elif function == 'delete':
+        sleep(2)
+        delete_posts()
+    elif function == 'delete_active':
+        sleep(2)
+        delete_posts(True)
     elif function == 'post':
-
         schools = ['USC']
         selections = ['buy_sell', 'group']
 

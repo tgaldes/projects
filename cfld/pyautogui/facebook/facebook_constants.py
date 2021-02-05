@@ -47,6 +47,16 @@ all_coords = {
             'incoming_message' : (2314, 1312),
             'close_chat' : (2437, 1062),
             'reply_window' : (2315, 1570),
+
+# deleting posts
+            'first_delete_button' : (672, 494),
+            'delete_post' : (693, 870),
+            'confirm_delete' : (1535, 888),
+# deleting active posts
+            'active_first_delete_button' : (1058, 430),
+            'active_delete_post' : (1117, 844),
+            'active_delete_post_alt' : (1074, 882), # for active posts marked as sold
+            'active_confirm_delete' : (1553, 888)
         }
     }
 mkey = 'm' # TODO
@@ -72,6 +82,20 @@ application_colors = {
     'incoming_message' : (229, 230, 235),
     'close_chat' : (244, 244, 244),
     'facebook_homepage' : (88, 150, 240),
+
+# deleting posts
+    'first_delete_button' : (217, 218, 223),
+    'first_delete_button_alt' : (217, 217, 224),
+    'delete_post' : (242, 242, 242),
+    'confirm_delete' : (69, 117, 225),
+    'confirm_delete_alt' : (81, 30, 235),
+# deleting active posts
+    'active_first_delete_button' : (217, 218, 223),
+    'active_first_delete_button_alt' : (217, 217, 224),
+    'active_delete_post' : (217, 218, 223),
+    'active_delete_post_alt' : (217, 218, 223),
+    'active_confirm_delete' : (69, 117, 225),
+    'active_confirm_delete_alt' : (81, 30, 235)
 }
 
 

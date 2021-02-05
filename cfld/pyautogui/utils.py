@@ -136,6 +136,15 @@ def wait_for_screen_then_click_or_exit(loc_on_screen_name, error_msg, target_col
     print(error_msg)
     exit(1)
 
+def wait_for_screen_then_click(loc_on_screen_name, error_msg, target_color_names=[], match = True, x = lambda : None, timeout_seconds = 30, clean_func = clean_up):
+    tcs = get_target_colors(loc_on_screen_name, target_color_names)
+    res = wait_for_screen_general(loc_on_screen_name, tcs, match, x, timeout_seconds)
+    if res:
+        mouse_click(loc_on_screen_name)
+        return True
+    print(error_msg)
+    return False
+
 # Open chrome and click on the url bar
 def open_chrome():
     mouse_click('menu')
