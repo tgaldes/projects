@@ -70,7 +70,6 @@ class GMailService(Logger):
                 self.label_id_2_string[label['id']] = label['name']
         self.thread_index = 0
         self.ld('Loaded labels: {}'.format(self.label_string_2_id.keys()))
-        pdb.set_trace()
 
     def get_history_id(self, thread_id):
         if thread_id in self.thread_id_2_history_id:
@@ -208,5 +207,6 @@ class GMailService(Logger):
         self.drafts.append(new_draft)
 
 if __name__=='__main__':
-    gs = GMailService('apply@cleanfloorslockingdoors.com', ["cleanfloorslockingdoors.com", "cf-ld.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")
+    #gs = GMailService('apply@cleanfloorslockingdoors.com', ["cleanfloorslockingdoors.com", "cf-ld.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")
+    gs = GMailService('tgaldes@gmail.com', ["gmail.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")
 
