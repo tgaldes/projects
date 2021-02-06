@@ -42,7 +42,7 @@ class GMailService(Logger):
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         self.default_limit = 1
-        self.default_query = 'Signing up'
+        self.default_query = ''
         #self.default_limit = 1
         #self.default_query = 'test subject'
 
