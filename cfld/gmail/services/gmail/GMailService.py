@@ -42,7 +42,7 @@ class GMailService(Logger):
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
         self.default_limit = 20
-        self.default_query = ''
+        self.default_query = 'label:INBOX'
         #self.default_limit = 1
         #self.default_query = 'test subject'
 
