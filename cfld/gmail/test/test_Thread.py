@@ -95,30 +95,6 @@ class ThreadTest(unittest.TestCase):
         with self.assertRaises(Exception):
             thread.append_to_draft('draft msg', ['nottheexistingdraftemail@asdf.com'])
 
-    def test_make_them_say_no(self):
-        mock_service = Mock()
-        mock_service.get_user = MagicMock(return_value='apply')
-        mock_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
-        mock_service.get_label_name = MagicMock(return_value='Schools/USC')
-        thread = Thread(*get_thread_constructor_args('thread_test_inputs/make_them_say_no.txt'), mock_service)
-        # Evening of 20201030
-        self.assertEqual(1604097866, thread.last_ts())
-        one_day_in_future = thread.last_ts() + 86400
-        two_days_in_future = thread.last_ts() + 86400 * 2
-        mock_service.get_label_name = MagicMock(return_value='not a school label')
-        self.assertEqual('Hi Tony,\r\n\r\nWe actually only do UCLA for summer housing.\r\n\r\nBest,\r\nTyler\r\nCF&LD\r\n', thread.last_message_text())
-
-        # check out timestamp boolean expression
-        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: thread.last_ts()))
-        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: one_day_in_future))
-        self.assertTrue(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: two_days_in_future))
-
-        # check it out when our email isn't the last in the thread
-        mock_service.get_user = MagicMock(return_value='tenant')
-        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: thread.last_ts()))
-        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: one_day_in_future))
-        self.assertFalse(thread.need_make_them_say_no(duration_days=1, time_getter_f=lambda: two_days_in_future))
-
     def test_append_creates_response_to_last_message_in_thread(self):
         mock_service = Mock()
         mock_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])

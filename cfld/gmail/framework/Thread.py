@@ -141,18 +141,6 @@ class Thread(Logger):
         self.lw('Could not find salutation in thread with id: {} subject: {}'.format(self.identifier, self.subject()))
         return base.format('')
 
-    # Return true if we want to send a follow up email to the thread confirming that the 
-    # tenant is no longer interested in housing
-    # Conditions- last message was sent by userId='me' more than duration_days ago
-    def need_make_them_say_no(self, duration_days=2, time_getter_f=time):
-        ts_true = self.last_ts() + duration_days * 86400 < time_getter_f()
-        # last message is from userId=me 
-        # AND we have sent that message (as opposed to a draft)
-        last_msg_true = \
-            self.is_last_message_from_us() \
-            and self.messages[-1].has_label_id('SENT')
-        return ts_true and last_msg_true
-
     # For reply all, get everything in the from, to, and cc fields that isn't our email
     def default_reply(self, reply_all=True):
         counter = -1
@@ -194,10 +182,10 @@ class Thread(Logger):
 
     # return the epoch time of the last message sent or received
     def last_ts(self):
-        return self.messages[-1].ts()
+        return self.__last_message().ts()
 
     def age_in_days(self, now_f=time):
-        return int((now_f() - self.messages[-1].ts()) / 86400)
+        return int((now_f() - self.__last_message().ts()) / 86400)
     
     # Retun a string representing the short name of the school
     # empty string if we can't find a label matching 'Schools/.*'
