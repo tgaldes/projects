@@ -148,6 +148,7 @@ def wait_for_screen_then_click(loc_on_screen_name, error_msg, target_color_names
 # Open chrome and click on the url bar
 def open_chrome():
     mouse_click('menu')
+    sleep(2)
     keyboard('Chrome')
     wait_for_screen_then_click_or_exit('chrome_icon_in_linux_menu', 'chrome did not pop up from linux menu.')
     wait_for_screen_then_click_or_exit('url_bar', 'url_bar did not pop up from chrome', target_color_names=['url_bar', 'url_bar_gray_color', 'url_bar_dark_color'])

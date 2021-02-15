@@ -16,6 +16,7 @@ all_coords = {
         'green_process_fee' : (1024, 454),
         'pending_process_fee' : (1832, 497),
         'tenant_screening' : (969, 422),
+        'tenant_page_loaded' : (1634, 494),
         'green_tenant_screening' : (790, 574),
         'green_review_order' : (879, 916),
         'monthly_rent' : (862, 453),
@@ -31,8 +32,8 @@ all_coords = {
         
         # getting credit check results
         #'move_in' : (958, 375),
-        'conditional' : (926, 573),
-        'decline' : (914, 573),
+        'conditional' : (958, 596),
+        'decline' : (919, 597),
         'credit_report_link' : (761, 695),
         'credit_report' : (1056, 415),
         'criminal_report_link' : (862, 697),
@@ -62,6 +63,7 @@ application_colors = {
     'green_process_fee' : (112, 143, 104),
     'pending_process_fee' : (236, 188, 83),
     'tenant_screening' : (79, 96, 149),
+    'tenant_page_loaded' : (227, 235, 242),
     'green_tenant_screening' : (144, 196, 199),
     'green_review_order' : (112, 143, 104),
     'charge_my_buildium_account' : (140, 178, 131),
@@ -77,8 +79,10 @@ application_colors = {
 
     # getting credit check results
     #'move_in' : (112, 143, 104),
-    'conditional' : (204, 204, 204),
-    'decline' : (204, 204, 204),
+    'conditional' : (207, 207, 207),
+    'conditional_alt' : (204, 204, 204),
+    'decline' : (207, 207, 207),
+    'decline_alt' : (204, 204, 204),
     # blue areas so we know we loaded the page
     'credit_report' : (216, 237, 254),
     'criminal_report' : (216, 237, 254),

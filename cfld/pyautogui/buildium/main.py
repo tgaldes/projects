@@ -84,19 +84,21 @@ def take_screenshots(first, last, start_fn_index = 0):
 
 def get_screening(first, last):
     open_applicant(first, last)
-    wait_for_screen_then_click_or_exit('tenant_screening', 'could not click on first screening button',
+    if wait_for_screen_or_clean_up('tenant_page_loaded', 'blue box on tenant page didnt load'):
+        mouse_click('tenant_screening')
+    '''wait_for_screen_then_click_or_exit('tenant_screening', 'could not click on first screening button',
                                 x = lambda : [
                                     move_to('tenant_screening'),
                                     pag.moveRel(1, 1, .1),
-                                    pag.moveRel(-1, -1, .1)])
+                                    pag.moveRel(-1, -1, .1)])'''
 
     start_fn_index = 0
     all_fns = []
     for page_link, page in [('credit_report_link', 'credit_report'), ('criminal_report_link', 'criminal_report'), ('evictions_report_link', 'evictions_report')]:
         # load the landing page
-        if not wait_for_screen_or_clean_up('decline', 'could not find gray decline button', clean_func = lambda : None) \
+        if not wait_for_screen_or_clean_up('decline', 'could not find gray decline button', clean_func = lambda : None, target_color_names=['decline, decline_alt']) \
                 and not \
-                wait_for_screen_or_clean_up('conditional', 'could not find gray conditional button'):
+                wait_for_screen_or_clean_up('conditional', 'could not find gray conditional button', target_color_names=['conditional, conditional_alt']):
                 return
         # click on the page we want
         mouse_click(page_link)

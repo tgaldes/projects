@@ -35,9 +35,8 @@ group_data = {'USC' :(
             'https://docs.google.com/document/d/17Kx_8SGCm3QA-ArL8o7GU99cOyqjLJX02lJogHlAvKg',
             '/home/tgaldes/Dropbox/Fraternity PM/Pictures/Minnesota Kappa Sigma/Facebook',
             [
-                ('https://www.facebook.com/groups/439773589790851/', 3),
-                ('https://www.facebook.com/groups/153997765269550/', 2),
                 ('https://www.facebook.com/groups/607733796013823/', 1)
+                ('https://www.facebook.com/groups/1364804473579405/', 1)
             ],
              (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
