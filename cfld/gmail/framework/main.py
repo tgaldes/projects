@@ -2,6 +2,7 @@ import pdb
 import sys
 import json
 from time import sleep
+import traceback
 
 import framework.globals
 from framework.Logger import Logger
@@ -37,12 +38,18 @@ class Main:
         self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes)
 
     def run_one(self):
-        for rule_group, user in self.rule_factory.get_rule_groups():
-            inbox = self.inboxes[user]
-            threads = inbox.query(rule_group.get_query())
-            for thread in threads:
-                self.logger.li('Processing user {} thread {}'.format(user, thread))
-                rule_group.process(thread)
+        try:
+            for rule_group, user in self.rule_factory.get_rule_groups():
+                inbox = self.inboxes[user]
+                threads = inbox.query(rule_group.get_query())
+                for thread in threads:
+                    self.logger.li('Processing user {} thread {}'.format(user, thread))
+                    rule_group.process(thread)
+            self.logger.li('Refreshing inboxes and default queries for next loop.')
+            for inbox in self.inboxes:
+                self.inboxes[inbox].refresh()
+        except Exception as e:
+            self.logger.lw('Caught exception in main. Stack: {}'.format(traceback.format_exc()))
 
     def run(self):
         if 'validate' in self.config and self.config['validate']:
@@ -52,11 +59,6 @@ class Main:
             self.run_one()
             loop_count += 1
             self.logger.li('Finished iteration {} in main'.format(loop_count))
-
-            self.logger.li('Refreshing inboxes and default queries for next loop.')
-            for inbox in self.inboxes:
-                self.inboxes[inbox].refresh()
-
             sleep(60)
 
 if __name__=='__main__':

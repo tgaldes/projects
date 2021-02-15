@@ -158,3 +158,32 @@ class IntegrationTest(unittest.TestCase):
         self.assertTrue(apply_threads[0].has_draft())
         self.assertTrue(parking_info in apply_threads[0].existing_draft_text())
 
+    def test_catch_socket_timeout_exception_in_main(self):
+    # In this test we'll have a mock service that raises an exception the first time we add a draft
+    # We expect that 
+        from orgs.example_org.ExampleOrg import signature
+        email_service = Mock()
+        all_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), email_service)]
+        email_service.query = MagicMock(return_value=all_threads)
+        email_service.get_label_name = MagicMock(return_value='Schools')
+        email_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
+        email_service.get_user = MagicMock(return_value='tyler')
+        email_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
+        email_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        email_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
+        email_service.append_or_create_draft = MagicMock(side_effect=Exception)
+        config = {}
+        config['org'] = {}
+        config['org']['name'] = 'example_org'
+        config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature']
+        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
+        logger = Logger('TestIntegration')
+        m = Main([email_service], logger, config)
+
+        m.setup()
+        # if we don't catch the exception here we'll fail
+        m.run_one()
+        self.assertEqual(1, email_service.append_or_create_draft.call_count)
+

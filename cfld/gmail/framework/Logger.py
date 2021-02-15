@@ -13,7 +13,7 @@ class Logger:
         self.logger.info(s)
 
     def lw(self, s):
-        self.logger.warn(s)
+        self.logger.warning(s)
         
     def le(self, s):
         self.logger.error(s)

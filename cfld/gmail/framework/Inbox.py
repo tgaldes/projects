@@ -12,7 +12,8 @@ class Inbox(Logger):
 
     # Note that current implementation will only pick up preloaded 20 threads
     # when q == ''
-    def query(self, q, limit=99):
+    # when limit is left as default we will let the service use it's default value
+    def query(self, q, limit=0): # TODO: how should we share the default with the service?
         res = []
         for thread in self.service.query(q, limit):
             # If we've fully processed this thread, make sure its history id has been incremented before processing it again

@@ -41,7 +41,7 @@ class GMailService(Logger):
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
-        self.default_limit = 1
+        self.default_limit = 20
         self.default_query = ''
         #self.default_limit = 1
         #self.default_query = 'test subject'
@@ -129,6 +129,8 @@ class GMailService(Logger):
 
     # Empty q gets us all_full_threads
     def query(self, q, limit):
+        if limit <= 0:
+            limit = self.default_limit
         if q in self.full_threads_by_query:
             return self.full_threads_by_query[q]
         elif q == '':
