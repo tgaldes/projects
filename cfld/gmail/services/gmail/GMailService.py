@@ -96,7 +96,7 @@ class GMailService(Logger):
                     self.__update_history_id(thread.id(), thread_map['historyId'])
                     res.append(thread)
                 except Exception as e:
-                    self.logw('Couldn\'t create thread id {} because of: {}'.format(item['id'], e))
+                    self.li('Couldn\'t create thread id {} because of: {}'.format(item['id'], e))
         # Save full result of the query
         self.full_threads_by_query[q] = res
 
@@ -195,8 +195,6 @@ class GMailService(Logger):
 
     def __create_thread_from_raw(self, raw_thread):
         messages = []
-        if len(raw_thread['messages']) == 0:
-            raise Exception('Cannot create thread without any messages.')
         for message in raw_thread['messages']:
             messages.append(GMailMessage(message, self))
         return Thread(raw_thread['id'], messages, self)

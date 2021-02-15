@@ -452,3 +452,10 @@ class ThreadTest(unittest.TestCase):
         thread = Thread(*get_thread_constructor_args('thread_test_inputs/first_delimiter_for_forwarded_message_text.txt'), mock_service)
         expected_last_message ='Hi buddy\r\n\r\n\r\n' 
         self.assertEqual(expected_last_message, thread.last_message_text())
+
+    def test_throw_in_constructor_for_draft_only_thread(self):
+        mock_service = Mock()
+        with self.assertRaises(Exception):
+            thread = Thread(*get_thread_constructor_args('thread_test_inputs/draft_only_thread.txt'), mock_service)
+
+

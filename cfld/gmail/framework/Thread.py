@@ -10,6 +10,8 @@ class Thread(Logger):
         self.service = service
         self.identifier = identifier
         self.messages = messages
+        if len(self) == 0:
+            raise Exception('Don\'t want to create a thread that contains no non draft messages, throwing in constructor as part of normal operation.')
         if self.messages:
             self.li('Initialized thread with id: {} subject: {}'.format(self.identifier, self.subject()))
         else:
