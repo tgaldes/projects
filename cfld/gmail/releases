@@ -1,3 +1,4 @@
+20200220 1.3.1 fix default query key error
 20200215 1.3.0 handle socket timeout, remove make them say no, fine tune prod rules for better processing in actual inboxes
 20200116 1.2.1 quick change for base validate to work with org code
 20200115 1.2.0 merge pyautogui reboot, add attachment rules
