@@ -133,7 +133,8 @@ class GMailService(Logger):
             limit = self.default_limit
         if q in self.full_threads_by_query:
             return self.full_threads_by_query[q]
-        elif q == '':
+        # default is already pre loaded
+        elif q == '' and self.default_query in self.full_threads_by_query:
             return self.full_threads_by_query[self.default_query]
         self.__populate_query_result(q, limit)
         return self.full_threads_by_query[q]
