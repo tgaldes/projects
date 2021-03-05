@@ -12,6 +12,7 @@ import collections
 import pdb
 import pickle
 import data_cleanup_helpers as dch
+from copy import copy
 
 from interface import implements
 
@@ -38,7 +39,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g'):
             # TEST
             parent_mailer_folder_id='15--fLcMPKG_Au0HIbo4Q30VCWzw9j0vl',
-            spreadsheet_id='1W0Ve0Prv8H9LSSDlyKxYUAXBuHNp7li0yIz6B-bI6uU'):
+            spreadsheet_id='13aEzvGkz1Sa0kflqcW52B_3caILUeB9eErk5vFlsmEc'):
 
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
         self.letter_creds = self.__load_creds('pickles/cfldv1_letter_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/docs_credentials.json', DOC_SCOPES)
@@ -54,6 +55,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         # map name of sheet to data
         self.sheets_data, self.sheets = self.__get_sheets(self.spreadsheet, self.spreadsheet_id)
 
+        # TODO: uncomment these
         self.letter_service = build('docs', 'v1', credentials=self.letter_creds)
 
 
@@ -61,11 +63,13 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
 
         self.gmail_service = build('drive', 'v3', credentials=self.gmail_creds)
 
+        # one off functions for maniuplating data on the google sheet or outputting data we should fix manually
         #self.__strip_whitespace('houses', 'chapter_designation')
-        self.__get_bad_addresses()
+        #self.__get_bad_addresses()
         #self.__get_bad_names()
         #self.__get_bad_chapter_designations()
         #self.__separate_emails()
+        #self.__move_multiline_email_addresses()
 
 # Will create a sheet for all the addresses, and a folder for the letters on demand
     def __set_up_mailer(self):
@@ -283,7 +287,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
         for sheet in spreadsheet.get('sheets'):
             title = sheet.get('properties').get('title')
 # Get the data from this sheet
-            range_name='{}!A1:AB2500'.format(title) # TODO: maybe can hardcode the name of the last column we need in python per sheet, get the whole first row, and then get the column letter from that then re get the whole sheet to that column
+            range_name='{}!A1:AM2500'.format(title) # TODO: maybe can hardcode the name of the last column we need in python per sheet, get the whole first row, and then get the column letter from that then re get the whole sheet to that column
             sheets[title] = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().get(spreadsheetId=args[0], range=args[1]).execute()''', id_, range_name)
             m[title] = sheets[title].get('values', [])
         return m, sheets
@@ -687,6 +691,56 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
                 values = [email_string.split()]
                 body = { 'values' : values, }
                 result = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range=args[0], valueInputOption='RAW', body=args[1]).execute()''', range_name, body)
+
+    def __move_multiline_email_addresses(self):
+        # we'll create an entirely new sheet that only has one email column
+        new_sheet_data = []
+        new_sheet_header = []
+        email_column_prefix = 'email'
+        sheet_data = self.sheets_data[sc.sheet_names['contacts']]
+        header = sheet_data[0]
+        for i, row in enumerate(sheet_data):
+            if i == 0:
+                added_email_header = False
+                start_email_index = -1
+                end_email_index = -1
+                for j, val in enumerate(row):
+                    if val[:len(email_column_prefix)] == email_column_prefix:
+                        if start_email_index == -1:
+                            start_email_index = j
+                        end_email_index = j
+                        if not added_email_header:
+                            new_sheet_header.append(val)
+                            added_email_header = True
+                        else:
+                            continue
+                    else:
+                        new_sheet_header.append(val)
+                print('New header is: {}'.format(new_sheet_header))
+                new_sheet_data.append(new_sheet_header)
+                continue
+            # populate all the non email values and leave the email blank for the moment
+            new_base_row = row[:start_email_index] + [''] + row[end_email_index + 1:]
+            added_row = False
+            for email in row[start_email_index:end_email_index + 1]:
+                if email != '':
+                    new_base_row[start_email_index] = email
+                    new_sheet_data.append(copy(new_base_row))
+                    added_row = True
+            # if we didn't have any email for this line, add one instance of it anyway
+            if not added_row:
+                    new_sheet_data.append(copy(new_base_row))
+        for row in new_sheet_data:
+            print(row)
+
+        # hardcoded :(
+        range_name = 'addresses_clean_new_data!A1:AH2642'
+        body = { 'values' : new_sheet_data }
+        result = self.__exponential_backoff('''self.sheet_service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range=args[0], valueInputOption='RAW', body=args[1]).execute()''', range_name, body)
+
+
+
+
 
 
         
