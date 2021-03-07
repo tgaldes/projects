@@ -19,6 +19,7 @@ class IntegrationTest(unittest.TestCase):
         email_service.query = MagicMock(return_value=all_threads)
         email_service.get_label_name = MagicMock(return_value='Schools')
         email_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
+        email_service.get_all_history_ids = MagicMock(return_value={})
         email_service.get_user = MagicMock(return_value='tyler')
         email_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
         email_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
@@ -70,6 +71,7 @@ class IntegrationTest(unittest.TestCase):
         tyler_service.get_user = MagicMock(return_value='tyler')
         tyler_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
         tyler_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
+        tyler_service.get_all_history_ids = MagicMock(return_value={})
 
         apply_service = Mock()
         apply_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'), apply_service)]
@@ -85,6 +87,7 @@ class IntegrationTest(unittest.TestCase):
         apply_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         apply_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : draft_text, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(draft_text)}, 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}, {}))
         apply_service.set_label = MagicMock(return_value={'labelIds' : ['test label id for "automation" label']})
+        apply_service.get_all_history_ids = MagicMock(return_value={})
         config = {}
         config['org'] = {}
         config['org']['name'] = 'example_org'
@@ -132,6 +135,7 @@ class IntegrationTest(unittest.TestCase):
         apply_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         apply_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : parking_info, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(parking_info)}, 'headers' : [{'name' : 'to', 'value' : '<{}>,<{}>'.format(*dest_email.split(','))}]}}, {}))
         apply_service.set_label = MagicMock(return_value={'labelIds' : ['test label id for "automation" label']})
+        apply_service.get_all_history_ids = MagicMock(return_value={})
         config = {}
         config['org'] = {}
         config['org']['name'] = 'example_org'
@@ -167,6 +171,7 @@ class IntegrationTest(unittest.TestCase):
         email_service.query = MagicMock(return_value=all_threads)
         email_service.get_label_name = MagicMock(return_value='Schools')
         email_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
+        email_service.get_all_history_ids = MagicMock(return_value={})
         email_service.get_user = MagicMock(return_value='tyler')
         email_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
         email_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])

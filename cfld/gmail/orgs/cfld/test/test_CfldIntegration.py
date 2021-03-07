@@ -36,6 +36,7 @@ class CfldIntegrationTest(unittest.TestCase):
         # submission handler will put together a response
         apply_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : '', 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : ''}, 'headers' : [{'name' : 'to', 'value' : '<test@mail.com>'}]}}, {}))
         apply_service.set_label = MagicMock(return_value={'labelIds' : ['test label id for "automation" label']})
+        apply_service.get_all_history_ids = MagicMock(return_value={})
         config = {}
         config['org'] = {}
         config['org']['name'] = 'cfld'
