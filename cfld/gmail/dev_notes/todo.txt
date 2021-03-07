@@ -1,80 +1,24 @@
-
-For application approved
-/usr/local/lib/python3.5/dist-packages/requests/__init__.py:83: RequestsDependencyWarning: Old version of cryptography ([1, 2, 3]) may cause slowdown.
-  warnings.warn(warning, RequestsDependencyWarning)
+/home/tgaldes/.local/lib/python3.5/site-packages/OpenSSL/crypto.py:14: CryptographyDeprecationWarning: Python 3.5 support will be dropped in the next release of cryptography. Please upgrade your Python.
+  from cryptography import utils, x509
+/usr/local/lib/python3.5/dist-packages/requests/__init__.py:91: RequestsDependencyWarning: urllib3 (1.26.3) or chardet (3.0.4) doesn't match a supported version!
+  RequestsDependencyWarning)
 Traceback (most recent call last):
   File "/cfld/projects/cfld/gmail/framework/main.py", line 81, in <module>
     m.run()
-  File "/cfld/projects/cfld/gmail/framework/main.py", line 52, in run
-    self.run_one()
-  File "/cfld/projects/cfld/gmail/framework/main.py", line 45, in run_one
-    rule_group.process(thread)
-  File "/cfld/projects/cfld/gmail/framework/RuleGroup.py", line 134, in process
-    self.rule.process(thread)
-  File "/cfld/projects/cfld/gmail/framework/RuleHolder.py", line 26, in process
-    self.action.process(thread, match_groups)
-  File "/cfld/projects/cfld/gmail/framework/Actions.py", line 126, in process
-    thread.remove_existing_draft()
-  File "/cfld/projects/cfld/gmail/framework/Thread.py", line 76, in remove_existing_draft
-    self.service.delete_draft(draft_id)
-  File "/cfld/projects/cfld/gmail/services/gmail/GMailService.py", line 165, in delete_draft
-    ret = self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
+  File "/cfld/projects/cfld/gmail/framework/main.py", line 58, in run
+    self.inboxes[inbox].refresh()
+  File "/cfld/projects/cfld/gmail/framework/Inbox.py", line 33, in refresh
+    self.service.refresh()
+  File "/cfld/projects/cfld/gmail/services/gmail/GMailService.py", line 124, in refresh
+    self.__populate_query_result(self.default_query, self.default_limit)
+  File "/cfld/projects/cfld/gmail/services/gmail/GMailService.py", line 91, in __populate_query_result
+    thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
   File "/usr/local/lib/python3.5/dist-packages/googleapiclient/_helpers.py", line 134, in positional_wrapper
     return wrapped(*args, **kwargs)
-  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 901, in execute
-    headers=self.headers,
-  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 204, in _retry_request
-    raise exception
-  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 177, in _retry_request
-    resp, content = http.request(uri, method, *args, **kwargs)
-  File "/usr/local/lib/python3.5/dist-packages/google_auth_httplib2.py", line 198, in request
-    uri, method, body=body, headers=request_headers, **kwargs)
-  File "/usr/local/lib/python3.5/dist-packages/httplib2/__init__.py", line 1994, in request
-    cachekey,
-  File "/usr/local/lib/python3.5/dist-packages/httplib2/__init__.py", line 1651, in _request
-    conn, request_uri, method, body, headers
-  File "/usr/local/lib/python3.5/dist-packages/httplib2/__init__.py", line 1589, in _conn_request
-    response = conn.getresponse()
-  File "/usr/lib/python3.5/http/client.py", line 1225, in getresponse
-    response.begin()
-  File "/usr/lib/python3.5/http/client.py", line 307, in begin
-    version, status, reason = self._read_status()
-  File "/usr/lib/python3.5/http/client.py", line 268, in _read_status
-    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
-  File "/usr/lib/python3.5/socket.py", line 575, in readinto
-    return self._sock.recv_into(b)
-  File "/usr/lib/python3.5/ssl.py", line 929, in recv_into
-    return self.read(nbytes, buffer)
-  File "/usr/lib/python3.5/ssl.py", line 791, in read
-    return self._sslobj.read(len, buffer)
-  File "/usr/lib/python3.5/ssl.py", line 575, in read
-    v = self._sslobj.read(len, buffer)
-socket.timeout: The read operation timed out
+  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 907, in execute
+    raise HttpError(resp, content, uri=self.uri)
+googleapiclient.errors.HttpError: <HttpError 500 when requesting https://gmail.googleapis.com/gmail/v1/users/me/threads/1777a77137389807?format=full&alt=json returned "Internal error encountered.">
 
 
 
-
-Medium value
-Long term low priority and low value tickets:
-- set the 'automation' label at the message level so our automation won't touch user created drafts, but will instead create it's own drafts in the threads
-
-  File "/cfld/projects/cfld/gmail/framework/main.py", line 81, in <module>
-    m.run()
-  File "/cfld/projects/cfld/gmail/framework/main.py", line 52, in run
-    self.run_one()
-  File "/cfld/projects/cfld/gmail/framework/main.py", line 45, in run_one
-    rule_group.process(thread)
-  File "/cfld/projects/cfld/gmail/framework/RuleGroup.py", line 134, in process
-    self.rule.process(thread)
-  File "/cfld/projects/cfld/gmail/framework/RuleHolder.py", line 23, in process
-    if self.matcher.matches(thread) or super().force_match():
-  File "/cfld/projects/cfld/gmail/framework/Matchers.py", line 158, in matches
-    if not matcher.matches(thread):
-  File "/cfld/projects/cfld/gmail/framework/Matchers.py", line 80, in matches
-    text = thread.last_message_text().lower()
-  File "/cfld/projects/cfld/gmail/framework/Thread.py", line 225, in last_message_text
-    return self.__last_message().content()
-  File "/cfld/projects/cfld/gmail/framework/Thread.py", line 242, in __last_message
-    raise Exception('No non draft messages in thread of length {}'.format(self.__len__()))
-Exception: No non draft messages in thread of length 0
-
+If an expression matcher is created with just whitespace, we should treat is as empty and log a warning or error or throw that we're ignoring it

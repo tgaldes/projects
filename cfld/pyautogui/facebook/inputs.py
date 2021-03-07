@@ -13,7 +13,9 @@ group_data = {'USC' :(
                  ('https://www.facebook.com/groups/344314769393545', 2),
                  ('https://www.facebook.com/groups/212185346023652/', 1),
                  ('https://www.facebook.com/groups/143384839561246/', 3),
-                 ('https://www.facebook.com/groups/161010671290969/', 1)
+                 ('https://www.facebook.com/groups/161010671290969/', 1),
+                 ('https://www.facebook.com/groups/housingusc/', 1),
+                 ('https://www.facebook.com/groups/apartment.la/', 1)
              ],
              (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
