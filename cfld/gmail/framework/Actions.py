@@ -42,6 +42,16 @@ class DestinationBase(Logger):
         else:
             return []
 
+class SendAction(implements(IAction), Logger):
+    def __init__(self):
+        super(SendAction, self).__init__(__class__)
+        self.ld('Created')
+    def process(self, thread, matches):
+        if thread.has_draft():
+            thread.send()
+        else:
+            self.lw('tried to send a message on a thread without a draft. Thread {}'.format(thread))
+
 class DraftAction(implements(IAction), DestinationBase):
     def __init__(self, value, destinations, prepend=False, name=''):
         if not name:

@@ -41,10 +41,10 @@ class GMailService(Logger):
         self.service = build('gmail', 'v1', credentials=creds)
         self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
 
-        self.default_limit = 20
-        self.default_query = 'label:INBOX'
         #self.default_limit = 1
-        #self.default_query = 'test subject'
+        #self.default_query = 'subject:stop hurting for tenants '
+        self.default_limit = 20
+        self.default_query = ''
 
 
         # We want to create no more than one Thread instance per thread id
@@ -171,6 +171,9 @@ class GMailService(Logger):
         ret = self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
         self.__update_history_id(thread_id, history_id=None)
         return ret
+    def send(self, draft_id):
+        message_data = self.service.users().drafts().send(userId='me', body={'id' : draft_id }).execute()
+        return GMailMessage(message_data, self)
 
     def get_attachment(self, attachment_id, message_id):
         return self.service.users().messages().attachments().get(userId='me', messageId=message_id, id=attachment_id).execute()

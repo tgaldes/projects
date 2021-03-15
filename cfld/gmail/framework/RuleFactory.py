@@ -96,6 +96,8 @@ class RuleFactory(Logger):
             elif tup.action == 'shell':
                 action = ShellAction(tup.value)
                 log_msg += 'ShellAction'
+            elif tup.action == 'send':
+                action = SendAction()
             else:
                     print(tup)
                     raise Exception('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}. tup: {}'.format(tup.action, tup))

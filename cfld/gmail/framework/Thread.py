@@ -189,16 +189,11 @@ class Thread(Logger):
     def age_in_days(self, now_f=time):
         return int((now_f() - self.__last_message().ts()) / 86400)
     
-    # Retun a string representing the short name of the school
-    # empty string if we can't find a label matching 'Schools/.*'
-    '''def short_name(self): # TODO: move to cfld
-        delim = 'Schools/'
-        for label_id in self.messages[0].label_ids():
-            label_name = self.service.get_label_name(label_id)
-            if label_name and label_name.find(delim) == 0:
-                return label_name[len(delim):]
-        return 'the campus' # TODO: are we sure?'''
-
+    def send(self):
+        draft_id = self.existing_draft_id()
+        if not draft_id:
+            raise Exception('No existing draft when we are trying to send on a thread.')
+        self.service.send(draft_id)
 
     def has_draft(self):
         if self.existing_draft_text():
@@ -248,7 +243,6 @@ class Thread(Logger):
                     return draft['id']
         return None
 
-    # TODO: return a bool
     def __concatenate_destinations(self, new_destinations):
         if self.messages[-1].is_draft():
             return list(set(new_destinations) | set(self.messages[-1].recipients()))
