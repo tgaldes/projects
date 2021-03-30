@@ -43,7 +43,7 @@ class GMailService(Logger):
 
         #self.default_limit = 1
         #self.default_query = 'subject:stop hurting for tenants '
-        self.default_limit = 20
+        self.default_limit = 40
         self.default_query = ''
 
 

@@ -21,4 +21,5 @@ googleapiclient.errors.HttpError: <HttpError 500 when requesting https://gmail.g
 
 
 
-If an expression matcher is created with just whitespace, we should treat is as empty and log a warning or error or throw that we're ignoring it
+- If an expression matcher is created with just whitespace, we should treat is as empty and log a warning or error or throw that we're ignoring it
+- rule to remove the inbox label from 'Rental Application submitted' or Rental Application approved' emails once we've run our redirect actions
