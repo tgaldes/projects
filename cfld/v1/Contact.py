@@ -79,7 +79,7 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
             m = letters.emails[self.data.code]
         else:
             m = letters.letters[self.data.code]
-        return m.format_letter(self.datas, self._number_of_messages_going_to_chapter(mail_type_enum))
+        return m.format_letter(self.datas, 1)#self._number_of_messages_going_to_chapter(mail_type_enum))
 
     def _number_of_messages_going_to_chapter(self, mail_type):
         if mail_type == enums.MailType.MAIL:

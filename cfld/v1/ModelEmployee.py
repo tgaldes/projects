@@ -36,6 +36,8 @@ class ModelEmployee(UI):
                     self.contacts.append(Contact(ContactData(*(data[:spreadsheet_constants.contact_data_header_length - 1]), house.data))) # subtract 1 so we can add the house data named tuple to the contact data
                     break
 
+        print('Loaded {} houses and {} people'.format(len(self.houses), len(self.contacts)))
+
     def send_intro_emails(self, min_duplicate_days,
                           school_filter=[],
                           school_filter_is_include=True,
@@ -63,9 +65,9 @@ class ModelEmployee(UI):
                           school_filter_is_include=True,
                           code_filter=[],
                           code_filter_is_include=True):
-        '''for contact in self.contacts:
+        for contact in self.contacts:
             if self.__filter(contact.data, min_duplicate_days, self.google.get_last_date_for_contact, MailType.MAIL, school_filter, school_filter_is_include, code_filter, code_filter_is_include):
-                f(contact, self.google)'''
+                f(contact, self.google)
         for house in self.houses:
             if self.__filter(house.data, min_duplicate_days, self.google.get_last_date_for_house, MailType.MAIL, school_filter, school_filter_is_include, code_filter, code_filter_is_include):
                 f(house, self.google)
@@ -110,7 +112,7 @@ if __name__=='__main__':
     #emp.update_redirects('/home/tgaldes/Desktop/redirects.csv')
 
     #emp.send_snail_mail(0, ['USA', 'VCU', 'ODU', 'UNR', 'UW Madison', 'Duke' 'Toledo', 'UCF', 'Nebraska'], True, [], False)
-    emp.send_snail_mail(0, ['Temple', 'Stanford', 'TCU', 'Rutgers', 'Memphis', 'UNM', 'CSU Fresno', 'CSULB', 'Tulsa', 'UTA', 'Tulane', 'Wichita State', 'Marquette', 'UK', 'Cincinnati'], True, [], False)
+    emp.send_snail_mail(0, ['USC', 'SJSU'], True, ['board'], True)
     #emp.send_snail_mail(0, ['UW'], True, ['active'], True)
     #emp.send_intro_emails(0, ['USC'], True, ['board'], True)
 

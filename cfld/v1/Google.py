@@ -39,7 +39,7 @@ class Google(implements(ILetterSender), implements(IEmailSender)):
             #spreadsheet_id='1dtHBRLoCbR5XJtl8T6DAZtdn_mpW1y4FR25myf1MK2g'):
             # TEST
             parent_mailer_folder_id='15--fLcMPKG_Au0HIbo4Q30VCWzw9j0vl',
-            spreadsheet_id='13aEzvGkz1Sa0kflqcW52B_3caILUeB9eErk5vFlsmEc'):
+            spreadsheet_id='10vKsgzKeakj7N06Oxufghq1_NNJ8HSye23NaTCSeURI'):
 
         self.sheet_creds = self.__load_creds('pickles/cfldv1_sheet_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json', SHEET_SCOPES)
         self.letter_creds = self.__load_creds('pickles/cfldv1_letter_secret.pickle', '/home/tgaldes/Dropbox/Fraternity PM/dev_private/docs_credentials.json', DOC_SCOPES)

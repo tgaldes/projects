@@ -1,3 +1,4 @@
+import pdb
 from global_funcs import safe_get_attr
 import spreadsheet_constants as sc
 class Message:
@@ -46,6 +47,7 @@ class Message:
                 print(tup)
                 raise Exception('Unsupported tuple len (not 1, 2, 4, or 5): '.format(tup))
         print(attrs)
+        #pdb.set_trace()
         return self.msg.format(*attrs)
 
 
@@ -54,9 +56,11 @@ common_formats = {
     'chapter_designation' : ('chapter_designation', 1),
     'multiple_contacts' : ('', ' several contacts I have available to', 1, 'unused_var'),
     'saluatation' : ('name', 0, 'Dear Mr. ', ',', 'To whom it may concern,'),
+    'area' : ('area', 1)
 }
 common_format_lists = {
     'general' : [common_formats['saluatation'], common_formats['multiple_contacts'], common_formats['chapter_designation'],  common_formats['fraternity']],
+    'general' : [common_formats['saluatation'], common_formats['chapter_designation'],  common_formats['fraternity'],  common_formats['area'],  common_formats['fraternity']],
     'general_email' : [common_formats['saluatation'], common_formats['multiple_contacts'], common_formats['chapter_designation'],  common_formats['fraternity'], (sc.unique_url_column_name, 0)],
 }
 letters = \
