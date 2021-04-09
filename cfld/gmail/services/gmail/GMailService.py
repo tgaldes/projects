@@ -43,8 +43,10 @@ class GMailService(Logger):
 
         #self.default_query = 'subject:stop hurting for tenants '
         #self.default_limit = 1200
-        self.default_query = ''
-        self.default_limit = 60
+        self.default_query = 'label:INBOX'
+        #self.default_query = 'label:automation/make_them_say_no'
+        self.default_limit = 30
+        #self.default_limit = 1
 
 
         # We want to create no more than one Thread instance per thread id
@@ -102,7 +104,7 @@ class GMailService(Logger):
             next_page_token = q_result.get('nextPageToken', [])
             if not next_page_token:
                 break
-            if len(res) > self.default_limit:
+            if len(res) >= self.default_limit:
                 break
             q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q), pageToken=next_page_token).execute()
 
@@ -189,10 +191,20 @@ class GMailService(Logger):
         ret = self.service.users().drafts().delete(userId=userId, id=draft_id).execute()
         self.__update_history_id(thread_id, history_id=None)
         return ret
-    def send(self, draft_id):
+    def send_draft(self, draft_id):
         try:
             message_data = self.service.users().drafts().send(userId='me', body={'id' : draft_id }).execute()
-            return GMailMessage(message_data, self)
+            # get the full message
+            full_message_data = self.service.users().messages().get(userId='me', id=message_data['id']).execute()
+            message = GMailMessage(full_message_data, self)
+            if message: # remove this draft id
+                # TODO: better design to hold drafts in a map with draft id as the key
+                for i, d in enumerate(self.drafts):
+                    if d['id'] == draft_id:
+                        del self.drafts[i]
+                        break
+            self.__update_history_id(full_message_data['threadId'], full_message_data['historyId'])
+            return message
         except:
             return None
 

@@ -25,55 +25,55 @@ class NewSubmissionHandlerTest(unittest.TestCase):
         # one room type desired open for move in
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type, move_in.strftime('%Y-%m-%d')))
         t.append_to_draft = MagicMock()
-        self.assertEqual(open_at_desired_move_in, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + open_at_desired_move_in, nsh.handle_thread(t))
 
         # two rooms type's open for move in # TODO: we can get more extensive with the test by having open_at_desired_move_in contain arguments that must be formatted with the room type
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type + ', ' + room_type_b, move_in.strftime('%Y-%m-%d')))
         t.append_to_draft = MagicMock()
         nsh.handle_thread(t)
-        self.assertEqual(open_at_desired_move_in, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + open_at_desired_move_in, nsh.handle_thread(t))
 
         # one room type desired before it's available
         desired_move_in = move_in - timedelta(days=1)
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(delay_move_in + delay_move_in_end_one, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + delay_move_in + delay_move_in_end_one, nsh.handle_thread(t))
 
         # two rooms types desired before they are availble
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type + ', ' + room_type_b, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(delay_move_in + delay_move_in_two + delay_move_in_end_two, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + delay_move_in + delay_move_in_two + delay_move_in_end_two, nsh.handle_thread(t))
 
         # three rooms types desired before they are availble
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type + ', ' + room_type_b + ', ' + room_type_c, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(delay_move_in + delay_move_in_two + delay_move_in_two + delay_move_in_end_three, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + delay_move_in + delay_move_in_two + delay_move_in_two + delay_move_in_end_three, nsh.handle_thread(t))
 
         # one room type not availalbe
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, unavailable_room, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(nothing_open, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + nothing_open, nsh.handle_thread(t))
 
         unavailable_room_two = 'garbarge value' # we should be able to handle user checking a box where the type of room isn't configured at all for that school
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, unavailable_room_two, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(nothing_open, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + nothing_open, nsh.handle_thread(t))
 
         # two room types not available
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, unavailable_room + ', ' + unavailable_room_two, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(nothing_open, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + nothing_open, nsh.handle_thread(t))
 
         # one ready for move in, one desired before available, one room type not available
         desired_move_in = move_in
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type_c + ', ' + room_type + ',' + unavailable_room_two, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(open_at_desired_move_in + delay_move_in + delay_move_in_end_one + nothing_open, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + open_at_desired_move_in + delay_move_in + delay_move_in_end_one + nothing_open, nsh.handle_thread(t))
 
         # change the order of args
         t.last_message_text = MagicMock(return_value=raw_email_text.format(email, unavailable_room_two + ', ' + room_type_c + ',' + room_type, desired_move_in.strftime('%Y-%m-%d')))
         nsh.handle_thread(t)
-        self.assertEqual(open_at_desired_move_in + delay_move_in + delay_move_in_end_one + nothing_open, nsh.handle_thread(t))
+        self.assertEqual(NewSubmissionHandler.base_greeting + open_at_desired_move_in + delay_move_in + delay_move_in_end_one + nothing_open, nsh.handle_thread(t))
 
 # ------------------- Constructor stuff ----------------------------
 

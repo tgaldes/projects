@@ -9,6 +9,7 @@ from framework.util import evaluate_expression, get_imports
 from framework.Thread import Thread
 from framework.BaseValidator import BaseValidator
 from framework.Logger import Logger
+from framework import constants
 
 class LabelAction(implements(IAction), Logger):
     def __init__(self, value, unset=False):
@@ -42,13 +43,14 @@ class DestinationBase(Logger):
         else:
             return []
 
-class SendAction(implements(IAction), Logger):
+class SendDraftAction(implements(IAction), Logger):
     def __init__(self):
-        super(SendAction, self).__init__(__class__)
+        super(SendDraftAction, self).__init__(__class__)
         self.ld('Created')
     def process(self, thread, matches):
         if thread.has_draft():
-            thread.send()
+            self.li('Sending draft on thread: {}'.format(thread))
+            thread.send_draft()
         else:
             self.lw('tried to send a message on a thread without a draft. Thread {}'.format(thread))
 
@@ -59,7 +61,7 @@ class DraftAction(implements(IAction), DestinationBase):
         else:
             super(DraftAction, self).__init__(destinations, name)
         self.value = value
-        self.label_action = LabelAction('"automation"')
+        self.label_action = LabelAction(constants.add_automation_label)
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.prepend = prepend
     def process(self, thread, matches):

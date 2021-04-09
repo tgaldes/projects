@@ -21,21 +21,12 @@ googleapiclient.errors.HttpError: <HttpError 500 when requesting https://gmail.g
 
 
 
-If an expression matcher is created with just whitespace, we should treat is as empty and log a warning or error or throw that we're ignoring it
-bump default number of emails we query in prod version
-parking will always match, need to look at the delimiters I'm using to avoid looking at the bodies of old emails
-we will go mid thread into a contact form and create a draft directing them to the application, stop doing that
-Thread.send should update the state of the thread and service list of drafts
+Thread.send should update the state of the thread and service list of drafts (integration test for this guy)
 
 
 rule additions
 
-1) add a thanks for reaching out at the start of the new submission handler
-2) rule to remove the inbox label from 'Rental Application submitted' or Rental Application approved' emails once we've run our redirect actions
-3) add thanks for reaching out to the 'Before we put you in touch with our ....'. We can also delete the existing draft when we match this rule so that I don't have to manually clear the line
 4) add a send rule for 3rd party matches with drafts. We're ready (are we though?)
 5) redirect rule for 'Just sent the lease out. Let me know if you have any questions.'
 6) redirect rule for signed lease 'Thanks for getting the lease out, I've sent you an invite for buildium where you'll be able to pay rent'
 7) Longer explanation of application to match a 3rd party 'what is your application process'
-8) rule for 'sent you an invite to our tenant portal'
-5) add send rule for 3rd party make them say no

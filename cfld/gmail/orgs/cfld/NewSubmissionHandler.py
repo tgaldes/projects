@@ -13,6 +13,7 @@ def room_types_to_string(types, joiner='and'):
     return ret
 
 class NewSubmissionHandler(Logger):
+    base_greeting = 'Thanks for filling out our contact form! '
     def __init__(self, raw_availability, raw_availability_blurbs, max_availability_index=100):
         super(NewSubmissionHandler, self).__init__(__class__)
         self.suite_bathroom_ending = 'wb'
@@ -126,7 +127,7 @@ class NewSubmissionHandler(Logger):
                 else:
                     delay_move_in_types.append((room_type, date_available))
 
-        response = ''
+        response = NewSubmissionHandler.base_greeting
         # format a line of the message for each category (available, available after desired move in date, not available)
         # pass in all arguments we MIGHT use to format the string to support add arguments to the string without requiring a code change
         if available_types:

@@ -10,6 +10,8 @@ class SubjectMatcherTest(unittest.TestCase):
     def test_throw_on_empty_init(self):
         with self.assertRaises(Exception):
             sm = SubjectMatcher('')
+        with self.assertRaises(Exception):
+            sm = SubjectMatcher(' ')
 
     def test_no_match(self):
         sm = SubjectMatcher('test subject')
@@ -94,12 +96,24 @@ class LabelMatcherTest(unittest.TestCase):
         with self.assertRaises(Exception):
             lm.get_matching_groups({})
 
+    def test_reverse_match(self):
+        lm = LabelMatcher('automation', True)
+        thread = Mock()
+        thread.labels = MagicMock(return_value=['no match', 'automation'])
+        self.assertFalse(lm.matches(thread))
+        thread.labels = MagicMock(return_value=['no match'])
+        self.assertTrue(lm.matches(thread))
+        self.assertEqual((), lm.get_matching_groups(thread))
+
+
 
 class BodyMatcherTest(unittest.TestCase):
 
     def test_throw_on_empty_init(self):
         with self.assertRaises(Exception):
             bm = BodyMatcher('')
+        with self.assertRaises(Exception):
+            bm = BodyMatcher(' ')
 
     def test_match(self):
         bm = BodyMatcher('automation')
@@ -137,6 +151,8 @@ class ExpressionMatcherTest(unittest.TestCase):
     def test_throw_on_empty_init(self):
         with self.assertRaises(Exception):
             em = ExpressionMatcher('')
+        with self.assertRaises(Exception):
+            em = ExpressionMatcher(' ')
 
     def test_all(self):
         thread = Mock()

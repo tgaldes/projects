@@ -5,6 +5,7 @@ from framework.Actions import *
 from framework.Logger import Logger
 from framework.RuleHolder import RuleHolder
 from framework.RuleGroup import IfAnyRuleGroup, IfElseRuleGroup, SingleRuleGroup
+from framework import constants
 
 def row_is_empty(row):
     for item in row:
@@ -42,7 +43,7 @@ class RuleFactory(Logger):
             if not tup.email:
                 raise Exception('Cannot create a rule without a user specified. tup: {}'.format(tup))
             matchers = []
-            # create matcher
+            # create one or more matchers
             if tup.label_regex:
                 matchers.append(LabelMatcher(tup.label_regex))
                 log_msg += 'LabelMatcher, '
@@ -55,6 +56,12 @@ class RuleFactory(Logger):
             if tup.expression_match:
                 matchers.append(ExpressionMatcher(tup.expression_match))
                 log_msg += 'ExpressionMatcher, '
+            # framework level behavior to never to never match with a draft action when
+            # the 'automation/force_skip' label is present. This is implemented so that
+            # the framework doesn't delete or modify a draft that the user might be 
+            # actively working on in the web client.
+            if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment']:
+                matchers.append(LabelMatcher(constants.force_skip_label, True))
             if not matchers:
                 matchers.append(AllMatcher())
                 log_msg += 'AllMatcher, '
@@ -79,7 +86,7 @@ class RuleFactory(Logger):
                     raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))
                 action = RedirectAction(inboxes[tup.dest_email], tup.finder, tup.value, tup.destinations)
                 log_msg += 'RedirectAction'
-            elif tup.action == 'empty':
+            elif tup.action == 'empty' or not tup.action:
                 action = EmptyAction()
                 log_msg += 'EmptyAction'
             elif tup.action == 'forward_attachment':
@@ -96,8 +103,8 @@ class RuleFactory(Logger):
             elif tup.action == 'shell':
                 action = ShellAction(tup.value)
                 log_msg += 'ShellAction'
-            elif tup.action == 'send':
-                action = SendAction()
+            elif tup.action == 'send_draft':
+                action = SendDraftAction()
             else:
                     print(tup)
                     raise Exception('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}. tup: {}'.format(tup.action, tup))

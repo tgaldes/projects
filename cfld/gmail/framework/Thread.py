@@ -189,14 +189,14 @@ class Thread(Logger):
     def age_in_days(self, now_f=time):
         return int((now_f() - self.__last_message().ts()) / 86400)
     
-    def send(self):
+    def send_draft(self):
         draft_id = self.existing_draft_id()
         if not draft_id:
             self.le('No existing draft when we are trying to send on a thread. {}'.format(self))
             return
             raise Exception('No existing draft when we are trying to send on a thread.')
-        # TODO: update state
-        self.service.send(draft_id)
+        message = self.service.send_draft(draft_id)
+        self.__add_or_update_message(message)
 
     def has_draft(self):
         if self.existing_draft_text():

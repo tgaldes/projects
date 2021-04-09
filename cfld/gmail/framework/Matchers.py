@@ -18,8 +18,8 @@ class RegexMatcher(BaseValidator):
     def __init__(self, re_string):
         super(RegexMatcher, self).__init__(self._name())
         self.re_string = re_string
-        if not self.re_string:
-            raise Exception('Cannot create with empty re_string: {}'.format(self.re_string))
+        if not self.re_string or self.re_string.isspace():
+            raise Exception('Cannot create with empty or whitespace re_string: {}'.format(self.re_string))
         # Force the regexes to match the entire expression
         if self.re_string[0] != '^':
             self.re_string = '^' + self.re_string
@@ -72,9 +72,9 @@ class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
 
     def __init__(self, needle):
         super(BodyMatcher, self).__init__(__class__)
-        self.needle = needle
-        if not self.needle:
-            raise Exception('Cannot create BodyMatcher with empty needle')
+        self.needle = needle.lower()
+        if not self.needle or self.needle.isspace():
+            raise Exception('Cannot create BodyMatcher with empty or whitespace needle')
 
     def matches(self, thread):
         text = thread.last_message_text().lower()
@@ -100,33 +100,34 @@ class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
 
 class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
 
-    def __init__(self, re_string):
+    def __init__(self, re_string, reverse_match=False):
         super(LabelMatcher, self).__init__(re_string)
+        self.reverse_match = reverse_match
 
     def matches(self, thread):
         for label in thread.labels():
             if super().matches(label, thread):
-                return True
-        return False
+                return not self.reverse_match
+        return self.reverse_match
 
     def get_matching_groups(self, thread):
         for label in thread.labels():
             try:
                 return super().get_matching_groups(label)
             except:
-                pass
+                if self.reverse_match:
+                    return ()
         raise Exception('Asked for matching groups when no matches found for labels: {}'.format(thread.labels()))
 
     def _name(self):
         return str(self.__class__)
 
-
 class ExpressionMatcher(BaseValidator, implements(IMatcher)):
     def __init__(self, expression):
         super(ExpressionMatcher, self).__init__(__class__)
         self.expression = expression
-        if not self.expression:
-            raise Exception('Cannot create {} with empty expression: {}'.format(self.__class__, self.expression))
+        if not self.expression or self.expression.isspace():
+            raise Exception('Cannot create {} with empty or whitespace expression: {}'.format(self.__class__, self.expression))
         self.ld('Created: expression={}'.format(self.expression))
 
     def matches(self, thread):

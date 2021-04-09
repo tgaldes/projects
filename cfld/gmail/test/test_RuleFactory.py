@@ -29,13 +29,13 @@ class RuleFactoryTest(unittest.TestCase):
         group = rule_groups[1]
         self.assertEqual(1, len(group))
         rh = group[0]
-        self.assertTrue(isinstance(rh.matcher, SubjectMatcher))
+        self.assertTrue(isinstance(rh.matcher, ComboMatcher))
         self.assertTrue(isinstance(rh.action, DraftAction))
         self.assertEqual('value expression', rh.action.value)
         group = rule_groups[2]
         self.assertEqual(1, len(group))
         rh = group[0]
-        self.assertTrue(isinstance(rh.matcher, AllMatcher))
+        self.assertTrue(isinstance(rh.matcher, LabelMatcher))
         self.assertTrue(isinstance(rh.action, DraftAction))
         self.assertEqual('value expression', rh.action.value)
 
@@ -144,7 +144,7 @@ class RuleFactoryTest(unittest.TestCase):
         group = rule_groups[0]
         self.assertEqual(1, len(group))
         rh = group[0]
-        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.matcher, ComboMatcher))
         self.assertTrue(isinstance(rh.action, DraftAction))
         self.assertTrue(rh.action.prepend)
 
@@ -166,10 +166,10 @@ class RuleFactoryTest(unittest.TestCase):
         group = rule_groups[0]
         self.assertEqual(3, len(group))
         rh = group[0]
-        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.matcher, ComboMatcher)) # body & reverse label
         self.assertTrue(isinstance(rh.action, AttachmentAction))
         rh = group[1]
-        self.assertTrue(isinstance(rh.matcher, BodyMatcher))
+        self.assertTrue(isinstance(rh.matcher, ComboMatcher))
         self.assertTrue(isinstance(rh.action, ForwardAttachmentAction))
         rh = group[2]
         self.assertTrue(isinstance(rh.matcher, BodyMatcher))
