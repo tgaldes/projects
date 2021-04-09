@@ -72,5 +72,14 @@ def short_name_from_thread(thread):
             return label_name[len(delim):]
     return 'the campus'
 
+
+def get_signed_lease_email(thread):
+    # Since Adobe doesn't know how to set the 'Reply-To' header in emails they send
+    # out we added a hack that optionally allows you to work around that
+    for email in thread.default_reply(force_all=True):
+        if email.split('@')[1].split('.')[0] in ['cleanfloorslockingdoors', 'echosign']:
+            continue
+        return email
+
     
 

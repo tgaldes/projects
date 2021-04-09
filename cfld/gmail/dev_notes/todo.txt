@@ -27,6 +27,3 @@ Thread.send should update the state of the thread and service list of drafts (in
 rule additions
 
 4) add a send rule for 3rd party matches with drafts. We're ready (are we though?)
-5) redirect rule for 'Just sent the lease out. Let me know if you have any questions.'
-6) redirect rule for signed lease 'Thanks for getting the lease out, I've sent you an invite for buildium where you'll be able to pay rent'
-7) Longer explanation of application to match a 3rd party 'what is your application process'

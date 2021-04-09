@@ -144,7 +144,7 @@ class Thread(Logger):
         return base.format('')
 
     # For reply all, get everything in the from, to, and cc fields that isn't our email
-    def default_reply(self, reply_all=True):
+    def default_reply(self, reply_all=True, force_all=False):
         counter = -1
         while True:
             message = self.messages[counter]
@@ -157,7 +157,10 @@ class Thread(Logger):
             reply_to = message.reply_to()
             if reply_to:
                 emails.append(reply_to)
-                return emails
+                # Since Adobe doesn't know how to set the 'Reply-To' header in emails they send
+                # out we added a hack that optionally allows you to work around that
+                if not force_all:
+                    return emails
             from_email = message.sender()
             if not self.__is_my_email(from_email):
                 emails.append(from_email)
