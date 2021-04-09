@@ -192,7 +192,10 @@ class Thread(Logger):
     def send(self):
         draft_id = self.existing_draft_id()
         if not draft_id:
+            self.le('No existing draft when we are trying to send on a thread. {}'.format(self))
+            return
             raise Exception('No existing draft when we are trying to send on a thread.')
+        # TODO: update state
         self.service.send(draft_id)
 
     def has_draft(self):

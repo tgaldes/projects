@@ -39,12 +39,12 @@ class GMailService(Logger):
                 pickle.dump(creds, token)
 
         self.service = build('gmail', 'v1', credentials=creds)
-        self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
+        self.__load_drafts()
 
-        #self.default_limit = 1
         #self.default_query = 'subject:stop hurting for tenants '
-        self.default_limit = 40
+        #self.default_limit = 1200
         self.default_query = ''
+        self.default_limit = 60
 
 
         # We want to create no more than one Thread instance per thread id
@@ -80,23 +80,32 @@ class GMailService(Logger):
 
     def __populate_query_result(self, q, limit):
         res = []
-        q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute().get('threads', [])
+        q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute()
         self.ld('Query {} returned {} threads.'.format(q, len(q_result)))
-        for item in q_result:
-            # Before we call the service, check if we already have this thread locally
-            if item['id'] in self.thread_id_2_full_threads:
-                self.ld('Returning existing thread: {}'.format(self.thread_id_2_full_threads[item['id']]))
-                res.append(self.thread_id_2_full_threads[item['id']])
-            else:
-                thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
-                try:
-                    thread = self.__create_thread_from_raw(thread_map)
-                    # Save this id for future use
-                    self.thread_id_2_full_threads[item['id']] = thread
-                    self.__update_history_id(thread.id(), thread_map['historyId'])
-                    res.append(thread)
-                except Exception as e:
-                    self.li('Couldn\'t create thread id {} because of: {}'.format(item['id'], e))
+        while True:
+            for item in q_result.get('threads', []):
+                # Before we call the service, check if we already have this thread locally
+                if item['id'] in self.thread_id_2_full_threads:
+                    self.ld('Returning existing thread: {}'.format(self.thread_id_2_full_threads[item['id']]))
+                    res.append(self.thread_id_2_full_threads[item['id']])
+                else:
+                    thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
+                    try:
+                        thread = self.__create_thread_from_raw(thread_map)
+                        # Save this id for future use
+                        self.thread_id_2_full_threads[item['id']] = thread
+                        self.__update_history_id(thread.id(), thread_map['historyId'])
+                        res.append(thread)
+                    except Exception as e:
+                        self.li('Couldn\'t create thread id {} because of: {}'.format(item['id'], e))
+            # see if we need to load the next page
+            next_page_token = q_result.get('nextPageToken', [])
+            if not next_page_token:
+                break
+            if len(res) > self.default_limit:
+                break
+            q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q), pageToken=next_page_token).execute()
+
         # Save full result of the query
         self.full_threads_by_query[q] = res
 
@@ -120,12 +129,21 @@ class GMailService(Logger):
 
     def get_email(self):
         return self.email
+    def __load_drafts(self):
+        draft_request = self.service.users().drafts().list(userId='me').execute()
+        self.drafts = []
+        while True:
+            self.drafts.extend(draft_request.get('drafts', []))
+            next_page_token = draft_request.get('nextPageToken', [])
+            if not next_page_token:
+                break
+            draft_request = self.service.users().drafts().list(userId='me', pageToken=next_page_token).execute()
 
     def refresh(self):
         self.full_threads_by_query = {}
         self.thread_id_2_full_threads = {}
         self.__populate_query_result(self.default_query, self.default_limit)
-        self.drafts = self.service.users().drafts().list(userId='me').execute().get('drafts', [])
+        self.__load_drafts()
 
     # Empty q gets us all_full_threads
     def query(self, q, limit):
@@ -172,8 +190,11 @@ class GMailService(Logger):
         self.__update_history_id(thread_id, history_id=None)
         return ret
     def send(self, draft_id):
-        message_data = self.service.users().drafts().send(userId='me', body={'id' : draft_id }).execute()
-        return GMailMessage(message_data, self)
+        try:
+            message_data = self.service.users().drafts().send(userId='me', body={'id' : draft_id }).execute()
+            return GMailMessage(message_data, self)
+        except:
+            return None
 
     def get_attachment(self, attachment_id, message_id):
         return self.service.users().messages().attachments().get(userId='me', messageId=message_id, id=attachment_id).execute()
