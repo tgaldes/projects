@@ -47,8 +47,7 @@ class Message:
                 print(tup)
                 raise Exception('Unsupported tuple len (not 1, 2, 4, or 5): '.format(tup))
         print(attrs)
-        #pdb.set_trace()
-        return self.msg.format(*attrs)
+        return self.msg.format(*attrs).replace('your', 'the')
 
 
 common_formats = {
@@ -59,7 +58,6 @@ common_formats = {
     'area' : ('area', 1)
 }
 common_format_lists = {
-    'general' : [common_formats['saluatation'], common_formats['multiple_contacts'], common_formats['chapter_designation'],  common_formats['fraternity']],
     'general' : [common_formats['saluatation'], common_formats['chapter_designation'],  common_formats['fraternity'],  common_formats['area'],  common_formats['fraternity']],
     'general_email' : [common_formats['saluatation'], common_formats['multiple_contacts'], common_formats['chapter_designation'],  common_formats['fraternity'], (sc.unique_url_column_name, 0)],
 }
@@ -68,9 +66,9 @@ letters = \
     'board' : Message('letters/board.txt', common_format_lists['general']),
     'undergrad' : Message('letters/undergrad.txt', common_format_lists['general']),
     'active' : Message('letters/undergrad.txt', common_format_lists['general']),
-    'agent_corp' : Message('letters/agent.txt', [('name', 0, 'To ', ',', 'To whom it may concern,', 'unused'), ('', ' several contacts I have available', 1, 'unused_var'), ('chapter_designation', 1), ('fraternity', 0, str.title)]),
+    'agent_corp' : Message('letters/agent.txt', common_format_lists['general']),
     'agent' : Message('letters/agent.txt', common_format_lists['general']),
-    'agent_female' : Message('letters/agent.txt', [('name', 0, 'Dear Mrs. ', ',', 'To whom it may concern,'), ('', ' several contacts I have available', 1, 'unused_var'), ('chapter_designation', 1), ('fraternity', 0, str.title)]),
+    'agent_female' : Message('letters/agent.txt', [('name', 0, 'Dear Mrs. ', ',', 'To whom it may concern,'), common_formats['chapter_designation'],  common_formats['fraternity'],  common_formats['area'],  common_formats['fraternity']]),
     'campaign_chair' : Message('letters/board.txt', common_format_lists['general']),
     'general_board' : Message('letters/board.txt', common_format_lists['general']),
     'general_undergrad' : Message('letters/undergrad.txt', common_format_lists['general']),

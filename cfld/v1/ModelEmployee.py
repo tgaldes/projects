@@ -111,8 +111,9 @@ if __name__=='__main__':
     emp = ModelEmployee(g2)
     #emp.update_redirects('/home/tgaldes/Desktop/redirects.csv')
 
-    #emp.send_snail_mail(0, ['USA', 'VCU', 'ODU', 'UNR', 'UW Madison', 'Duke' 'Toledo', 'UCF', 'Nebraska'], True, [], False)
-    emp.send_snail_mail(0, ['USC', 'SJSU'], True, ['board'], True)
+    #emp.send_snail_mail(200, ['Nebraska'], True, [], False)
+    # TODO: harvard
+    emp.send_snail_mail(200, ['Columbia', 'NYU', 'UPenn', 'Drexel', 'Temple', 'SMU', 'SJSU', 'UT', 'TCU', 'OSU', 'Butler', 'UNC Charlotte', 'Rutgers','Georgetown', 'MIT', 'Vanderbilt', 'Memphis', 'Denver', 'Louisville', 'Stevens', 'UMN', 'Tulsa', 'UTA', 'Tulane', 'Wichita State', 'Marquette', 'UK', 'Cincinnati', 'Pitt', 'CMU', 'Nebraska', 'UCF', 'Toledo', 'Duke', 'UW Madison', 'Texas Tech', 'UNR', 'ODU', 'VCU', 'LSU', 'Utah', 'Redlands', 'UMD', 'Akron', 'FSU', 'USA', 'UTK', 'UTC', 'Brown', 'Michigan', 'Oxy', 'USF', 'NC State'], True, ['board', 'agent', 'agent_corp', 'agent_female', 'campaign_chair', 'general_board'], True)
     #emp.send_snail_mail(0, ['UW'], True, ['active'], True)
     #emp.send_intro_emails(0, ['USC'], True, ['board'], True)
 

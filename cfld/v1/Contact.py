@@ -32,6 +32,9 @@ class Contact(implements(IAddressee), implements(IEmailAddressee)):
         if self.data.address == '':
             print('Skipping sending mail when address is empty for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, safe_get_attr(self.data, 'name')))
             return
+        if 'XRTS' in self.data.address:
+            print('Skipping sending mail when address has been returned to sender for contact {}, {}, {}'.format(self.data.short_name, self.data.fraternity, safe_get_attr(self.data, 'name')))
+            return
         if self.data.code in Contact.mail_skip_codes:
             print('Skipping sending mail for code: {}'.format(self.data.code))
             return
