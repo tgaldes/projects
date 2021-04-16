@@ -13,6 +13,7 @@ from framework.Inbox import Inbox
 from framework.RuleFactory import RuleFactory
 from framework.BaseValidator import BaseValidator
 from services.gmail.SheetService import SheetService
+from framework import constants
 
 
 class Main:
@@ -49,7 +50,14 @@ class Main:
                 self.logger.li('Query: "{}" returned {} threads for user {}'.format(rule_group.get_query(), len(threads), user))
                 for thread in threads:
                     self.logger.li('Processing user {} thread {}'.format(user, thread))
-                    rule_group.process(thread)
+                    try:
+                        rule_group.process(thread)
+                    except Exception as e:
+                        self.logger.le('Caught exception while processing: {}. Will continue execution of rules while skipping this thread'.format(thread))
+                        self.logger.le(str(e))
+                        thread.set_label(constants.error_label)
+                        inbox.blacklist_id(thread.id())
+
             self.logger.li('Refreshing inboxes and default queries for next loop.')
             self.refresh()
             return

@@ -19,11 +19,50 @@ Traceback (most recent call last):
     raise HttpError(resp, content, uri=self.uri)
 googleapiclient.errors.HttpError: <HttpError 500 when requesting https://gmail.googleapis.com/gmail/v1/users/me/threads/1777a77137389807?format=full&alt=json returned "Internal error encountered.">
 
+2021-04-10 06:05:03,862 [WARNING]                 main:- Caught exception while trying to refresh. Stack: Traceback (most recent call last):
+  File "./framework/main.py", line 61, in run_one
+    self.refresh()
+  File "./framework/main.py", line 42, in refresh
+    self.inboxes[inbox].refresh()
+  File "/home/tgaldes/git/projects/cfld/gmail/framework/Inbox.py", line 34, in refresh
+    self.service.refresh()
+  File "/home/tgaldes/git/projects/cfld/gmail/services/gmail/GMailService.py", line 147, in refresh
+    self.__populate_query_result(self.default_query, self.default_limit)
+  File "/home/tgaldes/git/projects/cfld/gmail/services/gmail/GMailService.py", line 85, in __populate_query_result
+    q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute()
+  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/_helpers.py", line 134, in positional_wrapper
+    return wrapped(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/googleapiclient/http.py", line 907, in execute
+    raise HttpError(resp, content, uri=self.uri)
+googleapiclient.errors.HttpError: <HttpError 429 when requesting https://gmail.googleapis.com/gmail/v1/users/me/threads?alt=json&maxResults=30&q=label%3AINBOX returned "User-rate limit exceeded.  Retry after 2021-04-10T10:20:01.929Z">
+
+
+
+<br>body, p, th, td { font-family: verdana, arial, sa...' contains:'new rental application' thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
+2021-04-11 23:08:46,612 [  DEBUG]         ComboMatcher:- matched 2 matchers, returning true for thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
+2021-04-11 23:08:46,612 [  DEBUG]           RuleHolder:- #102: process tenant application (match): matches
+2021-04-11 23:08:46,612 [  DEBUG]       SubjectMatcher:- 'Rental Application | Julia Shneidman 165 4th Street Northwest' matches regex:'^Rental Application .*$' thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
+2021-04-11 23:08:46,612 [  DEBUG]       SubjectMatcher:- SubjectMatcher: returning groups: ()
+<br>body, p, th, td { font-family: verdana, arial, sa...' contains:'new rental application' thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
+2021-04-11 23:08:46,613 [  DEBUG]           RuleHolder:- #103: process tenant application (add draft back to tenant): processing thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
+2021-04-11 23:08:46,613 [   INFO]           AllMatcher:- always returing true for thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
+2021-04-11 23:08:46,613 [  DEBUG]           RuleHolder:- #103: process tenant application (add draft back to tenant): matches
+2021-04-11 23:08:46,613 [  DEBUG]       RedirectAction:- processing a thread
+2021-04-11 23:08:46,784 [  DEBUG]         GMailService:- Query Julia Shneidman returned 3 threads.
+2021-04-11 23:08:46,784 [  DEBUG]         GMailService:- Returning existing thread: thread_id: 178b9cfb5f211f9b subject: New submission for Georgia Tech
+2021-04-11 23:08:46,927 [  DEBUG]         GMailService:- Returning existing thread: thread_id: 178bd1740e4db7fb subject: New submission for Georgia Tech
+2021-04-11 23:08:46,927 [   INFO]       RedirectAction:- No found_threads matched the expression: inbox.query(get_new_application_name(thread), limit=1)
+
+
+
 
 
 Thread.send should update the state of the thread and service list of drafts (integration test for this guy)
 
+check that the make them say no stuff is working as expected, may need to increase the limit
+
 
 rule additions
 
-4) add a send rule for 3rd party matches with drafts. We're ready (are we though?)
+4) add a send rule for 3rd party matches with drafts. We're ready (are we though?) we are very close
+

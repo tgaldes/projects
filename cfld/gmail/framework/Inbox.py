@@ -5,20 +5,23 @@ class Inbox(Logger):
     def __init__(self, service):
         super(Inbox, self).__init__(__class__)
         self.service = service
-
         self.thread_id_2_finalized_history_ids = {}
+        self.blacklisted_thread_ids = set()
+
     def get_service(self):
         return self.service
 
     # Note that current implementation will only pick up preloaded 20 threads
     # when q == ''
     # when limit is left as default we will let the service use it's default value
-    def query(self, q, limit=0): # TODO: how should we share the default with the service?
+    def query(self, q, limit=0):
         res = []
         for thread in self.service.query(q, limit):
             # If we've fully processed this thread, make sure its history id has been incremented before processing it again
-            if thread.id() in self.thread_id_2_finalized_history_ids \
-                    and self.service.get_history_id(thread.id()) <= self.thread_id_2_finalized_history_ids[thread.id()] :
+            if (thread.id() in self.thread_id_2_finalized_history_ids \
+                    and self.service.get_history_id(thread.id()) <= self.thread_id_2_finalized_history_ids[thread.id()]) \
+                or \
+                thread.id() in self.blacklisted_thread_ids:# never return a blacklisted thread
                 pass # current history is the same as the last time we finalized
             else:
                 res.append(thread)
@@ -32,4 +35,8 @@ class Inbox(Logger):
         # Call the service refresh second, because in the function it might re query
         # the state which will update the history ids with new values
         self.service.refresh()
+
+    # Tell the inbox to never return this thread any more.
+    def blacklist_id(self, thread_id):
+        self.blacklisted_thread_ids.add(thread_id)
 

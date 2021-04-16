@@ -46,8 +46,23 @@ class InboxTest(unittest.TestCase):
         inbox.refresh()
         self.assertEqual(0, len(inbox.query('')))
         
+    def test_blacklist_id(self):
+        mock_service = Mock()
+        mock_threads = []
+        history = {}
+        for i in range(5):
+            t = Mock()
+            t.id = MagicMock(return_value=i)
+            mock_threads.append(t)
+            history[i] = 100
 
 
+        mock_service.query = MagicMock(return_value=mock_threads)
+        mock_service.get_history_id = MagicMock(return_value=100)
+        inbox = Inbox(mock_service)
 
+        for i in range(5):
+            inbox.blacklist_id(i)
+            self.assertEqual(4 - i, len(inbox.query('')))
 
 

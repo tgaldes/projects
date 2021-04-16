@@ -192,3 +192,75 @@ class IntegrationTest(unittest.TestCase):
         m.run_one()
         self.assertEqual(1, email_service.append_or_create_draft.call_count)
 
+    def test_catch_exception_on_individual_thread_and_blacklist(self):
+    # two rules- one to label everything, one to add a draft to everything
+    # two threads. the first will throw when we try to add a label to it
+    # we expect to catch that exception and not process that thread any more
+    # we'll end up with no drafts on the bad thread, and add a label and a draft to the good thread
+
+        test_draft_text = 'test draft'
+        from orgs.example_org.ExampleOrg import header
+        example_rule_construction_data = [header, \
+        # label rule, will always match .* and run
+            ['Label by school', 'tyler', '', '', '', '', '', 'draft', test_draft_text, '', '', '1', 'ifelse', ''], \
+        # draft rule, will always match empty matcher
+            ['add draft', 'tyler', '', '', '', '', '', 'draft', test_draft_text, '', 'thread.default_reply()', '2', '', '', '']]
+
+        good_service = Mock()
+        bad_service = Mock()
+        bad_thread = Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), bad_service)
+        good_thread = Thread(*get_thread_constructor_args('integration_test_inputs/rental_application.txt'), good_service)
+        all_threads = [bad_thread, good_thread]
+
+
+        # set up good service
+        good_service.query = MagicMock(return_value=all_threads)
+        good_service.get_label_name = MagicMock(return_value='Schools')
+        good_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
+        good_service.get_all_history_ids = MagicMock(return_value={})
+        good_service.get_user = MagicMock(return_value='tyler')
+        good_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
+        good_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
+
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        good_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
+        dest_email = 'lookup@one.com,lookup@two.com'
+        good_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : test_draft_text, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(test_draft_text)}, 'headers' : [{'name' : 'to', 'value' : '<{}>,<{}>'.format(*dest_email.split(','))}]}}, {}))
+
+        # set up bad service, will throw on create_or_append_draft
+        bad_service.query = MagicMock(return_value=all_threads)
+        bad_service.get_label_name = MagicMock(return_value='Schools')
+        bad_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
+        bad_service.get_all_history_ids = MagicMock(return_value={})
+        bad_service.get_user = MagicMock(return_value='tyler')
+        bad_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
+        bad_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
+
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        bad_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
+        bad_service.append_or_create_draft = MagicMock(side_effect=Exception)
+
+        config = {}
+        config['org'] = {}
+        config['org']['name'] = 'example_org'
+        config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature']
+        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
+        logger = Logger('TestIntegration')
+        m = Main([good_service, bad_service], logger, config)
+
+        m.setup()
+        # if we don't catch the exception here we'll fail
+        m.run_one()
+
+        self.assertEqual(2, good_service.append_or_create_draft.call_count)
+        self.assertEqual(2, good_service.set_label.call_count) # will set the label as 'automation' twice
+        self.assertEqual(1, bad_service.set_label.call_count) # got hit once while setting the label for automation/errors
+        self.assertTrue(bad_thread.id() in m.inboxes['tyler'].blacklisted_thread_ids)
+        self.assertEqual(1, len(m.inboxes['tyler'].blacklisted_thread_ids))
+
+
+
+
+
