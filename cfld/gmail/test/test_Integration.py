@@ -27,6 +27,7 @@ class IntegrationTest(unittest.TestCase):
         draft_msg_id = '2345'
         email_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         email_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : signature(all_threads[0]), 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(signature(all_threads[0]))}, 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}, {}))
+        email_service.send_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : signature(all_threads[0]), 'labelIds' : ['SENT'], 'payload' : {'body' : { 'data' : encode_for_payload(signature(all_threads[0]))}, 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}, {}))
         config = {}
         config['org'] = {}
         config['org']['name'] = 'example_org'
@@ -52,6 +53,14 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual('<CACUCK-BGnDjQ6QzU0cGKwLpHOnJoseTVjR1CNQ+yEubty=ar9A@mail.gmail.com>', mime_multipart['In-Reply-To'])
         self.assertEqual('<CACUCK-BGnDjQ6QzU0cGKwLpHOnJoseTVjR1CNQ+yEubty=ar9A@mail.gmail.com>', mime_multipart['References'])
         self.assertEqual(all_threads[0].salutation() + signature(all_threads[0]), mime_multipart.__dict__['_payload'][0].__dict__['_payload'])
+
+        # now let's send the draft that we created
+        self.assertEqual(1, len(all_threads[0])) # len doesn't count draft messages
+        all_threads[0].send_draft()
+        self.assertFalse(all_threads[0].has_draft())
+        self.assertEqual(2, len(all_threads[0]))
+        sent_draft_id = email_service.send_draft.call_args[0][0]
+        self.assertEqual(draft_id, sent_draft_id)
 
 
     def test_redirect(self):

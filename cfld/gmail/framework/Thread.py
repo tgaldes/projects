@@ -197,7 +197,7 @@ class Thread(Logger):
         if not draft_id:
             self.le('No existing draft when we are trying to send on a thread. {}'.format(self))
             return
-            raise Exception('No existing draft when we are trying to send on a thread.')
+            #raise Exception('No existing draft when we are trying to send on a thread.')
         message = self.service.send_draft(draft_id)
         self.__add_or_update_message(message)
 
