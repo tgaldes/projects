@@ -79,6 +79,12 @@ class NewSubmissionHandler(Logger):
     # dictionary will look like {'name' : 'Tony K', 'email' : 'tony@ucla.edu' .....}
     def __parse_first_new_submission_message(self, text):
         ret = {}
+        # explicitly grab the 'questions:' section because it may contain the delimiter character
+        search_string = 'Questions:'
+        questions_index = text.index(search_string)
+        ret['questions'] = text[questions_index + len(search_string):]
+        text = text[:questions_index]
+        
         for item in text.split('\n'):
             try:
                 k, value = item.split(':')
@@ -93,8 +99,7 @@ class NewSubmissionHandler(Logger):
                 ret['short_name'] = value.strip()
             elif key == 'name' \
                     or key == 'gender' \
-                    or key == 'email' \
-                    or key == 'questions':
+                    or key == 'email':
                 ret[key] = value.strip().lower()
             elif key == 'move_in' or key == 'move_out':
                 v = value.strip()

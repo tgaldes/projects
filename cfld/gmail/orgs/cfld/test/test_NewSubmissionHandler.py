@@ -75,6 +75,20 @@ class NewSubmissionHandlerTest(unittest.TestCase):
         nsh.handle_thread(t)
         self.assertEqual(NewSubmissionHandler.base_greeting + open_at_desired_move_in + delay_move_in + delay_move_in_end_one + nothing_open, nsh.handle_thread(t))
 
+    def test_delimiter_character_in_questions_section(self):
+        # handle a case that crashed us where the first message looked like ''...questions: blah blah \nphone: 1234567'
+        email = 'djssi000000@gmail.com'
+        raw_email_text = 'Email: {}\n  Name: Dan Jassi\n        School: UCLA\n        Room: {}\n        Move In: {}\n        Move Out: \n        Gender: Male\n        Questions: \n        Can you do a showing?\nphone:123-456-7890'
+        nsh = NewSubmissionHandler(raw_availability=raw_availability, raw_availability_blurbs=raw_availability_blurbs, max_availability_index=max_index)
+        t = Mock()
+        t.__len__ = MagicMock(return_value=1)
+        t.labels = MagicMock(return_value='Schools/' + short_name)
+
+        # one room type desired open for move in
+        t.last_message_text = MagicMock(return_value=raw_email_text.format(email, room_type, move_in.strftime('%Y-%m-%d')))
+        t.append_to_draft = MagicMock()
+        self.assertEqual(NewSubmissionHandler.base_greeting + open_at_desired_move_in, nsh.handle_thread(t))
+
 # ------------------- Constructor stuff ----------------------------
 
     def test_throw_with_bad_availability_data(self):
