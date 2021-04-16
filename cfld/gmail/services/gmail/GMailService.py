@@ -44,9 +44,9 @@ class GMailService(Logger):
         #self.default_query = 'subject:stop hurting for tenants '
         #self.default_limit = 1200
         self.default_query = 'label:INBOX'
-        #self.default_query = 'label:automation/make_them_say_no'
-        self.default_limit = 30
-        #self.default_limit = 1
+        #self.default_query = 'rachelhthornton@utexas.edu label:schools-usc'
+        self.default_limit = 60
+        #self.default_limit = 10
 
 
         # We want to create no more than one Thread instance per thread id

@@ -23,6 +23,7 @@ class Thread(Logger):
         return self.identifier
     
     def set_label(self, label_string, unset=False):
+        # TODO: doing the short circuit here failed when a thread got in a bad state and didn't have the inbox label on message 0, but did have it on other messages
         if self.has_label(label_string) and not unset:
             return
         elif not self.has_label(label_string) and unset:
