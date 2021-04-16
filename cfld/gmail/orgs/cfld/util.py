@@ -73,6 +73,19 @@ def short_name_from_thread(thread):
     return 'the campus'
 
 
+# When we send out a lease doc to an owner and a tenant, we want to return just the tenant email here for the redirect to search on
+# arg will look like 'j.stan.hill@gmail.com and ivan.gonzalez@cimat.mx'
+# or 'ivan.gonzalez@cimat.mx'
+def get_lease_sent_out_email(email_list_from_subject, all_owner_emails):
+    #all_owner_emails = lookup_info('lease_owners', 'lease_owners')
+    emails = []
+    for token in email_list_from_subject.split():
+        if '@' in token and token not in all_owner_emails:
+            emails.append(token)
+    if len(emails) != 1:
+        raise Exception('In get_lease_sent_out_email with arg: {} we found {} non owner emails when we expected 1: {}'.format(email_list_from_subject, len(emails), emails))
+    return emails[0]
+
 def get_signed_lease_email(thread):
     # Since Adobe doesn't know how to set the 'Reply-To' header in emails they send
     # out we added a hack that optionally allows you to work around that

@@ -4,7 +4,7 @@ import os
 
 import framework.globals
 
-from orgs.cfld.util import signature, get_new_application_email, short_name_from_thread, get_new_application_name, get_approved_application_name
+from orgs.cfld.util import signature, get_new_application_email, short_name_from_thread, get_new_application_name, get_approved_application_name, get_lease_sent_out_email, get_signed_lease_email
 
 
 class CfldTest(unittest.TestCase):
@@ -80,7 +80,22 @@ class CfldTest(unittest.TestCase):
         mock_thread.labels = MagicMock(return_value=['another label', ' blah '])
         self.assertEqual('the campus', short_name_from_thread(mock_thread))
 
+    def test_get_lease_sent_out_email(self):
 
+        self.assertEqual('ivan.gonzalez@cimat.mx', get_lease_sent_out_email('j.stan.hill@gmail.com and ivan.gonzalez@cimat.mx', 'mharrel@jhtech.com,j.stan.hill@gmail.com'))
+        self.assertEqual('ivan.gonzalez@cimat.mx', get_lease_sent_out_email('ivan.gonzalez@cimat.mx', 'mharrel@jhtech.com,j.stan.hill@gmail.com'))
+        with self.assertRaises(Exception):
+            get_lease_sent_out_email('ivan.gonzalez@cimat.mx and another@email.com', 'mharrel@jhtech.com,j.stan.hill@gmail.com')
+        with self.assertRaises(Exception):
+            get_lease_sent_out_email('no emails found.here', 'mharrel@jhtech.com,j.stan.hill@gmail.com')
 
+    def test_get_signed_lease_email(self):
+        mock_thread = Mock()
 
+        mock_thread.default_reply = MagicMock(return_value=['adobe@echosign.com', 'tyler@cleanfloorslockingdoors.com', 'asdf@one.com'])
+        self.assertEqual('asdf@one.com', get_signed_lease_email(mock_thread))
+
+        mock_thread.default_reply = MagicMock(return_value=['adobe@echosign.com', 'asdf@one.com', 'tyler@cleanfloorslockingdoors.com'])
+        self.assertEqual('asdf@one.com', get_signed_lease_email(mock_thread))
+        
 
