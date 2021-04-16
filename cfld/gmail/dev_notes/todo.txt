@@ -57,9 +57,8 @@ googleapiclient.errors.HttpError: <HttpError 429 when requesting https://gmail.g
 
 
 
-Thread.send should update the state of the thread and service list of drafts (integration test for this guy)
-
-check that the make them say no stuff is working as expected, may need to increase the limit
+check that the make them say no stuff is working as expected (again because sending is dangerous)
+we should be able to specify we want to search the entire text of the thread so that we can avoid directing people to the official application multiple times.
 
 
 rule additions

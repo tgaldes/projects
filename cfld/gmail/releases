@@ -1,10 +1,11 @@
-20200409 1.4.0 send rules, longer default query, lots of updates on rule sheet
-20200307 1.3.2 try refreshing inboxes outside of main try catch loop
-20200220 1.3.1 fix default query key error
-20200215 1.3.0 handle socket timeout, remove make them say no, fine tune prod rules for better processing in actual inboxes
-20200116 1.2.1 quick change for base validate to work with org code
-20200115 1.2.0 merge pyautogui reboot, add attachment rules
-20200111 1.1.0 change main to run constantly and use historyid to determine when to reprocess a thread
+20210416 1.5.0 a bunch of little tweaks and bug fixes
+20210409 1.4.0 send rules, longer default query, lots of updates on rule sheet
+20210307 1.3.2 try refreshing inboxes outside of main try catch loop
+20210220 1.3.1 fix default query key error
+20210215 1.3.0 handle socket timeout, remove make them say no, fine tune prod rules for better processing in actual inboxes
+20210116 1.2.1 quick change for base validate to work with org code
+20210115 1.2.0 merge pyautogui reboot, add attachment rules
+20210111 1.1.0 change main to run constantly and use historyid to determine when to reprocess a thread
 20201227 1.0.0
 20201220 0.3.0
 20201218 0.2.0
