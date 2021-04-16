@@ -82,8 +82,10 @@ class GMailService(Logger):
 
     def __populate_query_result(self, q, limit):
         res = []
+        self.ld('Bumping limit from {} to {} so we can make sure we get the most recent thread.'.format(limit, limit + 2))
+        limit += 2
         q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute()
-        self.ld('Query {} returned {} threads.'.format(q, len(q_result)))
+        self.ld('Query {} returned {} threads from gmail api.'.format(q, len((q_result.get('threads'), []))))
         while True:
             for item in q_result.get('threads', []):
                 # Before we call the service, check if we already have this thread locally
@@ -104,10 +106,13 @@ class GMailService(Logger):
             next_page_token = q_result.get('nextPageToken', [])
             if not next_page_token:
                 break
-            if len(res) >= self.default_limit:
+            if len(res) >= limit:
                 break
             q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q), pageToken=next_page_token).execute()
 
+
+        # Sort by the latest timestamp of the last message on each thread
+        res = sorted(res, key=lambda x: x.last_ts(), reverse=True)
         # Save full result of the query
         self.full_threads_by_query[q] = res
 
@@ -157,7 +162,8 @@ class GMailService(Logger):
         elif q == '' and self.default_query in self.full_threads_by_query:
             return self.full_threads_by_query[self.default_query]
         self.__populate_query_result(q, limit)
-        return self.full_threads_by_query[q]
+        self.li('Query: {}, limit {}, return: {}'.format(q, limit, self.full_threads_by_query[q][:limit]))
+        return self.full_threads_by_query[q][:limit]
 
     def set_label(self, id, label_id, unset=False, userId='me'):
 # TODO: same expo backoff function as v1
