@@ -1,6 +1,7 @@
 import base64
 import pdb
 from framework.Logger import Logger
+import re
 
 # Message specific utils
 def extract_email(email_string):
@@ -17,19 +18,10 @@ def extract_emails(emails_string):
             and emails_string.find('>') == -1 \
             and emails_string.find('"') == -1:
         return [x.strip() for x in emails_string.split(',')]
-    insert_mode = False
-    res = []
-    current_email = ''
-    for char in emails_string:
-        if char == '<':
-            insert_mode = True
-        elif char == '>':
-            insert_mode = False
-            res.append(current_email)
-            current_email = ''
-        elif insert_mode:
-            current_email += char
-    return res
+
+    split = re.split('[\s,]', emails_string)
+    filtered = list(filter(lambda x : '@' in x, split))
+    return [x.strip('<').strip('>') for x in filtered]
 
 class GMailMessage(Logger):
     def __init__(self, fields, service):

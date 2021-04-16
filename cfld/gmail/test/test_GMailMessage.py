@@ -15,6 +15,9 @@ class GMailMessageTest(unittest.TestCase):
         four = 'Tyler Galdes <tgaldes@gmail.com>, Tyler Galdes <tyler@cf-ld.com>'
         five = 'tgaldes@gmail.com, tyler@cf-ld.com'
         six = '"King, Kristin" <Kristin.King@nemoves.com>'
+        seven = 'Stan Hill <j.stan.hill@gmail.com>, Kenneth Akers <akers.kenneth66@gmail.com>, ivan.gonzalez@cimat.mx'
+        eight = '<one@o>,<two@o>'
+
 
         self.assertEqual(list_one, extract_emails(one))
         self.assertEqual(list_one, extract_emails(two))
@@ -22,3 +25,5 @@ class GMailMessageTest(unittest.TestCase):
         self.assertEqual([one, 'tyler@cf-ld.com'], extract_emails(four))
         self.assertEqual([one, 'tyler@cf-ld.com'], extract_emails(five))
         self.assertEqual(['Kristin.King@nemoves.com'], extract_emails(six))
+        self.assertEqual(['j.stan.hill@gmail.com', 'akers.kenneth66@gmail.com', 'ivan.gonzalez@cimat.mx'], extract_emails(seven))
+        self.assertEqual(['one@o', 'two@o'], extract_emails(eight))
