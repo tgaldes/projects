@@ -63,6 +63,5 @@ check that the make them say no stuff is working as expected (again because send
 rule additions
 
 4) add a send rule for 3rd party matches with drafts. We're ready (are we though?) we are very close
-5) make them say no -> they say I'm still interested -> we say 'great please fill out cf-ld.com/contact-form to move forward'
 fill out an application -> take them to application link
 
