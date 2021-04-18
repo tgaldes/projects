@@ -1,4 +1,5 @@
 import pdb
+import bdb
 import inspect
 from flatten_dict import flatten 
 from flatten_dict import unflatten 
@@ -37,8 +38,9 @@ def evaluate_expression(expression, **kwargs):
     try:
         local_request = get_imports() + 'local_result = ' + expression.replace('thread,', 'kwargs["thread"],').replace('thread)', 'kwargs["thread"])').replace('(thread', '(kwargs["thread"]').replace('thread.', 'kwargs["thread"].').replace('inbox.', 'kwargs["inbox"].')
         exec(local_request)
+    except bdb.BdbQuit as e:
+        exit(0)
     except:
-        #pdb.set_trace()
         raise Exception("threw on local_request: {}".format(local_request))
     return locals()['local_result']
 

@@ -216,6 +216,14 @@ class Thread(Logger):
     def last_message_text(self):
         return self.__last_message().content()
 
+    # return the decoded body of all non draft messages in the thread
+    def full_text(self):
+        text = ''
+        for message in self.messages:
+            if not message.is_draft():
+                text += message.content() + '\n'
+        return text[:-1]
+
     def __is_my_email(self, test_email):
         if not test_email:
             return False

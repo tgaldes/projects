@@ -53,6 +53,8 @@ class Main:
                     self.logger.li('Processing user {} thread {}'.format(user, thread))
                     try:
                         rule_group.process(thread)
+                    except bdb.BdbQuit as e:
+                        exit(0)
                     except Exception as e:
                         self.logger.le('Caught exception while processing: {}. Will continue execution of rules while skipping this thread'.format(thread))
                         self.logger.le(str(e))
@@ -62,7 +64,7 @@ class Main:
             self.logger.li('Refreshing inboxes and default queries for next loop.')
             self.refresh()
             return
-        except Bdb.BdbQuit as e:
+        except bdb.BdbQuit as e:
             exit(0)
         except Exception as e:
             self.logger.lw('Caught exception in main. Stack: {}'.format(traceback.format_exc()))
@@ -71,6 +73,8 @@ class Main:
             try:
                 self.refresh()
                 return
+            except bdb.BdbQuit as e:
+                exit(0)
             except Exception as e:
                 self.logger.lw('Caught exception while trying to refresh. Stack: {}'.format(traceback.format_exc()))
         self.refresh() # at this point just let the exception refresh is creating kill the program
