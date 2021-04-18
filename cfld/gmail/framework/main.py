@@ -1,4 +1,5 @@
 import pdb
+import bdb
 import sys
 import json
 from time import sleep
@@ -61,6 +62,8 @@ class Main:
             self.logger.li('Refreshing inboxes and default queries for next loop.')
             self.refresh()
             return
+        except Bdb.BdbQuit as e:
+            exit(0)
         except Exception as e:
             self.logger.lw('Caught exception in main. Stack: {}'.format(traceback.format_exc()))
         self.logger.li('Attempting to refresh again before continuing.')

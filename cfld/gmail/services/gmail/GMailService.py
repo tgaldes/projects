@@ -46,7 +46,7 @@ class GMailService(Logger):
         self.default_query = 'label:INBOX'
         #self.default_query = 'rachelhthornton@utexas.edu label:schools-usc'
         self.default_limit = 60
-        #self.default_limit = 10
+        self.default_limit = 1
 
 
         # We want to create no more than one Thread instance per thread id
@@ -85,11 +85,12 @@ class GMailService(Logger):
         self.ld('Bumping limit from {} to {} so we can make sure we get the most recent thread.'.format(limit, limit + 2))
         limit += 2
         q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute()
-        self.ld('Query {} returned {} threads from gmail api.'.format(q, len((q_result.get('threads'), []))))
+        self.ld('Query {} returned {} threads from gmail api.'.format(q, len(q_result.get('threads'))))
         while True:
             for item in q_result.get('threads', []):
-                # Before we call the service, check if we already have this thread locally
-                if item['id'] in self.thread_id_2_full_threads:
+                # Before we call the service, check if we already have this up to date thread locally
+                if item['id'] in self.thread_id_2_full_threads \
+                        and item['historyId'] <= self.thread_id_2_history_id[item['id']]:
                     self.ld('Returning existing thread: {}'.format(self.thread_id_2_full_threads[item['id']]))
                     res.append(self.thread_id_2_full_threads[item['id']])
                 else:
@@ -147,8 +148,6 @@ class GMailService(Logger):
             draft_request = self.service.users().drafts().list(userId='me', pageToken=next_page_token).execute()
 
     def refresh(self):
-        self.full_threads_by_query = {}
-        self.thread_id_2_full_threads = {}
         self.__populate_query_result(self.default_query, self.default_limit)
         self.__load_drafts()
 
@@ -157,10 +156,10 @@ class GMailService(Logger):
         if limit <= 0:
             limit = self.default_limit
         if q in self.full_threads_by_query:
-            return self.full_threads_by_query[q]
+            return self.full_threads_by_query[q][:limit]
         # default is already pre loaded
         elif q == '' and self.default_query in self.full_threads_by_query:
-            return self.full_threads_by_query[self.default_query]
+            return self.full_threads_by_query[self.default_query][:limit]
         self.__populate_query_result(q, limit)
         self.li('Query: {}, limit {}, return: {}'.format(q, limit, self.full_threads_by_query[q][:limit]))
         return self.full_threads_by_query[q][:limit]
