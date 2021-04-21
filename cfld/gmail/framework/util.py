@@ -40,8 +40,8 @@ def evaluate_expression(expression, **kwargs):
         exec(local_request)
     except bdb.BdbQuit as e:
         exit(0)
-    except:
-        raise Exception("threw on local_request: {}".format(local_request))
+    except Exception as e:
+        raise Exception("threw on local_request: {}. Exception:\n{}".format(local_request, e))
     return locals()['local_result']
 
 def get_imports():

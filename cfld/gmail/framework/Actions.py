@@ -24,9 +24,9 @@ class LabelAction(implements(IAction), Logger):
         # use the values we saved in the constructor to run the appropriate code
         label_string = evaluate_expression(self.value, **locals())
         if self.unset:
-            self.ld('removing label: {}'.format(label_string))
+            self.ld('removing label: {} on thread {}'.format(label_string, thread))
         else:
-            self.ld('adding label: {}'.format(label_string))
+            self.ld('adding label: {} on thread {}'.format(label_string, thread))
         thread.set_label(label_string, unset=self.unset)
 
 class DestinationBase(Logger):

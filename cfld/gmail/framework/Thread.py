@@ -139,7 +139,7 @@ class Thread(Logger):
         # Otherwise if we have a reply-to in the first message of the thread, pull the first name from that
         reply_to = self.messages[0].reply_to(raw=True)
         if reply_to:
-            return base.format(' ' + reply_to.split()[0])
+            return base.format(' ' + reply_to.split()[0].strip('"'))
         # Otherwise log a warning and return something generic
         self.lw('Could not find salutation in thread with id: {} subject: {}'.format(self.identifier, self.subject()))
         return base.format('')
