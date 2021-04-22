@@ -58,10 +58,14 @@ googleapiclient.errors.HttpError: <HttpError 429 when requesting https://gmail.g
 
 
 check that the make them say no stuff is working as expected (again because sending is dangerous)
+redirect 'just sent the lease out' is hitting a force skip thread and so we don't add a salutation or signature. Why is that thread marked as force skip? Maybe for some threads we need to always update that field because our check history id process has a race condition? there's a dev test case for this guy (the salutation and signature was added manually)
+figure out the correct way to add and remove labels for indiv messages in a thread
 
 
 rule additions
 
 4) add a send rule for 3rd party matches with drafts. We're ready (are we though?) we are very close
 fill out an application -> take them to application link
-
+5) add an 'Earliest we could get you moved in is....' by school built with lookup info to all 3rd party
+6) visita -> before we put you in touch with our on site manager
+7) remove thread.default_reply() from signature, it's messing up the forward signed lease emails and is redundant
