@@ -7,13 +7,8 @@ group_data = {'USC' :(
              'https://docs.google.com/document/d/1wOmbPiLod6B-WPjF4ygP6JbjqGP8Em4VXPMk0yekX_8',
              '/home/tgaldes/Dropbox/Fraternity PM/Pictures/2715 Portland USC/selections',
              [
-                 ('https://www.facebook.com/groups/1621705121404017/', 2),
-                 ('https://www.facebook.com/groups/695435553986189/', 2), 
                  ('https://www.facebook.com/groups/344453725628321/', 2),
-                 ('https://www.facebook.com/groups/344314769393545', 2),
-                 ('https://www.facebook.com/groups/212185346023652/', 1),
                  ('https://www.facebook.com/groups/143384839561246/', 3),
-                 ('https://www.facebook.com/groups/161010671290969/', 1),
                  ('https://www.facebook.com/groups/housingusc/', 1),
                  ('https://www.facebook.com/groups/apartment.la/', 1)
              ],
