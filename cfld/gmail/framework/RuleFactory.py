@@ -60,7 +60,7 @@ class RuleFactory(Logger):
             # the 'automation/force_skip' label is present. This is implemented so that
             # the framework doesn't delete or modify a draft that the user might be 
             # actively working on in the web client.
-            if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment']:
+            if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft']:
                 matchers.append(LabelMatcher(constants.force_skip_label, True))
             if not matchers:
                 matchers.append(AllMatcher())

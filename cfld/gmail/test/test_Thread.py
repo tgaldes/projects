@@ -15,7 +15,7 @@ class ThreadTest(unittest.TestCase):
     def test_one_email_thread(self):
         mock_service = Mock()
         mock_service.get_label_id = MagicMock(return_value='mockid')
-        mock_service.set_label = MagicMock(return_value=['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid'])
+        mock_service.set_label = MagicMock(return_value={'labelIds' : ['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid']})
         thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_email_thread.txt'), mock_service)
         id = thread.identifier
         self.assertEqual('test subject', thread.subject())

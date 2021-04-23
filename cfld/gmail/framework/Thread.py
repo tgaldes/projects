@@ -31,9 +31,8 @@ class Thread(Logger):
         label_id = self.service.get_label_id(label_string)
         if label_id:
             resp = self.service.set_label(self.identifier, label_id, unset)
-            for label_id in resp:
-                for message in self.messages:
-                    message.add_label_id(label_id)
+            for message in self.messages:
+                message.set_labels(resp)
     # return the number of messages in the thread that have been sent by the user
     def get_user_message_count(self):
         my_email_count = 0

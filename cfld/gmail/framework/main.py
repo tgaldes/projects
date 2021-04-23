@@ -57,6 +57,7 @@ class Main:
                         exit(0)
                     except Exception as e:
                         self.logger.le('Caught exception while processing: {}. Will continue execution of rules while skipping this thread'.format(thread))
+                        self.logger.le('Trace: {}'.format(traceback.format_exc()))
                         self.logger.le(str(e))
                         thread.set_label(constants.error_label)
                         inbox.blacklist_id(thread.id())

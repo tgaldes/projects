@@ -66,11 +66,20 @@ class GMailMessage(Logger):
     def label_ids(self):
         return self.__field('labelIds', default=[])
 
-    def add_label_id(self, label_id):
-        if 'labelIds' not in self.fields:
-            self.fields['labelIds'] = [label_id]
-        else:
-            self.fields['labelIds'].append(label_id)
+    def set_labels(self, gmail_resp):
+        if 'messages' in gmail_resp:
+            for message_data in gmail_resp['messages']:
+                if message_data['id'] == self.__field('id'):
+                    self.fields['labelIds'] = message_data['labelIds']
+                    return
+
+        if 'labelIds' in gmail_resp and not self.is_draft():
+            self.fields['labelIds'] = gmail_resp['labelIds']
+
+        for label_id in self.__field('labelIds', default=[]):
+            if type(label_id) != str:
+                self.le('not string label id set: {}. for message with id: {}'.format(label_id, self.__fields('id')))
+
 # ------------- end slightly advanced accessors ------------------
 
 # ----------- wrappers around finding a single item from fields -------------------

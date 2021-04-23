@@ -41,10 +41,8 @@ class GMailService(Logger):
         self.service = build('gmail', 'v1', credentials=creds)
         self.__load_drafts()
 
-        #self.default_query = 'subject:stop hurting for tenants '
-        #self.default_limit = 1200
         self.default_query = 'label:INBOX'
-        #self.default_query = 'rachelhthornton@utexas.edu label:schools-usc'
+        #self.default_query = 'lewis lewis'
         self.default_limit = 60
         #self.default_limit = 3
 
@@ -85,6 +83,12 @@ class GMailService(Logger):
         self.ld('Bumping limit from {} to {} so we can make sure we get the most recent thread.'.format(limit, limit + 2))
         limit += 2
         q_result = self.service.users().threads().list(userId='me', maxResults = limit, q='{}'.format(q)).execute()
+        threads = q_result.get('threads')
+
+        if threads is None:
+            self.ld('Query {} returned 0 threads from gmail api'.format(q))
+            return []
+
         self.ld('Query {} returned {} threads from gmail api.'.format(q, len(q_result.get('threads'))))
         while True:
             for item in q_result.get('threads', []):
@@ -151,21 +155,20 @@ class GMailService(Logger):
         self.__populate_query_result(self.default_query, self.default_limit)
         self.__load_drafts()
 
-    # Empty q gets us all_full_threads
+    # Empty q is translated to the default query and is NOT rerequeried on the service
+    # any other query we re run the actualy query to get an updated list of thread ids
     def query(self, q, limit):
         if limit <= 0:
             limit = self.default_limit
-        if q in self.full_threads_by_query:
-            return self.full_threads_by_query[q][:limit]
         # default is already pre loaded
-        elif q == '' and self.default_query in self.full_threads_by_query:
+        if (q == '' or q == self.default_query) and self.default_query in self.full_threads_by_query:
             return self.full_threads_by_query[self.default_query][:limit]
+
         self.__populate_query_result(q, limit)
         self.li('Query: {}, limit {}, return: {}'.format(q, limit, self.full_threads_by_query[q][:limit]))
         return self.full_threads_by_query[q][:limit]
 
     def set_label(self, id, label_id, unset=False, userId='me'):
-# TODO: same expo backoff function as v1
         payload = { 'addLabelIds' : [],
                     'removeLabelIds' : []
                   }
@@ -178,11 +181,8 @@ class GMailService(Logger):
                                               body=payload).execute()
         self.__update_history_id(resp['id'], history_id=None)
         if 'labelIds' in resp:
-            return resp['labelIds']
-        elif 'messages' in resp:
-            return resp['messages'][0]['labelIds']
-        self.lw('No labelIds in response to set_label call for label_id: {} label_string: {}'.format(label_id, label_id_2_string[label_id]))
-        return []
+            self.lw('Got small resp on set_label api call. label_id: {} label_name: {} unset {} Resp: {}'.format(label_id, self.label_id_2_string[label_id], unset, resp))
+        return resp
 
     def get_drafts(self):
         return self.drafts
