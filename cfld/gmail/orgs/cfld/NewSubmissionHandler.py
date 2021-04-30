@@ -167,6 +167,8 @@ class NewSubmissionHandler(Logger):
         return response
 
     def __get_date_available(self, short_name, gender, room_type):
+        if gender in ['prefer not to say', 'non-binary']:
+            gender = 'male' # default to using availability for guys
         school_by_gender = self.availability[short_name][gender]
         if room_type in school_by_gender:
             return school_by_gender[room_type][0]

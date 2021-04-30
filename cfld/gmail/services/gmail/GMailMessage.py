@@ -7,12 +7,12 @@ import re
 def extract_email(email_string):
     if not email_string:
         return email_string
-    return email_string.split(' ')[-1].strip('<').strip('>')
+    return email_string.split(' ')[-1].strip('<').strip('>').strip('"')
 def extract_emails(emails_string):
     if not emails_string:
         return []
     if len(emails_string.split('@')) == 2 and len(emails_string.split(' ')) == 1:
-        return [emails_string.strip('<').strip('>')]
+        return [emails_string.strip('<').strip('>').strip('"')]
     # pick up a string like 'email@one.com, email@two.com'
     elif emails_string.find('<') == -1 \
             and emails_string.find('>') == -1 \
@@ -21,7 +21,7 @@ def extract_emails(emails_string):
 
     split = re.split('[\s,]', emails_string)
     filtered = list(filter(lambda x : '@' in x, split))
-    return [x.strip('<').strip('>') for x in filtered]
+    return [x.strip('<').strip('>').strip('"') for x in filtered]
 
 class GMailMessage(Logger):
     def __init__(self, fields, service):
