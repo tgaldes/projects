@@ -87,7 +87,8 @@ class GMailService(Logger):
 
         if threads is None:
             self.ld('Query {} returned 0 threads from gmail api'.format(q))
-            return []
+            self.full_threads_by_query[q] = []
+            return
 
         self.ld('Query {} returned {} threads from gmail api.'.format(q, len(q_result.get('threads'))))
         while True:
