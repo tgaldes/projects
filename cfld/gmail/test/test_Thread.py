@@ -86,7 +86,7 @@ class ThreadTest(unittest.TestCase):
         ln = 'label_name'
         mock_service.get_label_name = MagicMock(return_value=ln)
         thread = Thread(*get_thread_constructor_args('thread_test_inputs/make_them_say_no.txt'), mock_service)
-        self.assertEqual([ln for x in range(4)], thread.labels())
+        self.assertEqual(set([ln]), thread.labels())
 
     def test_new_destinations_match_existing_draft(self):
         mock_service = Mock()
