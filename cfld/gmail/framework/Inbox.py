@@ -14,18 +14,25 @@ class Inbox(Logger):
     # Note that current implementation will only pick up preloaded 20 threads
     # when q == ''
     # when limit is left as default we will let the service use it's default value
-    def query(self, q, limit=0):
+    def query(self, q, limit=0, ignore_history_id=False):
         res = []
         for thread in self.service.query(q, limit):
             # If we've fully processed this thread, make sure its history id has been incremented before processing it again
             if (thread.id() in self.thread_id_2_finalized_history_ids \
-                    and self.service.get_history_id(thread.id()) <= self.thread_id_2_finalized_history_ids[thread.id()]) \
+                    and self.service.get_history_id(thread.id()) <= self.thread_id_2_finalized_history_ids[thread.id()] and not ignore_history_id) \
                 or \
                 thread.id() in self.blacklisted_thread_ids:# never return a blacklisted thread
                 pass # current history is the same as the last time we finalized
             else:
                 res.append(thread)
         return res
+
+
+    # same as query but ignore the history id
+    # TODO: this is expanding the external interface when in reality every redirect call
+    # should be using this function on the Inbox
+    def force_query(self, q, limit=0):
+        return self.query(q, limit, ignore_history_id=True)
    
     def refresh(self):
         # We'll no longer return any old emails
