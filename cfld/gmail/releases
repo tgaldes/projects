@@ -1,3 +1,4 @@
+20210507 1.5.5 release force_query
 20210507 1.5.4 fix gmail service when custom query returns 0 threads, fix short circuit in thread.labels
 20210423 1.5.3 fix gmailservice (requery thread ids for non default queries), change how we update the label ids on GMailMessage after the set label call
 20210422 1.5.2 some logging additions
