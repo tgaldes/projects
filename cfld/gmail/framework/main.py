@@ -15,6 +15,8 @@ from framework.RuleFactory import RuleFactory
 from framework.BaseValidator import BaseValidator
 from services.gmail.SheetService import SheetService
 from framework import constants
+import logging
+import logging_tree
 
 
 class Main:
@@ -91,16 +93,20 @@ class Main:
             sleep(60)
 
 if __name__=='__main__':
-    logger = Logger('main')
     if len(sys.argv) < 2:
-        logger.li('No path specified for json config, exiting')
+        print('No path specified for json config, exiting')
         exit(1)
     fn = sys.argv[1]
     with open(fn, 'r') as f:
         config = json.load(f)
+    framework.globals.init_config(config)
+    logger = Logger('root', config['log_path'], root=True)
+    #logging_tree.printout()
     
 
     if config['type'] == 'gmail':
+        logging.getLogger('google').setLevel(logging.ERROR)
+        logging.getLogger('googleapiclient').setLevel(logging.ERROR)
         services = []
         for email in config['emails']:
             services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))

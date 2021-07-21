@@ -19,7 +19,7 @@ class LookupInfo(Logger):
                 self.info[last_key][row[1]] = row[2]
             else:
                 self.info[last_key][row[1]] = ''
-        print(self.info)
+        self.li(self.info)
 
     def lookup_info(self, key_a, key_b):
         if key_a in self.info and key_b in self.info[key_a]:
