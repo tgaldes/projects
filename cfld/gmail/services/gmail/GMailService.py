@@ -42,7 +42,7 @@ class GMailService(Logger):
         self.__load_drafts()
 
         self.default_query = 'label:INBOX'
-        #self.default_query = 'lewis lewis'
+        #self.default_query = 'test test test'
         self.default_limit = 60
         #self.default_limit = 3
 
@@ -94,6 +94,8 @@ class GMailService(Logger):
         while True:
             for item in q_result.get('threads', []):
                 # Before we call the service, check if we already have this up to date thread locally
+                #if item['id'] in self.thread_id_2_full_threads:
+                    #self.ld('History id for id: {}. gmail: {} cached: {}'.format(item['id'], item['historyId'], self.thread_id_2_history_id[item['id']]))
                 if item['id'] in self.thread_id_2_full_threads \
                         and item['historyId'] <= self.thread_id_2_history_id[item['id']]:
                     self.ld('Returning existing thread: {}'.format(self.thread_id_2_full_threads[item['id']]))
@@ -209,7 +211,12 @@ class GMailService(Logger):
                     if d['id'] == draft_id:
                         del self.drafts[i]
                         break
-            self.__update_history_id(full_message_data['threadId'], full_message_data['historyId'])
+            thread_map = self.service.users().threads().get(userId='me', id=full_message_data['threadId'], format='full').execute()
+            thread = self.__create_thread_from_raw(thread_map)
+            # Overwrite cached thread so we get the new history id on the THREAD when we send. Message history id is less 
+            # than the thread history after a send
+            self.thread_id_2_full_threads[thread.id()] = thread
+            self.__update_history_id(thread.id(), thread_map['historyId'])
             return message
         except:
             return None
