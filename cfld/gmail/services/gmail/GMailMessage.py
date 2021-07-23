@@ -88,7 +88,10 @@ class GMailMessage(Logger):
     def message_id(self):
         return self.__field('Message-ID')
     def sender(self):
-        return extract_email(self.__field('From', default=''))
+        ret = extract_email(self.__field('From', default=''))
+        if ret:
+            return ret
+        return extract_email(self.__field('from', default=''))
     def recipients(self):
         res = self.__field('To', default='')
         if not res:
@@ -143,9 +146,8 @@ class GMailMessage(Logger):
         if not ignore_old_messages:
             return ret
 
-        #pdb.set_trace()
         # Here we'll filter out all the b.s. that we get in gmail when we hit 'reply'
-        delimiters = ['\r\n\r\nOn ', '________________________________', '">On ']
+        delimiters = ['\r\n\r\nOn ', '________________________________', '">On ','> On ']
         for delimiter in delimiters:
             index = ret.find(delimiter)
             if index > 0:
