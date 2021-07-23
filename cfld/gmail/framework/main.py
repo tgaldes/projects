@@ -99,7 +99,6 @@ if __name__=='__main__':
     fn = sys.argv[1]
     with open(fn, 'r') as f:
         config = json.load(f)
-    framework.globals.init_config(config)
     logger = Logger('root', config['log_path'], root=True)
     #logging_tree.printout()
     

@@ -10,10 +10,10 @@ import pdb
 
 global_log_level = logging.DEBUG
 def getLogger(file_name, module_name, path='./log/', root=False):
-    file_name = os.path.join(path, file_name + '.log')
-    if not os.path.isdir(path): os.makedirs(path)
-    format = '%(asctime)s [%(levelname)7s] %(name)20s:- %(message)s'
     if root:
+        file_name = os.path.join(path, file_name + '.log')
+        if not os.path.isdir(path): os.makedirs(path)
+        format = '%(asctime)s [%(levelname)7s] %(name)20s:- %(message)s'
         logger = logging.getLogger()
         logger.setLevel(global_log_level)
         # new file every minute

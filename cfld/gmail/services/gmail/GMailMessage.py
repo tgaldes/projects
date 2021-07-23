@@ -142,8 +142,10 @@ class GMailMessage(Logger):
         ret = base64.urlsafe_b64decode(data.encode('UTF8')).decode('UTF8')
         if not ignore_old_messages:
             return ret
+
+        #pdb.set_trace()
         # Here we'll filter out all the b.s. that we get in gmail when we hit 'reply'
-        delimiters = ['\r\n\r\nOn ', '________________________________']
+        delimiters = ['\r\n\r\nOn ', '________________________________', '">On ']
         for delimiter in delimiters:
             index = ret.find(delimiter)
             if index > 0:

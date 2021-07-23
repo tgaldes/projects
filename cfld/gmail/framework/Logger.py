@@ -5,8 +5,6 @@ import framework.globals
 
 class Logger:
     def __init__(self, parent_name, path='./log/', root=False):
-        if 'log_path' in framework.globals.g_config:
-            path = framework.globals.g_config['log_path']
         self.logger = getLogger('gmail_service_log', class_to_string(parent_name), path=path, root=root)
 
     def ld(self, s):
