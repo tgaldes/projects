@@ -37,7 +37,6 @@ googleapiclient.errors.HttpError: <HttpError 500 when requesting https://gmail.g
 googleapiclient.errors.HttpError: <HttpError 429 when requesting https://gmail.googleapis.com/gmail/v1/users/me/threads?alt=json&maxResults=30&q=label%3AINBOX returned "User-rate limit exceeded.  Retry after 2021-04-10T10:20:01.929Z">
 
 
-
 <br>body, p, th, td { font-family: verdana, arial, sa...' contains:'new rental application' thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
 2021-04-11 23:08:46,612 [  DEBUG]         ComboMatcher:- matched 2 matchers, returning true for thread_id: 178c40c27b9374b1 subject: Rental Application | Julia Shneidman 165 4th Street Northwest
 2021-04-11 23:08:46,612 [  DEBUG]           RuleHolder:- #102: process tenant application (match): matches
@@ -54,22 +53,7 @@ googleapiclient.errors.HttpError: <HttpError 429 when requesting https://gmail.g
 2021-04-11 23:08:46,927 [   INFO]       RedirectAction:- No found_threads matched the expression: inbox.query(get_new_application_name(thread), limit=1)
 
 
-
-
-
-check that the make them say no stuff is working as expected (again because sending is dangerous)
-redirect 'just sent the lease out' is hitting a force skip thread and so we don't add a salutation or signature. Why is that thread marked as force skip? Maybe for some threads we need to always update that field because our check history id process has a race condition? there's a dev test case for this guy (the salutation and signature was added manually)
-figure out the correct way to add and remove labels for indiv messages in a thread- this is better but I've still seen some mtsn labels also set as inbox, something to check in the logs
-might not want to throw in the 'get_lease_sent_out_emails' func
-
+might not want to throw in the 'get_lease_sent_out_emails' func - what does this mean ??
 
 
 rule additions
-
-4) add a send rule for 3rd party matches with drafts. We're ready (are we though?) we are very close
-fill out an application -> take them to application link
-5) add an 'Earliest we could get you moved in is....' by school built with lookup info to all 3rd party
-6) visita -> before we put you in touch with our on site manager
-7) remove thread.default_reply() from signature, it's messing up the forward signed lease emails and is redundant
-8) 'to see' mapping to the 'before putting you in touch with our on site manager'...
-9) 'move date' in a rent path email could also ask for room type or direct them to the contact form

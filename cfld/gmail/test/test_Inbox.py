@@ -38,7 +38,7 @@ class InboxTest(unittest.TestCase):
 
         # Now update the history id that the mock service returns for one of the threads, and we should get that thread and the new thread back
 
-        mock_service.get_history_id.side_effect = [101, 100, 100, 100, 100, 100]
+        mock_service.get_history_id.side_effect = [101, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
         self.assertEqual(2, len(inbox.query('')))
 
         mock_service.get_all_history_ids = MagicMock(return_value=second_history)

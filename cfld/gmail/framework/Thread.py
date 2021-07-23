@@ -214,6 +214,9 @@ class Thread(Logger):
         last_message = self.__last_message()
         return self.__is_my_email(self.__last_message().sender())
 
+    def is_last_message_from_them(self):
+        return not self.is_last_message_from_us()
+
     # return the decoded body of the last non draft message
     def last_message_text(self):
         return self.__last_message().content()

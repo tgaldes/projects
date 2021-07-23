@@ -20,8 +20,10 @@ class Inbox(Logger):
             # If we've fully processed this thread, make sure its history id has been incremented before processing it again
             if (thread.id() in self.thread_id_2_finalized_history_ids \
                     and self.service.get_history_id(thread.id()) <= self.thread_id_2_finalized_history_ids[thread.id()] and not ignore_history_id) \
-                or \
-                thread.id() in self.blacklisted_thread_ids:# never return a blacklisted thread
+                    or \
+                    thread.id() in self.blacklisted_thread_ids:# never return a blacklisted thread
+                if thread.id() in self.thread_id_2_finalized_history_ids:
+                    self.ld('service hid {} finalized hid {} thread: {}'.format(self.service.get_history_id(thread.id()), self.thread_id_2_finalized_history_ids[thread.id()], thread.id()))
                 pass # current history is the same as the last time we finalized
             else:
                 res.append(thread)

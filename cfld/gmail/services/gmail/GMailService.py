@@ -42,9 +42,9 @@ class GMailService(Logger):
         self.__load_drafts()
 
         self.default_query = 'label:INBOX'
-        #self.default_query = 'test test test'
+        #self.default_query = 'Alana Benson'
         self.default_limit = 60
-        #self.default_limit = 3
+        #self.default_limit = 4
 
 
         # We want to create no more than one Thread instance per thread id
@@ -240,6 +240,10 @@ class GMailService(Logger):
         self.__update_drafts(draft)
         message_data = self.service.users().messages().get(userId=userId, id=draft['message']['id']).execute()
         self.__update_history_id(message_data['threadId'], message_data['historyId'])
+        thread_map = self.service.users().threads().get(userId='me', id=message_data['threadId'], format='full').execute()
+        thread_history_id = thread_map['historyId']
+        if thread_history_id != message_data['historyId']:
+            self.lw('append_or_create t hid: {} message hid {} thread {}'.format(thread_history_id, message_data['historyId'], thread_map['id']) )
         return GMailMessage(message_data, self)
 
 

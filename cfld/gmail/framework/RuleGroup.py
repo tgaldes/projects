@@ -68,11 +68,15 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup):
         super(IfAnyRuleGroup, self).__init__(rules_tup, __class__, query)
         self.if_rules = []
         self.any_rules = []
+        added_any_rule = False
         for irule, _, rule_type in rules_tup:
             if rule_type == if_any_rule_types[0]:
                 self.if_rules.append(irule)
+                if added_any_rule:
+                    raise Exception("Cannot specify an if rule after an any rule in an IfAny Rule group")
             elif rule_type == if_any_rule_types[1]:
                 self.any_rules.append(irule)
+                added_any_rule = True
             else:
                 raise Exception('unknown if any rule type: {}'.format(rule_type))
         if not self.if_rules or not self.any_rules:

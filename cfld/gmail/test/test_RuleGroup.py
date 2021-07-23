@@ -127,6 +127,9 @@ class IfAnyRuleGroupTest(unittest.TestCase):
         # No any rules
         with self.assertRaises(Exception):
             iag = IfAnyRuleGroup([(mock_irule_2, 'ifany', 'if'), (mock_irule_2, '', 'if'), (mock_irule_2, '', 'if')], '')
+        # if rule after any rule
+        with self.assertRaises(Exception):
+            iag = IfAnyRuleGroup([(mock_irule_2, 'ifany', 'if'), (mock_irule_2, '', 'any'), (mock_irule_2, '', 'if')], '')
 
 class SingleRuleGroupTest(unittest.TestCase):
 
