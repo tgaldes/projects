@@ -57,3 +57,5 @@ might not want to throw in the 'get_lease_sent_out_emails' func - what does this
 
 
 rule additions
+
+1- instead of immediately archiving 'Your signature is requrired' emails, we can leave them in the inbox and then archive them once the signed lease email for that tenant comes in, that way they stay as a reminder for me to sign the lease
