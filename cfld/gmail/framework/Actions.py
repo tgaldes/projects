@@ -11,6 +11,9 @@ from framework.BaseValidator import BaseValidator
 from framework.Logger import Logger
 from framework import constants
 
+
+
+
 class LabelAction(implements(IAction), Logger):
     def __init__(self, value, unset=False):
         super(LabelAction, self).__init__(__class__)
@@ -64,9 +67,8 @@ class DraftAction(implements(IAction), DestinationBase):
         self.label_action = LabelAction(constants.add_automation_label)
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.prepend = prepend
-    def process(self, thread, matches, log_debug=True):
-        if log_debug:
-            self.ld('processing a thread')
+    def process(self, thread, matches):
+        self.ld('processing a thread')
         destinations = self._get_destinations(thread, matches)
         if self.value:
             draft_content = evaluate_expression(self.value, **locals())
@@ -79,22 +81,19 @@ class DraftAction(implements(IAction), DestinationBase):
         self.label_action.process(thread, matches)
 
 
-# TODO: when we have one more class that's using redirect functionality 
-# we can extract some of the functionality to a base class
-# There are two differences between a redirect and a draft action
-# 1 - the redirect can create a draft on a different thread than the input thread
-# 2 - the redirect can create this draft in a different inbox
 # The redirect thread needs to know
 # - inbox he'll be sending to
 # - how to find the thread he'll be drafting on
-class RedirectAction(DraftAction):
-    def __init__(self, inbox, finder_expression, value, destinations):
-        super(RedirectAction, self).__init__(value, destinations, name=__class__, prepend=False)
+# and is created with an action that he will pass the found threads to
+class RedirectAction(Logger):
+    def __init__(self, inbox, finder_expression, action):
+        super(RedirectAction, self).__init__(__class__)
         self.inbox = inbox # set up by factory
         self.thread_finder_expression = finder_expression
-        if  not self.thread_finder_expression:
-            raise Exception('Cannot create with empty or thread_finder_expression: {} '.format(self.thread_finder_expression))
-        self.ld('Created: destinations={}, value={}, finder_expression={}'.format(self.destinations, self.value, self.thread_finder_expression))
+        self.action = action
+        if not self.thread_finder_expression:
+            raise Exception('Cannot create with empty thread_finder_expression: {} '.format(self.thread_finder_expression))
+        self.ld('Created: finder_expression={} action={}'.format(self.thread_finder_expression, self.action))
         
     def process(self, thread, matches):
         self.ld('processing a thread')
@@ -102,7 +101,7 @@ class RedirectAction(DraftAction):
         if not found_threads:
             self.li('No found_threads matched the expression: {}'.format(self.thread_finder_expression))
         for found_thread in found_threads:
-            super().process(found_thread, matches, log_debug=False)
+            self.action.process(found_thread, matches)
 
 # Like a redirect, but instead of creating a draft in the found thread,
 # we'll get the labels from the found thread and set any that match our regex

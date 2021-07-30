@@ -66,6 +66,7 @@ class RuleFactory(Logger):
                 matchers.append(AllMatcher())
                 log_msg += 'AllMatcher, '
             # create action
+            supported_actions = ['draft', 'prepend_draft', 'label', 'unlabel', 'remove_draft', 'redirect/redirect_draft', 'redirect_label', 'empty/\'\'', 'forward_attachment', 'attachment', 'label_lookup', 'shell', 'send_draft']
             if tup.action == 'draft':
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
@@ -81,17 +82,26 @@ class RuleFactory(Logger):
             elif tup.action == 'remove_draft':
                 action = RemoveDraftAction()
                 log_msg += 'RemoveDraftAction'
-            elif tup.action == 'redirect':
+            elif tup.action == 'redirect_draft' or tup.action == 'redirect':
                 if tup.dest_email not in inboxes:
                     raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))
-                action = RedirectAction(inboxes[tup.dest_email], tup.finder, tup.value, tup.destinations)
-                log_msg += 'RedirectAction'
+                inner_action = DraftAction(tup.value, tup.destinations)
+                action = RedirectAction(inboxes[tup.dest_email], tup.finder, inner_action)
+                log_msg += 'RedirectDraftAction'
+            elif tup.action == 'redirect_label':
+                if tup.dest_email not in inboxes:
+                    raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))
+                inner_action = LabelAction(tup.value)
+                action = RedirectAction(inboxes[tup.dest_email], tup.finder, inner_action)
+                log_msg += 'RedirectLabelAction'
             elif tup.action == 'empty' or not tup.action:
                 action = EmptyAction()
                 log_msg += 'EmptyAction'
+            # grabs attachment from email thread
             elif tup.action == 'forward_attachment':
                 action = ForwardAttachmentAction(tup.destinations)
                 log_msg += 'ForwardAttachmentAction'
+            # Looks for files on computer
             elif tup.action == 'attachment':
                 action = AttachmentAction(tup.value, tup.destinations)
                 log_msg += 'AttachmentAction'
@@ -107,7 +117,7 @@ class RuleFactory(Logger):
                 action = SendDraftAction()
             else:
                     print(tup)
-                    raise Exception('Only draft, prepend_draft, label, unlabel, remove_draft, and redirect are supported for actions. No rule will be created for {}. tup: {}'.format(tup.action, tup))
+                    raise Exception('Supported actions are: {} No rule will be created for {}. tup: {}'.format(supported_actions, tup.action, tup))
 
             # Create the rule holder
             if len(matchers) == 1:
