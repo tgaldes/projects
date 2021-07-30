@@ -64,8 +64,9 @@ class DraftAction(implements(IAction), DestinationBase):
         self.label_action = LabelAction(constants.add_automation_label)
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.prepend = prepend
-    def process(self, thread, matches):
-        self.ld('processing a thread')
+    def process(self, thread, matches, log_debug=True):
+        if log_debug:
+            self.ld('processing a thread')
         destinations = self._get_destinations(thread, matches)
         if self.value:
             draft_content = evaluate_expression(self.value, **locals())
@@ -101,7 +102,7 @@ class RedirectAction(DraftAction):
         if not found_threads:
             self.li('No found_threads matched the expression: {}'.format(self.thread_finder_expression))
         for found_thread in found_threads:
-            super().process(found_thread, matches)
+            super().process(found_thread, matches, log_debug=False)
 
 # Like a redirect, but instead of creating a draft in the found thread,
 # we'll get the labels from the found thread and set any that match our regex
