@@ -23,9 +23,11 @@ class Inbox(Logger):
                     or \
                     thread.id() in self.blacklisted_thread_ids:# never return a blacklisted thread
                 if thread.id() in self.thread_id_2_finalized_history_ids:
-                    self.ld('service hid {} finalized hid {} thread: {}'.format(self.service.get_history_id(thread.id()), self.thread_id_2_finalized_history_ids[thread.id()], thread.id()))
+                    self.ld('not returning history id {} finalized hid {} thread: {}'.format(self.service.get_history_id(thread.id()), self.thread_id_2_finalized_history_ids[thread.id()], thread.id()))
                 pass # current history is the same as the last time we finalized
             else:
+                if thread.id() in self.thread_id_2_finalized_history_ids:
+                    self.ld('returning hid {} finalized hid {} thread: {}'.format(self.service.get_history_id(thread.id()), self.thread_id_2_finalized_history_ids[thread.id()], thread.id()))
                 res.append(thread)
         return res
 

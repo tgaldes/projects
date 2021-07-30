@@ -15,7 +15,7 @@ from services.gmail.GMailMessage import GMailMessage
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 class GMailService(Logger):
-    def __init__(self, email, domains, secret_path, token_dir):
+    def __init__(self, email, domains, secret_path, token_dir, default_query_limit=60, default_query_string='label:INBOX'):
         super(GMailService, self).__init__(__class__)
         self.email = email
         self.user = email.split('@')[0]
@@ -39,12 +39,9 @@ class GMailService(Logger):
                 pickle.dump(creds, token)
 
         self.service = build('gmail', 'v1', credentials=creds)
-        self.__load_drafts()
 
-        self.default_query = 'label:INBOX'
-        #self.default_query = 'Alana Benson'
-        self.default_limit = 60
-        #self.default_limit = 4
+        self.default_query = default_query_string
+        self.default_limit = default_query_limit
 
 
         # We want to create no more than one Thread instance per thread id
@@ -55,9 +52,13 @@ class GMailService(Logger):
         self.full_threads_by_query = {}
         # Map the thread id to the latest historyId (basically latest state) that we have seen on the thread
         self.thread_id_2_history_id = {}
+        # We only want to finalize the history id of a thread once it has been processed by all the rules. 
+        # This map holds the thread ids of all the threads we had in memory at the start of processing rules
+        # When a thread comes in mid iteration from a rule using the non default query, we'll return that thread on the next
+        # iteration so that it can be processed by all the rules
 
-        self.__populate_query_result(self.default_query, self.default_limit)
-
+        self.thread_ids_in_memory_at_start_of_iteration = set()
+        self.refresh() # run default query, get drafts, populate thread_ids_in_memory_at_start_of_iteration
         results = self.service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
         self.label_string_2_id = {}
@@ -75,8 +76,12 @@ class GMailService(Logger):
         if thread_id in self.thread_id_2_history_id:
             return int(self.thread_id_2_history_id[thread_id])
         return 0
+
     def get_all_history_ids(self):
-        return self.thread_id_2_history_id
+        history_ids_of_threads_that_were_in_memory_since_start_of_one_iteration = {}
+        for id in self.thread_ids_in_memory_at_start_of_iteration:
+            history_ids_of_threads_that_were_in_memory_since_start_of_one_iteration[id] = self.thread_id_2_history_id[id]
+        return history_ids_of_threads_that_were_in_memory_since_start_of_one_iteration
 
     def __populate_query_result(self, q, limit):
         res = []
@@ -94,8 +99,8 @@ class GMailService(Logger):
         while True:
             for item in q_result.get('threads', []):
                 # Before we call the service, check if we already have this up to date thread locally
-                #if item['id'] in self.thread_id_2_full_threads:
-                    #self.ld('History id for id: {}. gmail: {} cached: {}'.format(item['id'], item['historyId'], self.thread_id_2_history_id[item['id']]))
+                if item['id'] in self.thread_id_2_full_threads:
+                    self.ld('History id for id: {}. gmail: {} cached: {}'.format(item['id'], item['historyId'], self.thread_id_2_history_id[item['id']]))
                 if item['id'] in self.thread_id_2_full_threads \
                         and item['historyId'] <= self.thread_id_2_history_id[item['id']]:
                     self.ld('Returning existing thread: {}'.format(self.thread_id_2_full_threads[item['id']]))
@@ -157,6 +162,8 @@ class GMailService(Logger):
     def refresh(self):
         self.__populate_query_result(self.default_query, self.default_limit)
         self.__load_drafts()
+        # populate set of thread ids we have in memory at the start of the next iteration
+        self.thread_ids_in_memory_at_start_of_iteration = self.thread_id_2_full_threads.keys()
 
     # Empty q is translated to the default query and is NOT rerequeried on the service
     # any other query we re run the actualy query to get an updated list of thread ids
