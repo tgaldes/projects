@@ -86,6 +86,7 @@ class Main:
         if 'validate' in self.config and self.config['validate']:
             self.validate_rules()
         loop_count = 0
+        
         while True:
             self.run_one()
             loop_count += 1
@@ -108,7 +109,10 @@ if __name__=='__main__':
         logging.getLogger('googleapiclient').setLevel(logging.ERROR)
         services = []
         for email in config['emails']:
-            services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))
+            if 'default_query_limit' and 'default_query_string' in config:
+                services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir'], config['default_query_limit'], config['default_query_string']))
+            else:
+                services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))
     else:
         logger.lf('Only gmail type supported, exiting')
         exit(1)
