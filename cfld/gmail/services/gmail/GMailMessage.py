@@ -8,6 +8,7 @@ def extract_email(email_string):
     if not email_string:
         return email_string
     return email_string.split(' ')[-1].strip('<').strip('>').strip('"')
+# return list of strings of the emails
 def extract_emails(emails_string):
     if not emails_string:
         return []
@@ -127,6 +128,12 @@ class GMailMessage(Logger):
 
 
 # ----------- end wrappers around finding a single item from fields ----------------
+
+    # return the recipients of the message, minus any email that appears in filters
+    def filtered_recipients(self, filters):
+        rec = set(self.recipients())
+        f = set(filters)
+        return list(rec - f)
 
     # of html formatting
     def content(self, ignore_old_messages=True):

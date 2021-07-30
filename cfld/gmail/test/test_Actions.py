@@ -128,11 +128,7 @@ class RedirectActionTest(unittest.TestCase):
 
     def test_throw_on_empty_init(self):
         with self.assertRaises(Exception):
-            ra = RedirectAction('', 'exp', 'exp')
-        with self.assertRaises(Exception):
             ra = RedirectAction('exp', '', 'exp')
-        with self.assertRaises(Exception):
-            ra = RedirectAction('exp', 'exp', '')
 
     # This tests the flow the RedirectAction sees when we get a new rental application
     # 1 The application goes to tyler@ inbox
@@ -152,7 +148,8 @@ class RedirectActionTest(unittest.TestCase):
         destinations = 'thread.default_reply()'
         expression = '"You\'ll need to approve the application for housing at {} on your end".format(thread.get_short_name())'
 
-        ra = RedirectAction(mock_inbox, finder_expression, expression, destinations)
+        inner_action = DraftAction(expression, destinations)
+        ra = RedirectAction(mock_inbox, finder_expression, inner_action)
         ra.process(mock_input_thread, ())
         mock_input_thread.get_new_application_email.assert_called_once_with()
         mock_inbox.get_threads_from_email_address.assert_called_once_with('tgaldes@gmail.com')

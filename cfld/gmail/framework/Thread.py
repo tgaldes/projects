@@ -107,7 +107,7 @@ class Thread(Logger):
         existing_body = self.existing_draft_text()
         existing_attachments = self.existing_draft_attachments()
         existing_attachments.append((data, fn))
-        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), existing_body, existing_attachments)
+        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.last_message().message_id(), self.last_message().message_id(), existing_body, existing_attachments)
         if draft_id:
             self.remove_existing_draft(False) # Remove our copy but not the service copy
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
@@ -119,7 +119,7 @@ class Thread(Logger):
         if draft_id:
             destinations = self.__concatenate_destinations(destinations)
 
-        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.__last_message().message_id(), self.__last_message().message_id(), body, self.existing_draft_attachments())
+        mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.last_message().message_id(), self.last_message().message_id(), body, self.existing_draft_attachments())
         if draft_id:
             self.remove_existing_draft(False) # Remove our copy but not the service copy
         response = self.service.append_or_create_draft(mime_multipart, self.identifier, draft_id) # service returns a Message class
@@ -189,10 +189,10 @@ class Thread(Logger):
 
     # return the epoch time of the last message sent or received
     def last_ts(self):
-        return self.__last_message().ts()
+        return self.last_message().ts()
 
     def age_in_days(self, now_f=time):
-        return int((now_f() - self.__last_message().ts()) / 86400)
+        return int((now_f() - self.last_message().ts()) / 86400)
     
     def send_draft(self):
         draft_id = self.existing_draft_id()
@@ -211,15 +211,15 @@ class Thread(Logger):
 
     # Return true if the last non draft message is from our user, false otherwise
     def is_last_message_from_us(self):
-        last_message = self.__last_message()
-        return self.__is_my_email(self.__last_message().sender())
+        last_message = self.last_message()
+        return self.__is_my_email(self.last_message().sender())
 
     def is_last_message_from_them(self):
         return not self.is_last_message_from_us()
 
     # return the decoded body of the last non draft message
     def last_message_text(self):
-        return self.__last_message().content()
+        return self.last_message().content()
 
     # return the decoded body of all non draft messages in the thread
     def full_text(self):
@@ -238,9 +238,15 @@ class Thread(Logger):
             return True
         return False
 
+    def my_emails(self):
+        user = self.service.get_user()
+        ret = []
+        for d in self.service.get_domains():
+            ret.append(user + '@' + d)
+        return ret
 
     # return the last non draft message
-    def __last_message(self):
+    def last_message(self):
         for message in reversed(self.messages):
             if not message.is_draft():
                 return message
