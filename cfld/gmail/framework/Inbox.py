@@ -11,8 +11,6 @@ class Inbox(Logger):
     def get_service(self):
         return self.service
 
-    # Note that current implementation will only pick up preloaded 20 threads
-    # when q == ''
     # when limit is left as default we will let the service use it's default value
     def query(self, q, limit=0, ignore_history_id=False):
         res = []
@@ -38,14 +36,16 @@ class Inbox(Logger):
     def force_query(self, q, limit=0):
         return self.query(q, limit, ignore_history_id=True)
    
+    # split refresh and finalize. call refresh before the loop, finalize after
+    # service will hide thread ids that were reinitialized mid run from the return of get_all_history_ids, like the first way I implemented it but instead of if the thread is in memory at the start of the run it's if the thread has been reinit during the run
     def refresh(self):
+        self.service.refresh()
+
+    def finalize(self):
         # We'll no longer return any old emails
         thread_id_2_history_ids = self.service.get_all_history_ids()
         for thread_id, history_id in thread_id_2_history_ids.items():
             self.thread_id_2_finalized_history_ids[thread_id] = int(history_id)
-        # Call the service refresh second, because in the function it might re query
-        # the state which will update the history ids with new values
-        self.service.refresh()
 
     # Tell the inbox to never return this thread any more.
     def blacklist_id(self, thread_id):

@@ -269,7 +269,93 @@ class IntegrationTest(unittest.TestCase):
         self.assertTrue(bad_thread.id() in m.inboxes['tyler'].blacklisted_thread_ids)
         self.assertEqual(1, len(m.inboxes['tyler'].blacklisted_thread_ids))
 
+    def test_reinitialize_thread_mid_iteration(self):
+        # This is a complicated example
+        # we are in the middle of processing rules
+        # a new message comes in on a thread that has the label asdf that we already cached on the service
+        # we process a few more rules
+        # now we have a rule that does a custom query 'label:asdf'
+        # the service will see that it needs to get the full thread from the service
+        # and reinitialize it
+        # now we come to the end of the run
+        # we can't finalize that threads history id! since it came in mid run
+        # we'll have missed rules early on that might have wanted to act on it
+        # and thus need to give it another chance to be processed
 
 
+        # in the test we've boiled this down to initializing the thread
+        # with reinit set to True. We'll process all the rules three times,
+        # and only after the second iteration will the history id be marked as finalized,
+        # so we expect to add the draft twice
 
+        test_draft_text = '"test draft"'
+        from orgs.example_org.ExampleOrg import header
+        import orgs.example_org.ExampleOrg
+        orgs.example_org.ExampleOrg.example_rule_construction_data = [header, \
+        # draft rule, will always match empty matcher
+            ['add draft', 'tyler', '', '', '', '', '', 'draft', test_draft_text, '', 'thread.default_reply()', '2', '', '', 'custom_query']]
+
+        reinit_service = Mock()
+        reinit_thread = Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), reinit_service)
+        all_threads = [reinit_thread]
+
+        def set_reinit(q, limit):
+            reinit_thread = Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), reinit_service)
+            all_threads = [reinit_thread]
+            return all_threads
+
+        # set up reinit service
+        #reinit_service.query = MagicMock(return_value=all_threads)
+        reinit_service.query = set_reinit
+        reinit_service.get_label_name = MagicMock(return_value='Schools')
+        reinit_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
+        current_history_id = 1
+        reinit_service.get_all_history_ids = MagicMock(return_value={reinit_thread.id() : current_history_id})
+        reinit_service.get_history_id = MagicMock(return_value=current_history_id)
+        reinit_service.get_user = MagicMock(return_value='tyler')
+        reinit_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
+        reinit_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
+
+        draft_id = '1234'
+        draft_msg_id = '2345'
+        dest_email = 'lookup@one.com,lookup@two.com'
+        reinit_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
+        reinit_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : test_draft_text, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(test_draft_text)}, 'headers' : [{'name' : 'to', 'value' : '<{}>,<{}>'.format(*dest_email.split(','))}]}}, {}))
+
+        config = {}
+        config['org'] = {}
+        config['org']['name'] = 'example_org'
+        config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature']
+        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
+        logger = Logger('TestIntegration', '/cfld/log/test/', True)
+        m = Main([reinit_service], logger, config)
+
+        m.setup()
+
+        # first run
+        # will have nothing finalized so will execute the rule
+        # afterwards 1 is finalized as the history id
+        m.run_one()
+        self.assertEqual(1, reinit_service.append_or_create_draft.call_count)
+
+        current_history_id = 2
+        reinit_service.get_history_id = MagicMock(return_value=current_history_id)
+        reinit_service.get_all_history_ids = MagicMock(return_value={})
+        # 1 is finalized but we return 2 as the current history id
+        # so the rule executes
+        # afterwards, we don't give any new history id to finalize
+        m.run_one()
+        self.assertEqual(2, reinit_service.append_or_create_draft.call_count)
+
+        reinit_service.get_all_history_ids = MagicMock(return_value={reinit_thread.id() : current_history_id})
+        # 1 is STILL finalized but we return 2 as the current history id
+        # so the rule executes
+        # afterwards, we finalize 2
+        m.run_one()
+        self.assertEqual(3, reinit_service.append_or_create_draft.call_count)
+
+        # 2 is finalized and we return 2 as the history id,
+        # so query won't return the thread
+        m.run_one()
+        self.assertEqual(3, reinit_service.append_or_create_draft.call_count)
 

@@ -26,6 +26,7 @@ class InboxTest(unittest.TestCase):
         # Now we'll finalize the history ids of the mock threads
         mock_service.get_all_history_ids = MagicMock(return_value=history)
         mock_service.refresh = MagicMock()
+        inbox.finalize()
         inbox.refresh()
 
         # Add in a new thread, it will be the only one returned
@@ -43,6 +44,7 @@ class InboxTest(unittest.TestCase):
 
         mock_service.get_all_history_ids = MagicMock(return_value=second_history)
         mock_service.get_history_id = MagicMock(return_value=111)
+        inbox.finalize()
         inbox.refresh()
         self.assertEqual(0, len(inbox.query('')))
         

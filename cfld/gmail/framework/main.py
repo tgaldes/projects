@@ -44,9 +44,16 @@ class Main:
     def refresh(self):
         for inbox in self.inboxes:
             self.inboxes[inbox].refresh()
+    def finalize(self):
+        for inbox in self.inboxes:
+            self.inboxes[inbox].finalize()
 
     def run_one(self):
         try:
+
+            self.logger.li('Refreshing inboxes and default queries for upcoming loop.')
+            self.refresh()
+
             for rule_group, user in self.rule_factory.get_rule_groups():
                 inbox = self.inboxes[user]
                 threads = inbox.query(rule_group.get_query())
@@ -63,9 +70,9 @@ class Main:
                         self.logger.le(str(e))
                         thread.set_label(constants.error_label)
                         inbox.blacklist_id(thread.id())
+            # will tell Inbox to not process Threads a second time
+            self.finalize()
 
-            self.logger.li('Refreshing inboxes and default queries for next loop.')
-            self.refresh()
             return
         except bdb.BdbQuit as e:
             exit(0)
