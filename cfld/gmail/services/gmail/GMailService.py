@@ -52,13 +52,22 @@ class GMailService(Logger):
         self.full_threads_by_query = {}
         # Map the thread id to the latest historyId (basically latest state) that we have seen on the thread
         self.thread_id_2_history_id = {}
-        # We only want to finalize the history id of a thread once it has been processed by all the rules. 
-        # This map holds the thread ids of all the threads we had in memory at the start of processing rules
-        # When a thread comes in mid iteration from a rule using the non default query, we'll return that thread on the next
-        # iteration so that it can be processed by all the rules
 
-        self.thread_ids_in_memory_at_start_of_iteration = set()
-        self.refresh() # run default query, get drafts, populate thread_ids_in_memory_at_start_of_iteration
+        # This helps us handle a complicated example
+        # we are in the middle of processing rules
+        # a new message comes in on a thread that is cached on the service and has the label asdf
+        # we process a few more rules
+        # now we have a rule that does a custom query 'label:asdf'
+        # the service will see that it needs to get the full thread from the service
+        # and reinitialize it
+        # now we come to the end of the run
+        # we can't finalize that threads history id! since it came in mid run
+        # we'll have missed rules early on that might have wanted to act on it
+        # and thus need to give it another chance to be processed
+        # so when the inbox asks for the finalized thread/history ids, don't include in what we return
+        self.reinitialized_mid_iteration_thread_ids = set()
+
+
         results = self.service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
         self.label_string_2_id = {}
@@ -78,10 +87,13 @@ class GMailService(Logger):
         return 0
 
     def get_all_history_ids(self):
-        history_ids_of_threads_that_were_in_memory_since_start_of_one_iteration = {}
-        for id in self.thread_ids_in_memory_at_start_of_iteration:
-            history_ids_of_threads_that_were_in_memory_since_start_of_one_iteration[id] = self.thread_id_2_history_id[id]
-        return history_ids_of_threads_that_were_in_memory_since_start_of_one_iteration
+        ret = {}
+        for thread_id, history_id in self.thread_id_2_history_id:
+            # don't finalize threads that have been reinitialized mid iteration so that all rules
+            # get a chance to process them
+            if thread_id not in self.reinitialized_mid_iteration_thread_ids:
+                ret[thread_id] = history_id
+        return ret
 
     def __populate_query_result(self, q, limit):
         res = []
@@ -108,10 +120,13 @@ class GMailService(Logger):
                 else:
                     thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
                     try:
+                        if q != self.default_query:
+                            self.ld('Reinit {} mid run. new hid: {}'.format(thread.id(), thread_map['historyId']))
+                            self.reinitialized_mid_iteration_thread_ids.add(thread.id())
                         thread = self.__create_thread_from_raw(thread_map)
                         # Save this id for future use
                         self.thread_id_2_full_threads[item['id']] = thread
-                        self.__update_history_id(thread.id(), thread_map['historyId'])
+                        old_id = self.__update_history_id(thread.id(), thread_map['historyId'])
                         res.append(thread)
                     except Exception as e:
                         self.li('Couldn\'t create thread id {} because of: {}'.format(item['id'], e))
@@ -132,7 +147,11 @@ class GMailService(Logger):
     def __update_history_id(self, thread_id, history_id=None):
         if history_id is None:
             history_id = self.service.users().threads().get(userId='me', id=thread_id, format='full').execute()['historyId']
+        old_id = None
+        if thread_id in self.thread_id_2_history_id:
+            old_id = self.thread_id_2_history_id[thread_id]
         self.thread_id_2_history_id[thread_id] = history_id
+        return old_id
                 
     def get_label_id(self, label_string): # TODO: create label on demand? Or force an exception when the desired label doesn't match somehting I've already created
         if label_string in self.label_string_2_id:
@@ -162,20 +181,24 @@ class GMailService(Logger):
     def refresh(self):
         self.__populate_query_result(self.default_query, self.default_limit)
         self.__load_drafts()
-        # populate set of thread ids we have in memory at the start of the next iteration
-        self.thread_ids_in_memory_at_start_of_iteration = self.thread_id_2_full_threads.keys()
+        self.reinitialized_mid_iteration_thread_ids = set()
 
     # Empty q is translated to the default query and is NOT rerequeried on the service
     # any other query we re run the actualy query to get an updated list of thread ids
     def query(self, q, limit):
+        if q == '':
+            q = self.default_query
         if limit <= 0:
             limit = self.default_limit
-        # default is already pre loaded
-        if (q == '' or q == self.default_query) and self.default_query in self.full_threads_by_query:
-            return self.full_threads_by_query[self.default_query][:limit]
+        # default query is preloaded
+        if q in self.full_threads_by_query and q == self.default_query:
+            return self.full_threads_by_query[q][:limit]
 
+        # repopulate other queries each time to get the latest state
+        # e.g. rule 1 adds an automation label, rule 2 has query label:automation
+        # we'll need to run that query after executing rule 1
         self.__populate_query_result(q, limit)
-        self.li('Query: {}, limit {}, return: {}'.format(q, limit, self.full_threads_by_query[q][:limit]))
+        self.li('Query: \'{}\', limit {}, return: {}'.format(q, limit, self.full_threads_by_query[q][:limit]))
         return self.full_threads_by_query[q][:limit]
 
     def set_label(self, id, label_id, unset=False, userId='me'):
