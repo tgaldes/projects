@@ -1,0 +1,74 @@
+# process new applicant
+
+todo open buildium, go to applications page
+
+>>> sleep(5); pag.screenshot().getpixel(pag.position()); pag.position()
+
+
+
+
+leasing tab
+(255, 255, 255)
+Point(x=890, y=225)
+
+application sub tab (move to activate)
+(242, 242, 242)
+Point(x=1029, y=282)
+
+
+
+
+ctrl f
+
+enter in the email address
+
+find on the screen where its orange and click
+(230, 155, 66) color of found text
+Point(x=1244, y=520) rough search area
+(242, 242, 242) color of standard buildium background
+Point(x=1251, y=544) where we want to click (right below found text)
+
+click on process fee
+(255, 255, 255)
+Point(x=1688, y=547)
+
+click on new process fee (green)
+(112, 143, 104)
+Point(x=1024, y=454)
+
+confirm that its pending when it shows up as yellow here
+(236, 188, 83)
+Point(x=1832, y=497)
+
+click on screening button
+Point(x=982, y=415)
+
+click on next screening button, wait for it to turn green and move the mouse around while were waiting to trigger the front end to change the color
+(144, 196, 199)
+Point(x=790, y=574)
+
+wait for page to load and get dark green review order button (move mouse as well)
+(112, 143, 104)
+Point(x=879, y=916)
+
+type out 800 in monthly rent
+Point(x=862, y=453)
+
+security deposit type out 800
+Point(x=1121, y=460)
+
+keep clicking here until it turns the color (charge my buildium account)
+(140, 178, 131)
+Point(x=769, y=839)
+
+click on dark green review order button
+(112, 143, 104)
+Point(x=879, y=916)
+
+click the checkbox and it should turn green
+(140, 178, 131)
+Point(x=776, y=492)
+
+click dark green place order button
+(112, 143, 104)
+

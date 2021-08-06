@@ -8,10 +8,23 @@ group_data = {'USC' :(
              '/home/tgaldes/Dropbox/Fraternity PM/Pictures/2715 Portland USC/selections',
              [
                  ('https://www.facebook.com/groups/344453725628321/', 2),
-                 ('https://www.facebook.com/groups/143384839561246/', 3),
                  ('https://www.facebook.com/groups/housingusc/', 1),
                  ('https://www.facebook.com/groups/apartment.la/', 1)
+                 ('https://www.facebook.com/groups/143384839561246/', 3),
              ],
+             (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
+             (1113, 282)  # coords to the area that we check for post pending
+        ),
+        'UCLA' :
+        (
+            'asdf',
+            'asdf',
+            [
+                 ('https://www.facebook.com/groups/1835635240040670/', 1)
+                 ('https://www.facebook.com/groups/415336998925847/', 1)
+                 ('https://www.facebook.com/groups/apartment.la/', 1)
+                 ('https://www.facebook.com/groups/143384839561246/', 3),
+            ],
              (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
         ),
@@ -21,8 +34,24 @@ group_data = {'USC' :(
             '/home/tgaldes/Dropbox/Fraternity PM/Pictures/SJSU TX/facebook',
             [
                 ('https://www.facebook.com/groups/948845475189394/', 1),
-                ('https://www.facebook.com/groups/SJSUhousing/', 2),
-                ('https://www.facebook.com/groups/574981909329531/', 2)
+                ('https://www.facebook.com/groups/SJSUhousing/', 2), # SJSU
+                ('https://www.facebook.com/groups/574981909329531/', 2) # SJSU
+            ],
+             (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
+             (1113, 282)  # coords to the area that we check for post pending
+        ),
+        'Pitt' :
+        (
+            'asdf',
+            'asdf',
+            [
+                ('https://www.facebook.com/groups/pittoffcampus/', 1),
+                ('https://www.facebook.com/groups/1891295347777497/', 1),
+                ('https://www.facebook.com/groups/816037598451517/', 1),
+                ('https://www.facebook.com/groups/214878512490890/', 1),
+                ('https://www.facebook.com/groups/206101910004393/', 1),
+                ('https://www.facebook.com/groups/918647024841663/', 1),
+                ('https://www.facebook.com/groups/904140896737771/', 1),
             ],
              (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
@@ -43,14 +72,14 @@ buy_sell_data = {'USC' :(
              'https://docs.google.com/document/d/1wOmbPiLod6B-WPjF4ygP6JbjqGP8Em4VXPMk0yekX_8',
              '/home/tgaldes/Dropbox/Fraternity PM/Pictures/2715 Portland USC/selections',
              [
-                 ('https://www.facebook.com/groups/151027485336692/?ref=gysj', 1),
-                 ('https://www.facebook.com/groups/55449183852/', 2), 
-                 ('https://www.facebook.com/groups/roompiklosangelesroommaterentals', 2),
-                 ('https://www.facebook.com/groups/LosAngelesHousingRentals/', 2),
-                 ('https://www.facebook.com/groups/1286269061395308/', 2),
-                 ('https://www.facebook.com/groups/LA4stay/', 2),
-                 ('https://www.facebook.com/groups/764096300371317/', 3),
-                 ('https://www.facebook.com/groups/uschousing/', 2),
+                 ('https://www.facebook.com/groups/764096300371317/', 3), # USC
+                 ('https://www.facebook.com/groups/uschousing/', 2), # USC
+                 ('https://www.facebook.com/groups/151027485336692/?ref=gysj', 1), # LA
+                 ('https://www.facebook.com/groups/55449183852/', 2), # LA
+                 ('https://www.facebook.com/groups/roompiklosangelesroommaterentals', 2), # LA
+                 ('https://www.facebook.com/groups/LosAngelesHousingRentals/', 2), # LA
+                 ('https://www.facebook.com/groups/1286269061395308/', 2), # LA
+                 ('https://www.facebook.com/groups/LA4stay/', 2), # LA
              ],
              'USC Student Housing',
              '500'
@@ -65,6 +94,24 @@ buy_sell_data = {'USC' :(
                 ('https://www.facebook.com/groups/2023562321211089', 3),
                 ('https://www.facebook.com/groups/I3027/', 2),
                 ('https://www.facebook.com/groups/bayareagradhousing2015', 2),
+            ],
+             'SJSU Student Housing',
+             '650',
+        ),
+        'UCLA' :
+        (
+            'asdf',
+            'asdf',
+            [
+                 ('https://www.facebook.com/groups/846176935459516/', 1),
+                 ('https://www.facebook.com/groups/437963763011620/', 1),
+                 ('https://www.facebook.com/groups/1414484008814397', 1),
+                 ('https://www.facebook.com/groups/151027485336692/?ref=gysj', 1), # LA
+                 ('https://www.facebook.com/groups/55449183852/', 2), # LA
+                 ('https://www.facebook.com/groups/roompiklosangelesroommaterentals', 2), # LA
+                 ('https://www.facebook.com/groups/LosAngelesHousingRentals/', 2), # LA
+                 ('https://www.facebook.com/groups/1286269061395308/', 2), # LA
+                 ('https://www.facebook.com/groups/LA4stay/', 2), # LA
             ],
              'SJSU Student Housing',
              '650',
