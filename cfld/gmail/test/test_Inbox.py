@@ -13,12 +13,12 @@ class InboxTest(unittest.TestCase):
         for i in range(5):
             t = Mock()
             t.id = MagicMock(return_value=i)
+            t.history_id = MagicMock(return_value=100)
             mock_threads.append(t)
             history[i] = 100
             second_history[i] = 111
 
         mock_service.query = MagicMock(return_value=mock_threads)
-        mock_service.get_history_id = MagicMock(return_value=100)
         inbox = Inbox(mock_service)
 
         self.assertEqual(5, len(inbox.query('')))
@@ -32,6 +32,7 @@ class InboxTest(unittest.TestCase):
         # Add in a new thread, it will be the only one returned
         t = Mock()
         t.id = MagicMock(return_value=6)
+        t.history_id = MagicMock(return_value=100)
         history[6] = 100
         second_history[6] = 111
         mock_threads.append(t)
@@ -39,11 +40,10 @@ class InboxTest(unittest.TestCase):
 
         # Now update the history id that the mock service returns for one of the threads, and we should get that thread and the new thread back
 
-        mock_service.get_history_id.side_effect = [101, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+        mock_threads[0].history_id = MagicMock(return_value=111)
         self.assertEqual(2, len(inbox.query('')))
 
         mock_service.get_all_history_ids = MagicMock(return_value=second_history)
-        mock_service.get_history_id = MagicMock(return_value=111)
         inbox.finalize()
         inbox.refresh()
         self.assertEqual(0, len(inbox.query('')))

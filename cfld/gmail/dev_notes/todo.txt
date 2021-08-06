@@ -58,4 +58,12 @@ might not want to throw in the 'get_lease_sent_out_emails' func - what does this
 
 rule additions
 
-1- instead of immediately archiving 'Your signature is requrired' emails, we can leave them in the inbox and then archive them once the signed lease email for that tenant comes in, that way they stay as a reminder for me to sign the lease
+1- instead of immediately archiving 'Your signature is requrired' emails, we can leave them in the inbox and then archive them once the signed lease email for that tenant comes in, that way they stay as a reminder for me to sign the lease, OR we can add the automation label ourselves and add an empty draft to it so it shows up in the automation folder, maybe create a tag action so we label automation and label tag and then don't remove the automation label if it has the tag label so that everything requiring user attention remains in the automation folder
+DONE? 2- can we change up how we are querying emails so that a rule like makethemsayno will get a chance to act on a thread on every iteration?
+    we could split that rule into two and query for 3rd_party and automation/contact_form labels
+    - add 'not 'automation/make_them_say_no' in thread.labels()' to the expression matcher and then we could use force_query and not need to worry about checking on the same thread many times
+    - something like a 24 hr reset when we drop all the finalized history ids and will re process all the rules (that should be ok since we can kill and restart the process w/ it not getting stuff messed up due to double processing)
+3- in third party threads when they respond and we've asked them to give a start date and room type we can do a tour email plus do a direct to the official application
+
+
+in the current changelist let's make reinitialized mid run a property on the thread that the gmail service will set via the constructor and the inbox will query from the thread each time instead of changing the interface of query

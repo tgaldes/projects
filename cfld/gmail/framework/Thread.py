@@ -5,17 +5,23 @@ from framework.Logger import Logger
 from framework.MimeEmail import create_multipart
 
 class Thread(Logger):
-    def __init__(self, identifier, messages, service):
+    def __init__(self, identifier, messages, service, historyId=0):
         super(Thread, self).__init__(__class__)
         self.service = service
         self.identifier = identifier
         self.messages = messages
+        self.historyId = int(historyId)
         if len(self) == 0:
             raise Exception('Don\'t want to create a thread that contains no non draft messages, throwing in constructor as part of normal operation.')
         if self.messages:
             self.li('Initialized thread with id: {} subject: {}'.format(self.identifier, self.subject()))
         else:
             self.li('Initialized empty thread with id: {}'.format(self.identifier))
+
+    def history_id(self):
+        return self.historyId
+    def _set_history_id(self, historyId):
+        self.historyId= int(historyId)
 
     def subject(self):
         return self.messages[0].subject()

@@ -16,6 +16,11 @@ def get_thread_constructor_args(fn):
         messages.append(GMailMessage(fields, Mock()))
     return d['id'], messages
 
+def get_history_id(fn):
+    with open(os.path.join(parent_path, fn), 'r') as f:
+        d = json.load(f)
+    return d['historyId']
+
 def encode_for_payload(text):
     return base64.urlsafe_b64encode(text.encode('utf-8')).decode()
 

@@ -23,6 +23,8 @@
     "secret_path" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json",
     "client_token_dir" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/",
     "sheet_name" : "quick_rules",
-    "log_path" : "/cfld/log/quick/"
+    "log_path" : "/cfld/log/quick/",
+    "default_query_limit" : 5,
+    "default_query_string" : "label:INBOX"
 }
 

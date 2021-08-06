@@ -299,19 +299,14 @@ class IntegrationTest(unittest.TestCase):
         reinit_thread = Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), reinit_service)
         all_threads = [reinit_thread]
 
-        def set_reinit(q, limit):
-            reinit_thread = Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), reinit_service)
-            all_threads = [reinit_thread]
-            return all_threads
-
         # set up reinit service
         #reinit_service.query = MagicMock(return_value=all_threads)
-        reinit_service.query = set_reinit
+        reinit_service.query = MagicMock(return_value=all_threads)
         reinit_service.get_label_name = MagicMock(return_value='Schools')
         reinit_service.set_label = MagicMock(return_value={'labelIds' : ['test label id']})
         current_history_id = 1
         reinit_service.get_all_history_ids = MagicMock(return_value={reinit_thread.id() : current_history_id})
-        reinit_service.get_history_id = MagicMock(return_value=current_history_id)
+        reinit_thread.history_id = MagicMock(return_value=current_history_id)
         reinit_service.get_user = MagicMock(return_value='tyler')
         reinit_service.get_email = MagicMock(return_value='tyler@cleanfloorslockingdoors.com')
         reinit_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
@@ -339,8 +334,9 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(1, reinit_service.append_or_create_draft.call_count)
 
         current_history_id = 2
-        reinit_service.get_history_id = MagicMock(return_value=current_history_id)
+        #reinit_thread.history_id = MagicMock(return_value=current_history_id)
         reinit_service.get_all_history_ids = MagicMock(return_value={})
+        reinit_thread.history_id = MagicMock(return_value=2)
         # 1 is finalized but we return 2 as the current history id
         # so the rule executes
         # afterwards, we don't give any new history id to finalize

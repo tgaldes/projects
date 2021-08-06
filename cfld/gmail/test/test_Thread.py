@@ -3,7 +3,7 @@ from unittest import mock
 import unittest
 import pdb
 
-from test.TestUtil import get_thread_constructor_args, encode_for_payload
+from test.TestUtil import get_thread_constructor_args, get_history_id, encode_for_payload
 import test.TestConfig
 
 from framework.Thread import Thread
@@ -16,7 +16,7 @@ class ThreadTest(unittest.TestCase):
         mock_service = Mock()
         mock_service.get_label_id = MagicMock(return_value='mockid')
         mock_service.set_label = MagicMock(return_value={'labelIds' : ['IMPORTANT', 'CATEGORY_PERSONAL', 'INBOX', 'mockid']})
-        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_email_thread.txt'), mock_service)
+        thread = Thread(*get_thread_constructor_args('thread_test_inputs/one_email_thread.txt'), mock_service, get_history_id('thread_test_inputs/one_email_thread.txt'))
         id = thread.identifier
         self.assertEqual('test subject', thread.subject())
         mock_service.get_user = MagicMock(return_value='tyler')
@@ -47,6 +47,7 @@ class ThreadTest(unittest.TestCase):
         # getting some fields from various depths of the json 
         self.assertEqual('test subject', thread.subject())
         self.assertEqual(1604022596, thread.last_ts())
+        self.assertEqual(690981, thread.history_id())
 
         # add a brand new draft
         first_msg = 'draft line one'
