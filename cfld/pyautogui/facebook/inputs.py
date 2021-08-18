@@ -7,8 +7,8 @@ group_data = {'USC' :(
              'https://docs.google.com/document/d/1wOmbPiLod6B-WPjF4ygP6JbjqGP8Em4VXPMk0yekX_8',
              '/home/tgaldes/Dropbox/Fraternity PM/Pictures/2715 Portland USC/selections',
              [
-                 ('https://www.facebook.com/groups/344453725628321/', 2),
-                 ('https://www.facebook.com/groups/housingusc/', 1),
+                 ('https://www.facebook.com/groups/344453725628321/', 2), # USC
+                 ('https://www.facebook.com/groups/housingusc/', 1), # USC
                  ('https://www.facebook.com/groups/apartment.la/', 1)
                  ('https://www.facebook.com/groups/143384839561246/', 3),
              ],
@@ -20,8 +20,8 @@ group_data = {'USC' :(
             'asdf',
             'asdf',
             [
-                 ('https://www.facebook.com/groups/1835635240040670/', 1)
-                 ('https://www.facebook.com/groups/415336998925847/', 1)
+                 ('https://www.facebook.com/groups/1835635240040670/', 1) # UCLA
+                 ('https://www.facebook.com/groups/415336998925847/', 1) # UCLA
                  ('https://www.facebook.com/groups/apartment.la/', 1)
                  ('https://www.facebook.com/groups/143384839561246/', 3),
             ],
@@ -106,6 +106,7 @@ buy_sell_data = {'USC' :(
                  ('https://www.facebook.com/groups/846176935459516/', 1),
                  ('https://www.facebook.com/groups/437963763011620/', 1),
                  ('https://www.facebook.com/groups/1414484008814397', 1),
+                 ('https://www.facebook.com/groups/269352189809136', 1) # UCLA
                  ('https://www.facebook.com/groups/151027485336692/?ref=gysj', 1), # LA
                  ('https://www.facebook.com/groups/55449183852/', 2), # LA
                  ('https://www.facebook.com/groups/roompiklosangelesroommaterentals', 2), # LA

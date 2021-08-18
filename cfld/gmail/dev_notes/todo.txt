@@ -54,6 +54,7 @@ googleapiclient.errors.HttpError: <HttpError 429 when requesting https://gmail.g
 
 
 might not want to throw in the 'get_lease_sent_out_emails' func - what does this mean ??
+if I do a make them say no off a tour email, I would rather not have the people added in the tour info get the make them say no. proper way to do this would be to cc those people in the tour email so I can specify reply all = false in thread.recipients
 
 
 rule additions
