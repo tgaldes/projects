@@ -1,3 +1,4 @@
+20210820 2.0.0 pre and post process rule groups
 20210723 1.6.0 some small bug fixes, change for better logging, a couple new rules in gmail sheet
 20210507 1.5.5 release force_query
 20210507 1.5.4 fix gmail service when custom query returns 0 threads, fix short circuit in thread.labels
