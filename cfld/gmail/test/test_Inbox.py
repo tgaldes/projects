@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, Mock
 import unittest
 from framework.Inbox import Inbox
+import pdb
 
 
 class InboxTest(unittest.TestCase):
@@ -66,5 +67,63 @@ class InboxTest(unittest.TestCase):
         for i in range(5):
             inbox.blacklist_id(i)
             self.assertEqual(4 - i, len(inbox.query('')))
+
+    def test_pre_and_post_process(self):
+        # give the inbox two pre process and two post process groups
+        # we sdlkfwon't do anything with the history ids
+        # pre will get called when the thread is first returned after construction or after a call to finalize resets the state of the inbox
+        # post gets called during finalize
+
+        def create_mock_rule_group():
+            m = Mock()
+            m.process = MagicMock()
+            return m
+        pre_groups = [create_mock_rule_group() for x in range(2)]
+        post_groups = [create_mock_rule_group() for x in range(2)]
+        mock_service = Mock()
+        mock_threads = []
+        history = {}
+        for i in range(2):
+            t = Mock()
+            t.id = MagicMock(return_value=i)
+            mock_threads.append(t)
+            history[i] = 99
+            t.history_id = MagicMock(return_value=100)
+        mock_service.get_all_history_ids = MagicMock(return_value=history)
+        mock_service.query = MagicMock(return_value=mock_threads)
+        mock_service.get_history_id = MagicMock(return_value=99)
+        inbox = Inbox(mock_service)
+        inbox.set_pre_process_rule_groups(pre_groups)
+        inbox.set_post_process_rule_groups(post_groups)
+
+        # first query will run both pre groups on both threads and then not again
+        for i in range(2):
+            inbox.query('')
+            for g in pre_groups:
+                self.assertEqual(2, g.process.call_count)
+            for g in post_groups:
+                self.assertEqual(0, g.process.call_count)
+        # now finalize and run post
+        inbox.finalize()
+        for g in pre_groups:
+            self.assertEqual(2, g.process.call_count)
+        for g in post_groups:
+            self.assertEqual(2, g.process.call_count)
+        # now we can run pre rules on the threads again
+        for i in range(2):
+            inbox.query('')
+            for g in pre_groups:
+                self.assertEqual(4, g.process.call_count)
+            for g in post_groups:
+                self.assertEqual(2, g.process.call_count)
+        # now finalize and run post
+        inbox.finalize()
+        for g in pre_groups:
+            self.assertEqual(4, g.process.call_count)
+        for g in post_groups:
+            self.assertEqual(4, g.process.call_count)
+
+if __name__=='__main__':
+    unittest.main()
 
 

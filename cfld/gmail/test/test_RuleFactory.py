@@ -18,7 +18,7 @@ class RuleFactoryTest(unittest.TestCase):
 
         rf = RuleFactory(sheet_data)
 
-        rule_groups = rf.get_rule_groups_for_user('apply')
+        rule_groups = rf.get_rule_groups()
         self.assertEqual(3, len(rule_groups))
         group = rule_groups[0]
         self.assertEqual(1, len(group))
@@ -81,7 +81,7 @@ class RuleFactoryTest(unittest.TestCase):
 
         inboxes = {'apply' : 'apply_inbox', 'tyler' : 'tyler_inbox'}
         rf = RuleFactory(sheet_data, inboxes)
-        rule_groups = rf.get_rule_groups_for_user('apply')
+        rule_groups = rf.get_rule_groups()
         self.assertEqual(1, len(rule_groups))
         group = rule_groups[0]
         self.assertEqual(1, len(group))
@@ -105,7 +105,7 @@ class RuleFactoryTest(unittest.TestCase):
         # types are ifelse, ifany, single, ifany
 
         rf = RuleFactory(sheet_data)
-        rule_groups = rf.get_rule_groups_for_user('apply')
+        rule_groups = rf.get_rule_groups()
         self.assertEqual(4, len(rule_groups))
         self.assertEqual(3, len(rule_groups[0]))
         self.assertEqual(2, len(rule_groups[1]))
@@ -123,7 +123,7 @@ class RuleFactoryTest(unittest.TestCase):
 
         rf = RuleFactory(sheet_data)
 
-        rule_groups = rf.get_rule_groups_for_user('apply')
+        rule_groups = rf.get_rule_groups()
         self.assertEqual(1, len(rule_groups))
         group = rule_groups[0]
         self.assertEqual(1, len(group))
@@ -139,7 +139,7 @@ class RuleFactoryTest(unittest.TestCase):
 
         rf = RuleFactory(sheet_data)
 
-        rule_groups = rf.get_rule_groups_for_user('apply')
+        rule_groups = rf.get_rule_groups()
         self.assertEqual(1, len(rule_groups))
         group = rule_groups[0]
         self.assertEqual(1, len(group))
@@ -161,7 +161,7 @@ class RuleFactoryTest(unittest.TestCase):
         inboxes = {'apply' : 'apply_inbox', 'tyler' : 'tyler_inbox'}
         rf = RuleFactory(sheet_data, inboxes)
 
-        rule_groups = rf.get_rule_groups_for_user('apply')
+        rule_groups = rf.get_rule_groups()
         self.assertEqual(1, len(rule_groups))
         group = rule_groups[0]
         self.assertEqual(3, len(group))
@@ -183,10 +183,23 @@ class RuleFactoryTest(unittest.TestCase):
         with self.assertRaises(Exception):
             rf = RuleFactory(sheet_data)
 
+    def test_pre_and_post_groups(self):
+        sheet_data = \
+            [RuleFactoryTest.header, \
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '0', 'preifelse', '', 'label:automation'], \
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '1', 'postifany', 'if', ''],
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '1', '', 'any', ''],
+             ['remove automation', 'apply', '', '', '', 'body regext', '', 'prepend_draft', '"automation"', '', 'destination_email', '2', 'post', '', '']]
+        rf = RuleFactory(sheet_data)
+        self.assertEqual(1, len(rf.get_pre_process_rule_groups('apply')))
+        self.assertEqual(2, len(rf.get_post_process_rule_groups('apply')))
+        self.assertEqual(0, len(rf.get_rule_groups()))
 
+        self.assertTrue(isinstance(rf.get_pre_process_rule_groups('apply')[0], SingleRuleGroup))
+        self.assertTrue(isinstance(rf.get_post_process_rule_groups('apply')[0], IfAnyRuleGroup))
+        self.assertTrue(isinstance(rf.get_post_process_rule_groups('apply')[1], SingleRuleGroup))
 
-
-
-
+if __name__=='__main__':
+    unittest.main()
 
 

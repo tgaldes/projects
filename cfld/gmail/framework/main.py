@@ -17,6 +17,7 @@ from services.gmail.SheetService import SheetService
 from framework import constants
 import logging
 import logging_tree
+from framework.util import process_thread_try_catch
 
 
 class Main:
@@ -28,7 +29,8 @@ class Main:
 
     def validate_rules(self):
         BaseValidator.set_validate_mode(True)
-        for rule_group, user in self.rule_factory.get_rule_groups():
+        for rule_group in self.rule_factory.get_rule_groups():
+            user = rule_group.get_user()
             inbox = self.inboxes[user]
             for thread in inbox.query('label:automation/dev_test_case/validate'):
                 self.logger.li('Processing user {} thread {} in validate mode'.format(thread, user))
@@ -40,6 +42,9 @@ class Main:
         for service in self.mail_services:
             self.inboxes[service.get_user()] = Inbox(service)
         self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes)
+        for user, inbox in self.inboxes.items():
+            inbox.set_pre_process_rule_groups(self.rule_factory.get_pre_process_rule_groups(user))
+            inbox.set_post_process_rule_groups(self.rule_factory.get_post_process_rule_groups(user))
 
     def refresh(self):
         for inbox in self.inboxes:
@@ -54,23 +59,16 @@ class Main:
             self.logger.li('Refreshing inboxes and default queries for upcoming loop.')
             self.refresh()
 
-            for rule_group, user in self.rule_factory.get_rule_groups():
+            for rule_group in self.rule_factory.get_rule_groups():
+                user = rule_group.get_user()
                 inbox = self.inboxes[user]
                 threads = inbox.query(rule_group.get_query())
                 self.logger.li('Query: "{}" returned {} threads for user {}'.format(rule_group.get_query(), len(threads), user))
                 for thread in threads:
                     self.logger.li('Processing user {} thread {}'.format(user, thread))
-                    try:
-                        rule_group.process(thread)
-                    except bdb.BdbQuit as e:
-                        exit(0)
-                    except Exception as e:
-                        self.logger.le('Caught exception while processing: {}. Will continue execution of rules while skipping this thread'.format(thread))
-                        self.logger.le('Trace: {}'.format(traceback.format_exc()))
-                        self.logger.le(str(e))
-                        thread.set_label(constants.error_label)
-                        inbox.blacklist_id(thread.id())
+                    process_thread_try_catch(thread, inbox, rule_group, self.logger)
             # will tell Inbox to not process Threads a second time
+
             self.finalize()
 
             return

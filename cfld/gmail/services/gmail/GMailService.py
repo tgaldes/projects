@@ -51,21 +51,6 @@ class GMailService(Logger):
         # Map queries to a list of created Thread instances
         self.full_threads_by_query = {}
 
-        # This helps us handle a complicated example
-        # we are in the middle of processing rules
-        # a new message comes in on a thread that is cached on the service and has the label asdf
-        # we process a few more rules
-        # now we have a rule that does a custom query 'label:asdf'
-        # the service will see that it needs to get the full thread from the service
-        # and reinitialize it
-        # now we come to the end of the run
-        # we can't finalize that threads history id! since it came in mid run
-        # we'll have missed rules early on that might have wanted to act on it
-        # and thus need to give it another chance to be processed
-        # so when the inbox asks for the finalized thread/history ids, don't include in what we return
-        self.reinitialized_mid_iteration_thread_ids = set()
-
-
         results = self.service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
         self.label_string_2_id = {}
@@ -82,12 +67,7 @@ class GMailService(Logger):
     def get_all_history_ids(self):
         ret = {}
         for thread_id in self.thread_id_2_full_threads:
-            # don't finalize threads that have been reinitialized mid iteration so that all rules
-            # get a chance to process them
-            if thread_id not in self.reinitialized_mid_iteration_thread_ids:
-                ret[thread_id] = self.thread_id_2_full_threads[thread_id].history_id()
-            else:
-                self.ld('Not returning initialized thread: {}'.format(self.thread_id_2_full_threads[thread_id]))
+            ret[thread_id] = self.thread_id_2_full_threads[thread_id].history_id()
         return ret
 
     def __history_id(self, thread_id):
@@ -121,9 +101,6 @@ class GMailService(Logger):
                     thread_map = self.service.users().threads().get(userId='me', id=item['id'], format='full').execute()
                     try:
                         thread = self.__create_thread_from_raw(thread_map)
-                        if q != self.default_query:
-                            self.ld('Init {} mid run. new hid: {}'.format(thread.id(), thread_map['historyId']))
-                            self.reinitialized_mid_iteration_thread_ids.add(thread.id())
                         # Save this id for future use
                         self.thread_id_2_full_threads[item['id']] = thread
                         self.__update_history_id(thread.id(), thread_map['historyId'])
@@ -180,7 +157,6 @@ class GMailService(Logger):
     def refresh(self):
         self.__populate_query_result(self.default_query, self.default_limit)
         self.__load_drafts()
-        self.reinitialized_mid_iteration_thread_ids = set()
 
     # Empty q is translated to the default query and is NOT rerequeried on the service
     # any other query we re run the actualy query to get an updated list of thread ids

@@ -1,5 +1,6 @@
 import pdb
 from framework.Logger import Logger
+from framework.util import process_thread_try_catch
 
 class Inbox(Logger):
     def __init__(self, service):
@@ -8,8 +9,16 @@ class Inbox(Logger):
         self.thread_id_2_finalized_history_ids = {}
         self.blacklisted_thread_ids = set()
 
-    def get_service(self):
-        return self.service
+        self.preprocess_groups = []
+        self.postprocess_groups = []
+
+        # before returning a thread from querying the first time in an iteration
+        # we'll run the preprocess rules
+        self.thread_id_2_threads_in_this_iteration = {}
+    def set_pre_process_rule_groups(self, g):
+        self.preprocess_groups = g
+    def set_post_process_rule_groups(self, g):
+        self.postprocess_groups = g
 
     # when limit is left as default we will let the service use it's default value
     def query(self, q, limit=0, ignore_history_id=False):
@@ -26,7 +35,16 @@ class Inbox(Logger):
             else:
                 if thread.id() in self.thread_id_2_finalized_history_ids:
                     self.ld('returning hid {} finalized hid {} thread: {}'.format(thread.history_id(), self.thread_id_2_finalized_history_ids[thread.id()], thread.id()))
+                # do we need to run preprocess rules?
+                #pdb.set_trace()
+                if thread.id() not in self.thread_id_2_threads_in_this_iteration:
+                    self.thread_id_2_threads_in_this_iteration[thread.id()] = thread
+                    self.__run_rules(self.preprocess_groups, thread, 'Preprocessing ')
+                # we'll return the thread to whoever was querying
                 res.append(thread)
+
+
+        # if we haven't seen any of these threads before, run the preprocess rules on them
         return res
 
 
@@ -42,6 +60,10 @@ class Inbox(Logger):
         self.service.refresh()
 
     def finalize(self):
+        # run the postprocess rules on all the ids we have returned since finalizing
+        for thread_id, thread in self.thread_id_2_threads_in_this_iteration.items():
+            self.__run_rules(self.postprocess_groups, thread, 'Postprocessing ')
+        self.thread_id_2_threads_in_this_iteration.clear()
         # We'll no longer return any old emails
         thread_id_2_history_ids = self.service.get_all_history_ids()
         for thread_id, history_id in thread_id_2_history_ids.items():
@@ -50,4 +72,10 @@ class Inbox(Logger):
     # Tell the inbox to never return this thread any more.
     def blacklist_id(self, thread_id):
         self.blacklisted_thread_ids.add(thread_id)
+
+    def __run_rules(self, rule_groups, thread, log_msg):
+        for rule in rule_groups:
+            self.li('{} thread: {}'.format(log_msg, thread))
+            process_thread_try_catch(thread, self, rule, self.logger)
+
 

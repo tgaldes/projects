@@ -12,9 +12,10 @@ from framework.BaseValidator import BaseValidator
 if_any_rule_types = ['if', 'any']
 
 class RuleGroup(BaseValidator):
-    def __init__(self, rules_tup, child, query):
+    def __init__(self, rules_tup, child, query, user):
         super(RuleGroup, self).__init__(child)
         enums = copy.copy(self._enums())
+        self.user = user
         for i, (_, group_type, unused) in enumerate(rules_tup):
             if i == 1: # only the first row needs to specify the type
                 enums.append('')
@@ -29,10 +30,13 @@ class RuleGroup(BaseValidator):
     def get_query(self):
         return self.query
 
+    def get_user(self):
+        return self.user
+
 # When the first irule matches the thread, we break
 class IfElseRuleGroup(implements(IRule), RuleGroup):
-    def __init__(self, rules_tup, query):
-        super(IfElseRuleGroup, self).__init__(rules_tup, __class__, query)
+    def __init__(self, rules_tup, query, user):
+        super(IfElseRuleGroup, self).__init__(rules_tup, __class__, query, user)
         self.rules = []
         for irule, _, rule_type in rules_tup:
             self.rules.append(irule)
@@ -58,14 +62,14 @@ class IfElseRuleGroup(implements(IRule), RuleGroup):
                 break
 
     def _enums(self):
-        return ['', 'ifelse']
+        return ['', 'ifelse', 'preifelse', 'postifelse', 'post', 'pre']
 
 
 # Do the if actions until one returns true
 # If any if actions returned true, do all the then actions
 class IfAnyRuleGroup(implements(IRule), RuleGroup):
-    def __init__(self, rules_tup, query):
-        super(IfAnyRuleGroup, self).__init__(rules_tup, __class__, query)
+    def __init__(self, rules_tup, query, user):
+        super(IfAnyRuleGroup, self).__init__(rules_tup, __class__, query, user)
         self.if_rules = []
         self.any_rules = []
         added_any_rule = False
@@ -109,12 +113,12 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup):
                 irule.process(thread)
 
     def _enums(self):
-        return ['ifany']
+        return ['ifany', 'preifany', 'postifany']
 
 
 class SingleRuleGroup(implements(IRule), RuleGroup):
-    def __init__(self, rules_tup, query):
-        super(SingleRuleGroup, self).__init__(rules_tup, __class__, query)
+    def __init__(self, rules_tup, query, user):
+        super(SingleRuleGroup, self).__init__(rules_tup, __class__, query, user)
         if len(rules_tup) != 1:
             raise Exception('Cannot create with rule list of size != 1: {}'.format(rules_tup))
         self.rule = rules_tup[0][0]
@@ -124,7 +128,7 @@ class SingleRuleGroup(implements(IRule), RuleGroup):
     # We are ok with a user specifying they want to create an ifelse rule group
     # and only having one rule in that group. Single rule group == if else rule
     # group with one rule
-        return ['', 'ifelse']
+        return ['', 'ifelse', 'preifelse', 'postifelse', 'post', 'pre']
 
     def __len__(self):
         return 1

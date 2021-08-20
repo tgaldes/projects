@@ -129,54 +129,56 @@ class RuleFactory(Logger):
             if float(tup.group) == last_group_index:
                 if tup.query:
                     raise Exception('Can only specify a custom query in the first rule of a rule group.')
-                raw_rule_group_tuples[-1][0].append((rh, tup.group_type, tup.rule_type))
+                raw_rule_group_tuples[-1][0].append([rh, tup.group_type, tup.rule_type])
             else: # group of one rule
-                raw_rule_group_tuples.append(([(rh, tup.group_type, tup.rule_type)], tup.email, tup.query))
+                raw_rule_group_tuples.append([[(rh, tup.group_type, tup.rule_type)], tup.email, tup.query])
             last_group_index = float(tup.group)
 
             log_msg += ', Group #{}'.format(tup.group)
 
             self.li(log_msg)
 
-        self.all_rule_groups = []
+        self.all_rule_groups = [[], [], []]
         self.__create_rule_groups(raw_rule_group_tuples, self.all_rule_groups)
 
-    def __create_rule_groups(self, tups, target_list):         
+    # target_lists [0] == normal, [1], preprocess, [2] post process
+    def __create_rule_groups(self, tups, target_lists):         
         for raw_rule_group, user, query in tups:
+            index = 0
+            if 'pre' in raw_rule_group[0][1].lower():
+                index = 1
+                self.ld('Creating pre process rule group')
+            elif 'post' in raw_rule_group[0][1].lower():
+                index = 2
+                self.ld('Creating post process rule group')
             if not raw_rule_group:
                 raise Exception('raw_rule_group of size 0')
+            rule_type_name = raw_rule_group[0][1].lower().replace('pre', '').replace('post', '')
             if len(raw_rule_group) == 1:
-                target_list.append((SingleRuleGroup(raw_rule_group, query), user))
+                target_lists[index].append(SingleRuleGroup(raw_rule_group, query, user))
             # Default multi rule group is ifelse
-            elif raw_rule_group[0][1] == '' \
-                    or raw_rule_group[0][1].lower() == 'ifelse': # REFACTOR these enums should live in one spot, we also reference then in RuleGroup.py
-                target_list.append((IfElseRuleGroup(raw_rule_group, query), user))
-            elif raw_rule_group[0][1].lower() == 'ifany':
-                target_list.append((IfAnyRuleGroup(raw_rule_group, query), user))
+            elif rule_type_name == '' \
+                    or rule_type_name == 'ifelse': # REFACTOR these enums should live in one spot, we also reference then in RuleGroup.py
+                target_lists[index].append(IfElseRuleGroup(raw_rule_group, query, user))
+            elif rule_type_name == 'ifany':
+                target_lists[index].append(IfAnyRuleGroup(raw_rule_group, query, user))
             else:
                 self.le('Not processing rule group with type: {}'.format(raw_rule_group[0][1]))
    
-    # list of [(RuleGroup, user)...
+    # list of [RuleGroup, ...
     def get_rule_groups(self):
-        return self.all_rule_groups
+        return self.all_rule_groups[0]
 
-    def get_rule_groups_for_user(self, user):
+    def get_pre_process_rule_groups(self, user):
+        return self.__get_pre_post(user, 1)
+    def get_post_process_rule_groups(self, user):
+        return self.__get_pre_post(user, 2)
+    def __get_pre_post(self, user, index):
         ret = []
-        for rule_group, rule_user in self.all_rule_groups:
-            if rule_user == user:
-                ret.append(rule_group)
+        for rule in self.all_rule_groups[index]:
+            if rule.get_user() == user:
+                ret.append(rule)
         return ret
-
-    # at the framework level we want to always remove the 'automation' label from
-    # any thread that doesn't end with a draft
-    def get_rule_groups_for_clean_up(self):
-        matcher = LabelMatcher('automation')
-        ematcher = ExpressionMatcher('not thread.has_draft()')
-        cmatcher = ComboMatcher([matcher, ematcher])
-        action = LabelAction('"automation"', unset=True)
-        rh = RuleHolder(action, cmatcher)
-        rg = SingleRuleGroup([[rh]])
-        return rg
 
 
 

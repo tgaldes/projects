@@ -4,6 +4,8 @@ import inspect
 from flatten_dict import flatten 
 from flatten_dict import unflatten 
 import framework.globals
+import traceback
+from framework import constants
 # TODO: diff list of user utils and framework utils that aren't exposed to user
 def class_to_string(c):
     temp = str(c)
@@ -50,3 +52,15 @@ def get_imports():
     except:
         return ''
 
+
+def process_thread_try_catch(thread, inbox, rule_group, logger):
+    try:
+        rule_group.process(thread)
+    except bdb.BdbQuit as e:
+        exit(0)
+    except Exception as e:
+        logger.le('Caught exception while processing: {}. Will continue execution of rules while skipping this thread'.format(thread))
+        logger.le('Trace: {}'.format(traceback.format_exc()))
+        logger.le(str(e))
+        thread.set_label(constants.error_label)
+        inbox.blacklist_id(thread.id())
