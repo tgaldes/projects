@@ -257,6 +257,7 @@ class GMailService(Logger):
         for message in raw_thread['messages']:
             messages.append(GMailMessage(message, self))
         return Thread(raw_thread['id'], messages, self, raw_thread['historyId'])
+        #output_raw_thread('test/gmail_message_inputs/test_delimiter_2.txt', raw_thread)
 
     def __update_drafts(self, new_draft):
         for i, old_draft in enumerate(self.drafts):
@@ -264,6 +265,11 @@ class GMailService(Logger):
                 self.drafts[i] = new_draft # update with the new message id
                 return
         self.drafts.append(new_draft)
+
+def output_raw_thread(fn, thread_map):
+    with open(fn, 'w+') as f:
+        import json
+        json.dump(thread_map, f, indent=4)
 
 if __name__=='__main__':
     #gs = GMailService('apply@cleanfloorslockingdoors.com', ["cleanfloorslockingdoors.com", "cf-ld.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")

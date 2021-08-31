@@ -154,12 +154,18 @@ class GMailMessage(Logger):
             return ret
 
         # Here we'll filter out all the b.s. that we get in gmail when we hit 'reply'
-        delimiters = ['\r\n\r\nOn ', '________________________________', '">On ','> On ']
+        # Look for the earliest of any of the delimiters in the message
+        delimiters = ['\r\n\r\nOn ', '________________________________', '">On ','> On ', '/>On ', '\r\n    On ']
+        min_index = len(ret)
+        min_delim = ''
         for delimiter in delimiters:
             index = ret.find(delimiter)
-            if index > 0:
-                return ret[:index]
-        return ret
+            if index >= 0 and index < min_index:
+                min_index = index
+                min_delim = delimiter
+        if not min_delim:
+            return ret
+        return ret[:ret.find(min_delim)]
 
     # return a list of all the (attachment data, filename), empty if no attachments
     def attachments(self):
