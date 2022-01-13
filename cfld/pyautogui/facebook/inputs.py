@@ -9,6 +9,10 @@ group_data = {'USC' :(
              [
                  ('https://www.facebook.com/groups/344453725628321/', 2), # USC
                  ('https://www.facebook.com/groups/housingusc/', 1), # USC
+                 ('https://www.facebook.com/groups/2276346809256403/', 2), # USC
+                 ('https://www.facebook.com/groups/277551263757337/', 1), # USC
+                 ('https://www.facebook.com/groups/764096300371317/', 1), # USC
+                 ('https://www.facebook.com/groups/722648524787656/', 1), # USC
                  ('https://www.facebook.com/groups/apartment.la/', 1)
                  ('https://www.facebook.com/groups/143384839561246/', 3),
              ],
@@ -28,6 +32,11 @@ group_data = {'USC' :(
              (1194, 1390), # coords to the 'post' button when we c/p the blurb into the text box
              (1113, 282)  # coords to the area that we check for post pending
         ),
+# https://www.facebook.com/groups/800869849994171/ # GTECH
+# https://www.facebook.com/groups/Atlanta4stay/ # GTECH
+# https://www.facebook.com/groups/GeorgiaTechSubleasesRoommates/ # GTECH
+# https://www.facebook.com/groups/EmorySubleasesRoommates/ # GTECH
+# https://www.facebook.com/groups/155028668511402/ # GTECH
         'SJSU' :
         (
             'https://docs.google.com/document/d/1jxyqgdu0EXNK73gg5kcapxTcLc0XilB1qrkAbe31BtU',
@@ -72,8 +81,6 @@ buy_sell_data = {'USC' :(
              'https://docs.google.com/document/d/1wOmbPiLod6B-WPjF4ygP6JbjqGP8Em4VXPMk0yekX_8',
              '/home/tgaldes/Dropbox/Fraternity PM/Pictures/2715 Portland USC/selections',
              [
-                 ('https://www.facebook.com/groups/764096300371317/', 3), # USC
-                 ('https://www.facebook.com/groups/uschousing/', 2), # USC
                  ('https://www.facebook.com/groups/151027485336692/?ref=gysj', 1), # LA
                  ('https://www.facebook.com/groups/55449183852/', 2), # LA
                  ('https://www.facebook.com/groups/roompiklosangelesroommaterentals', 2), # LA
