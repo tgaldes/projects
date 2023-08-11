@@ -226,6 +226,8 @@ class Thread(Logger):
     # return the decoded body of the last non draft message
     def last_message_text(self):
         return self.last_message().content()
+    def first_message_text(self):
+        return self.first_message().content()
 
     # return the decoded body of all non draft messages in the thread
     def full_text(self):
@@ -254,6 +256,12 @@ class Thread(Logger):
     # return the last non draft message
     def last_message(self):
         for message in reversed(self.messages):
+            if not message.is_draft():
+                return message
+        raise Exception('No non draft messages in thread of length {}'.format(self.__len__()))
+
+    def first_message(self):
+        for message in self.messages:
             if not message.is_draft():
                 return message
         raise Exception('No non draft messages in thread of length {}'.format(self.__len__()))

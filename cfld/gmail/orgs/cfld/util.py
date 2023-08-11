@@ -55,8 +55,8 @@ def signature(thread):
         first = 'Wyatt'
         last = 'Cornelius'
     elif name == 'apply':
-        first = 'Tyler'
-        last = 'Galdes'
+        first = 'Lee'
+        last = 'Melbourne-Weaver'
     if my_message_count == 0:
         return 'Best,<br>{} {}<br>Clean Floors & Locking Doors Team<br>'.format(first, last)
     elif my_message_count == 1:

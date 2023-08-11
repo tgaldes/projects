@@ -69,10 +69,10 @@ class NewSubmissionHandler(Logger):
     def handle_thread(self, thread):
         self.li('Handling thread with id {} subject {}'.format(thread.identifier, thread.subject()))
         short_name = short_name_from_thread(thread) # we use the school to look up the room availability at the school
-        if len(thread) == 1:
-            return self.__handle_first_msg(thread)
+        if len(thread) == 2:
+            return self.__handle_second_msg(thread)
         else:
-            self.lw('not configured to respond to threads of more than length 1. Not doing anything')
+            self.lw('not configured to respond to threads of more than length 2. Not doing anything')
 
     # extract the relevant fields of the message
     # return a dictionary of all the fields in the New Submission for short_name message
@@ -113,12 +113,14 @@ class NewSubmissionHandler(Logger):
                 for room_selection in value.lower().split(','):
                     types.append(room_selection.strip())
                 ret[key] = types
+            elif key == 'number':
+                pass
             else:
                 raise Exception('Bad key passed to __parse_first_new_submission_message: {}'.format(k))
         return ret
 
-    def __handle_first_msg(self, thread):
-        parsed_msg = self.__parse_first_new_submission_message(thread.last_message_text())
+    def __handle_second_msg(self, thread):
+        parsed_msg = self.__parse_first_new_submission_message(thread.first_message_text())
         self.li(parsed_msg)
         not_available_types, delay_move_in_types, available_types = [], [], []
         for room_type in parsed_msg['room']:
