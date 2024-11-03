@@ -294,6 +294,19 @@ class Thread(Logger):
                 old_message.update_all(new_message)
                 return
         self.messages.append(new_message)
+
+    def get_thread_emails(self):
+        emails = []
+        for message in self.messages:
+            if not message.is_draft():
+                emails.append(message.sender())
+        return emails
+
+    def get_thread_messages(self):
+        m = []
+        for message in self.messages:
+            m.append(message.content())
+        return m
                 
 
 

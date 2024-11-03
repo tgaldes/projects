@@ -70,6 +70,9 @@ class RuleFactory(Logger):
             if tup.action == 'draft':
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
+            elif tup.action == 'llm_draft':
+                action = LLMDraftAction(tup.value, tup.destinations)
+                log_msg += 'LLMDraftAction'
             elif tup.action == 'prepend_draft':
                 action = DraftAction(tup.value, tup.destinations, prepend=True)
                 log_msg += 'DraftAction'
