@@ -40,6 +40,9 @@ class CfldOrg(Logger, implements(IOrg)):
     def get_llm_info(self):
         return self.ss.get_llm_info()
 
+    def check_reload(self):
+        return self.ss.check_reload()
+
 # Having non class wrapper functions around the org makes it easier to call these 
 # functions in the rule snippets (don't need 'org.XXXXXX')
 # AND easier to make them visible in evaluate_expression 

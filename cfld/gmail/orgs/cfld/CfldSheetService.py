@@ -12,11 +12,11 @@ class CfldSheetService(SheetService):
         return self.lookup_info_data
 
     def get_llm_info(self):
-        try:
-            return self.llm_context_data
-        except:
-            self.llm_context_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_context!A1:C100').execute().get('values', [])
-        return self.llm_context_data
+        new_info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_context!A4:A200').execute().get('values', [])
+        # info is a list of lists. each inner list has a single string element
+        # combine them all into a single string then return
+        info = ' '.join([i[0] for i in info])
+        return info
 
     def get_availability(self):
         try:
@@ -31,3 +31,15 @@ class CfldSheetService(SheetService):
         except:
             self.availability_blurbs = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='availability!I1:N3').execute().get('values', [])
         return self.availability_blurbs
+
+    def check_reload(self):
+        try:
+            reload = int(self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='reload!A2:A2').execute().get('values', [])[0][0])
+            if reload == 1:
+                # reset reload flag on the sheet
+                self.service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range='reload!A2:A2', body={'values': [[0]]}, valueInputOption='RAW').execute()
+                return True
+            else:
+                return False
+        except:
+            return False

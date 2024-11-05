@@ -98,6 +98,16 @@ class Main:
             self.logger.li('Finished iteration {} in main'.format(loop_count))
             sleep(60)
 
+            # check if we need to reload everything
+            if self.check_reload():
+                self.logger.li('Reloading everything')
+                self.setup()
+
+    def check_reload(self):
+        return framework.globals.g_org.check_reload()
+
+
+
 if __name__=='__main__':
     if len(sys.argv) < 2:
         print('No path specified for json config, exiting')
