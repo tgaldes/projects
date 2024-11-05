@@ -17,7 +17,7 @@ class RuleFactory(Logger):
     # sheet data is a list of lists
     # first list is the header which we'll use to create a named tuple
     # then for each row we'll create an instance of the desired RuleHolder
-    def __init__(self, sheet_data=[], inboxes={}):
+    def __init__(self, sheet_data=[], inboxes={}, llm_data=''):
         super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
@@ -71,7 +71,7 @@ class RuleFactory(Logger):
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
             elif tup.action == 'llm_draft':
-                action = LLMDraftAction(tup.value, tup.destinations)
+                action = LLMDraftAction(tup.value, tup.destinations, llm_data)
                 log_msg += 'LLMDraftAction'
             elif tup.action == 'prepend_draft':
                 action = DraftAction(tup.value, tup.destinations, prepend=True)

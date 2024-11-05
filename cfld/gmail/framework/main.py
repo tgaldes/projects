@@ -41,7 +41,7 @@ class Main:
         self.inboxes = {}
         for service in self.mail_services:
             self.inboxes[service.get_user()] = Inbox(service)
-        self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes)
+        self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes, framework.globals.g_org.get_llm_info())
         for user, inbox in self.inboxes.items():
             inbox.set_pre_process_rule_groups(self.rule_factory.get_pre_process_rule_groups(user))
             inbox.set_post_process_rule_groups(self.rule_factory.get_post_process_rule_groups(user))

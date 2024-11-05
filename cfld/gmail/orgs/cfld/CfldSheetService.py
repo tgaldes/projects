@@ -11,6 +11,13 @@ class CfldSheetService(SheetService):
             self.lookup_info_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='lookup_info!A1:C100').execute().get('values', [])
         return self.lookup_info_data
 
+    def get_llm_info(self):
+        try:
+            return self.llm_context_data
+        except:
+            self.llm_context_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_context!A1:C100').execute().get('values', [])
+        return self.llm_context_data
+
     def get_availability(self):
         try:
             return self.availability

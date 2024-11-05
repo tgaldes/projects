@@ -81,18 +81,13 @@ class DraftAction(implements(IAction), DestinationBase):
             thread.append_to_draft(draft_content, destinations)
         self.label_action.process(thread, matches)
 
-# sk-svcacct-pWzPhMM7a8nRITuGW46H6tqZy4-ClbzJ761p__3_0KXvzDGvotpvHv9w3keMOLOuJ_Uq9T3BlbkFJcJWYt8kc_UEt_r1KX7sFGnHNip7fMFhUk62XgM_Z0tLu2Te7WZ94khA0sjBDn5CEYzUAA
 class LLMDraftAction(implements(IAction), DestinationBase):
-    def __init__(self, value, destinations, prepend=False, name=''):
-        if not name:
-            super(LLMDraftAction, self).__init__(destinations, __class__)
-        else:
-            super(LLMDraftAction, self).__init__(destinations, name)
+    def __init__(self, value, destinations, context):
+        super(LLMDraftAction, self).__init__(destinations, __class__)
         self.value = value
         self.label_action = LabelAction(constants.add_automation_label)
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
-        self.prepend = prepend
-        self.llm = OpenAiLLM()
+        self.llm = OpenAiLLM(system_background=context)
     def process(self, thread, matches):
         self.ld('processing a thread')
         destinations = self._get_destinations(thread, matches)
@@ -100,10 +95,7 @@ class LLMDraftAction(implements(IAction), DestinationBase):
             draft_content = self.llm.generate_response(thread)
         else:
             draft_content = ''
-        if self.prepend:
-            thread.prepend_to_draft(draft_content, destinations)
-        else:
-            thread.append_to_draft(draft_content, destinations)
+        thread.append_to_draft(draft_content, destinations)
         self.label_action.process(thread, matches)
 
 

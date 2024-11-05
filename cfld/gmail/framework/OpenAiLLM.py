@@ -2,8 +2,7 @@ from openai import OpenAI
 import os
 
 class OpenAiLLM:
-    # TODO: both of these
-    def __init__(self, api_key_path="/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_open_api_key.txt", system_background="You work at a property management company that leases out rooms to college students. Answer prospective tenant inquiries about vacancies and other questions they may have. Any new paragraphs in the response you give should be separated by '<br><br>'. Add one at the end of your response as well."):
+    def __init__(self, system_background, api_key_path="/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_open_api_key.txt"):
         with open(api_key_path) as f:
             api_key = f.read().strip()
         os.environ["OPENAI_API_KEY"] = api_key
@@ -17,12 +16,11 @@ class OpenAiLLM:
         emails = thread.get_thread_emails()
         messages = thread.get_thread_messages()
 
-        # TODO
-        assistant_emails = ['tyler@cleanfloorslockingdoors.com', 'apply@cleanfloorslockingdoors.com', 'apply@cf-ld.com', 'tyler@cf-ld.com', 'lee@cf-ld.com', 'lee@cleanfloorslockingdoors.com']
+        assistant_domains = ['@cleanfloorslockingdoors.com', '@cf-ld.com']
 
         roles = []
         for email, message in zip(emails, messages):
-            if email in assistant_emails:
+            if email.split('@')[1] in assistant_domains:
                 roles.append({"role": "assistant", "content": message})
             else:
                 roles.append({"role": "user", "content": message})
