@@ -12,7 +12,7 @@ class CfldSheetService(SheetService):
         return self.lookup_info_data
 
     def get_llm_info(self):
-        new_info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_context!A4:A200').execute().get('values', [])
+        info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_context!A4:A200').execute().get('values', [])
         # info is a list of lists. each inner list has a single string element
         # combine them all into a single string then return
         info = ' '.join([i[0] for i in info])
