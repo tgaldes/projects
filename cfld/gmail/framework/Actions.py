@@ -82,21 +82,19 @@ class DraftAction(implements(IAction), DestinationBase):
         self.label_action.process(thread, matches)
 
 class LLMDraftAction(implements(IAction), DestinationBase):
-    def __init__(self, value, destinations, context):
+    def __init__(self, value, destinations, context_dict):
         super(LLMDraftAction, self).__init__(destinations, __class__)
         self.value = value
         self.label_action = LabelAction(constants.add_automation_label)
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
-        self.llm = OpenAiLLM(system_background=context)
+        self.llm = OpenAiLLM(system_background=context_dict[value])
     def process(self, thread, matches):
         self.ld('processing a thread')
         destinations = self._get_destinations(thread, matches)
-        if self.value:
-            draft_content = self.llm.generate_response(thread)
-        else:
-            draft_content = ''
-        thread.append_to_draft(draft_content, destinations)
-        self.label_action.process(thread, matches)
+        draft_content = self.llm.generate_response(thread)
+        if draft_content:
+            thread.append_to_draft(draft_content, destinations)
+            self.label_action.process(thread, matches)
 
 
 # The redirect thread needs to know

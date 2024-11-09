@@ -56,11 +56,14 @@ class RuleFactory(Logger):
             if tup.expression_match:
                 matchers.append(ExpressionMatcher(tup.expression_match))
                 log_msg += 'ExpressionMatcher, '
+            if tup.contact_group_match:
+                matchers.append(ContactGroupMatcher(tup.contact_group_match))
+                log_msg += 'ContactGroupMatcher, '
             # framework level behavior to never to never match with a draft action when
             # the 'automation/force_skip' label is present. This is implemented so that
             # the framework doesn't delete or modify a draft that the user might be 
             # actively working on in the web client.
-            if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft']:
+            if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft']:
                 matchers.append(LabelMatcher(constants.force_skip_label, True))
             if not matchers:
                 matchers.append(AllMatcher())

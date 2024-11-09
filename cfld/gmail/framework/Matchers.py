@@ -6,6 +6,7 @@ from framework.Interfaces import IMatcher
 from framework.BaseValidator import BaseValidator
 from framework.util import evaluate_expression, class_to_string
 from framework.Logger import Logger
+from framework.ContactGroup import ContactGroup
 
 
 def clean_text(text):
@@ -181,6 +182,25 @@ class AllMatcher(Logger):
     def matches(self, thread):
         self.li('always returing true for {}'.format(thread))
         return True
+
+    def get_matching_groups(self, thread):
+        return []
+
+# return True if any email in the thread is in the group
+class ContactGroupMatcher(Logger):
+    def __init__(self, group_name):
+        super(ContactGroupMatcher, self).__init__(__class__)
+        self.group_name = group_name
+        self.group = ContactGroup(group_name)
+        self.li('Created: group_name={}'.format(self.group_name))
+
+    def matches(self, thread):
+        for email in thread.get_thread_emails():
+            if self.group.has_email(email):
+                self.ld('\'{}\' is in group \'{}\' {}'.format(email, self.group_name, thread))
+                return True
+        self.ld('No emails from thread in group \'{}\' {}'.format(self.group_name, thread))
+        return False
 
     def get_matching_groups(self, thread):
         return []

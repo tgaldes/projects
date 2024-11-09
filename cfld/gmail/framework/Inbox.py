@@ -36,7 +36,6 @@ class Inbox(Logger):
                 if thread.id() in self.thread_id_2_finalized_history_ids:
                     self.ld('returning hid {} finalized hid {} thread: {}'.format(thread.history_id(), self.thread_id_2_finalized_history_ids[thread.id()], thread.id()))
                 # do we need to run preprocess rules?
-                #pdb.set_trace()
                 if thread.id() not in self.thread_id_2_threads_in_this_iteration:
                     self.thread_id_2_threads_in_this_iteration[thread.id()] = thread
                     self.__run_rules(self.preprocess_groups, thread, 'Preprocessing ')
