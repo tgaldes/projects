@@ -22,8 +22,21 @@ class CfldSheetService(SheetService):
                 if len(j) <= i:
                     continue
                 d[key] += j[i] + '\n\n'
-            #d[key] = '\n\n'.join([j[i] for j in info[1:]])
         return d
+
+    def get_action_info(self):
+        info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='actions!A4:G200').execute().get('values', [])
+        # info is a list of lists. each inner list has a single string element
+        # combine them all into a single string then return
+        d = {}
+        for i, key in enumerate(info[0]):
+            d[key] = ''
+            for j in info[1:]:
+                if len(j) <= i:
+                    continue
+                d[key] += j[i] + ' '
+        return d
+
 
     def get_availability(self):
         try:

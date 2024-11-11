@@ -17,7 +17,7 @@ class RuleFactory(Logger):
     # sheet data is a list of lists
     # first list is the header which we'll use to create a named tuple
     # then for each row we'll create an instance of the desired RuleHolder
-    def __init__(self, sheet_data=[], inboxes={}, llm_data=''):
+    def __init__(self, sheet_data=[], inboxes={}, llm_data='', action_data=''):
         super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
@@ -88,6 +88,9 @@ class RuleFactory(Logger):
             elif tup.action == 'remove_draft':
                 action = RemoveDraftAction()
                 log_msg += 'RemoveDraftAction'
+            elif tup.action == 'shell':
+                action = ShellAction(tup.value, action_data)
+                log_msg += 'ShellAction'
             elif tup.action == 'redirect_draft' or tup.action == 'redirect':
                 if tup.dest_email not in inboxes:
                     raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))

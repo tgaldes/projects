@@ -1,4 +1,5 @@
 import pdb
+import os
 from interface import implements
 import subprocess
 import re
@@ -7,7 +8,6 @@ from glob import glob
 from framework.Interfaces import IAction
 from framework.util import evaluate_expression, get_imports
 from framework.Thread import Thread
-from framework.BaseValidator import BaseValidator
 from framework.Logger import Logger
 from framework.OpenAiLLM import OpenAiLLM
 from framework import constants
@@ -95,6 +95,26 @@ class LLMDraftAction(implements(IAction), DestinationBase):
         if draft_content:
             thread.append_to_draft(draft_content, destinations)
             self.label_action.process(thread, matches)
+
+# an action that runs a shell script
+class ShellAction(implements(IAction), Logger):
+    def __init__(self, key_and_command, action_data):
+        super(ShellAction, self).__init__(__class__)
+        s = key_and_command.split(',')
+        self.instructions = '"' + action_data[s[0].strip()] + '"'
+        self.command = s[1].strip()
+        self.ld('Created: command={}, key='.format(self.command, s[0].strip()))
+    def process(self, thread, matches):
+        evaluated_command = evaluate_expression(self.command, **locals())
+        evaluated_command += ' ' + (self.instructions)
+        self.ld('Command evaluated to: {}'.format(evaluated_command))
+        # use Popen to run the command, throw exception if it fails
+        p = subprocess.Popen(evaluated_command, shell=True)
+        p.wait()
+        if p.returncode != 0:
+            self.lw('Command failed: {}'.format(evaluated_command))
+            raise Exception('Command failed: {}'.format(evaluated_command))
+        self.ld('Command succeeded')
 
 
 # The redirect thread needs to know
@@ -187,25 +207,3 @@ class AttachmentAction(DestinationBase):
             self.ld('Adding attachement from file: {}'.format(fn))
             thread.add_attachment_to_draft(data, fn, destinations)
         
-class ShellAction(Logger):
-    def __init__(self, command):
-        super(ShellAction, self).__init__(__class__)
-        self.command = command
-        self.ld('Created: command={}'.format(self.command))
-
-    def process(self, thread, matches):
-        evaluated_command = evaluate_expression(self.command, **locals())
-        self.ld('Command evaluated to: {}'.format(evaluated_command))
-        if BaseValidator.force_matches:
-            return 0
-        child = subprocess.Popen(evaluated_command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, error = child.communicate()
-        rc = child.returncode
-
-        self.li('stdout: {}'.format(out))
-        self.li('stderr: {}'.format(error))
-
-        if rc != 0:
-            self.le('subprocess failed.\nstdout: {}\n\nstderr: {}\n\nrc: {}'.format(out, error, rc))
-        return rc
-

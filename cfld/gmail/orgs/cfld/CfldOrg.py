@@ -40,6 +40,9 @@ class CfldOrg(Logger, implements(IOrg)):
     def get_llm_info(self):
         return self.ss.get_llm_info()
 
+    def get_action_info(self):
+        return self.ss.get_action_info()
+
     def check_reload(self):
         return self.ss.check_reload()
 
