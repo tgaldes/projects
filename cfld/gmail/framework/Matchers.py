@@ -3,8 +3,6 @@ import pdb
 from interface import implements
 
 from framework.Interfaces import IMatcher
-from framework.BaseValidator import BaseValidator
-from framework.util import evaluate_expression, class_to_string
 from framework.Logger import Logger
 from framework.ContactGroup import ContactGroup
 
@@ -15,7 +13,7 @@ def clean_text(text):
         return text[:99] + '...'
     return text
 
-class RegexMatcher(BaseValidator):
+class RegexMatcher(Logger):
     def __init__(self, re_string):
         super(RegexMatcher, self).__init__(self._name())
         self.re_string = re_string
@@ -34,9 +32,6 @@ class RegexMatcher(BaseValidator):
         if self.re.match(text):
             self.ld('\'{}\' matches regex:\'{}\' {}'.format(clean_text(text), self.re_string, thread))
             return True
-        elif super().force_match():
-            self.ld('\'{}\' forced to return true for {}'.format(self.re_string, thread))
-            return True
         else:
             self.ld('\'{}\' no match regex:\'{}\' {}'.format(clean_text(text), self.re_string, thread))
             return False
@@ -49,8 +44,6 @@ class RegexMatcher(BaseValidator):
         if g:
             self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
             return g.groups()
-        elif super().force_match():
-            return []
         raise Exception('Asked for matching groups when no match. re: {} thread subject: {}'.format(self.re_string, text))
     
 
@@ -69,7 +62,7 @@ class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
         return str(self.__class__)
 
 
-class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
+class BodyMatcher(implements(IMatcher), Logger):
 
     def __init__(self, needle):
         super(BodyMatcher, self).__init__(__class__)
@@ -82,9 +75,6 @@ class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
         if self.needle in text:
             self.ld('\'{}\' contains:\'{}\' {}'.format(clean_text(text), self.needle, thread))
             return True
-        elif super().force_match():
-            self.ld('\'{}\' forced to return true for {}'.format(self.needle, thread))
-            return True
         else:
             self.ld('\'{}\' no match regex:\'{}\' {}'.format(clean_text(text), self.needle, thread))
             return False
@@ -92,8 +82,6 @@ class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
     def get_matching_groups(self, thread):
         text = thread.last_message_text().lower()
         if self.needle in text:
-            return []
-        elif super().force_match():
             return []
         else:
             raise Exception('Asked for matching groups when no match. needle: {} haystack (trimmed): {}'.format(self.needle, clean_text(text)))
@@ -123,7 +111,7 @@ class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
     def _name(self):
         return str(self.__class__)
 
-class ExpressionMatcher(BaseValidator, implements(IMatcher)):
+class ExpressionMatcher(Logger, implements(IMatcher)):
     def __init__(self, expression):
         super(ExpressionMatcher, self).__init__(__class__)
         self.expression = expression
@@ -134,9 +122,6 @@ class ExpressionMatcher(BaseValidator, implements(IMatcher)):
     def matches(self, thread):
         if evaluate_expression(self.expression, **locals()):
             self.ld('{} returns true {}'.format(self.expression, thread))
-            return True
-        elif super().force_match():
-            self.ld('\'{}\' forced to return true for {}'.format(self.expression, thread))
             return True
         self.ld('{} returns false {}'.format(self.expression, thread))
         return False

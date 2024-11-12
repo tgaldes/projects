@@ -6,11 +6,11 @@ import re
 from glob import glob
 
 from framework.Interfaces import IAction
-from framework.util import evaluate_expression, get_imports
+from framework.util import evaluate_expression 
 from framework.Thread import Thread
 from framework.Logger import Logger
 from framework.OpenAiLLM import OpenAiLLM
-from framework import constants
+from framework.Config import Config
 
 
 
@@ -65,7 +65,7 @@ class DraftAction(implements(IAction), DestinationBase):
         else:
             super(DraftAction, self).__init__(destinations, name)
         self.value = value
-        self.label_action = LabelAction(constants.add_automation_label)
+        self.label_action = LabelAction(Config().get_automation_label())
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.prepend = prepend
     def process(self, thread, matches):
@@ -85,7 +85,7 @@ class LLMDraftAction(implements(IAction), DestinationBase):
     def __init__(self, value, destinations, context_dict):
         super(LLMDraftAction, self).__init__(destinations, __class__)
         self.value = value
-        self.label_action = LabelAction(constants.add_automation_label)
+        self.label_action = LabelAction(Config().get_automation_label())
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.llm = OpenAiLLM(system_background=context_dict[value])
     def process(self, thread, matches):

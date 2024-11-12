@@ -45,9 +45,47 @@ class SheetService(Logger):
         else:
             self.li('Loaded info to construct {} rules.'.format(len(self.rule_construction_data) - 1))
 
+    def get_action_info(self):
+        info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='actions!A4:G200').execute().get('values', [])
+        # info is a list of lists. each inner list has a single string element
+        # combine them all into a single string then return
+        d = {}
+        for i, key in enumerate(info[0]):
+            d[key] = ''
+            for j in info[1:]:
+                if len(j) <= i:
+                    continue
+                d[key] += j[i] + ' '
+        return d
+
+    def get_llm_info(self):
+        info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_context!A4:G200').execute().get('values', [])
+        # info is a list of lists. each inner list has a single string element
+        # combine them all into a single string then return
+        d = {}
+        for i, key in enumerate(info[0]):
+            d[key] = ''
+            for j in info[1:]:
+                if len(j) <= i:
+                    continue
+                d[key] += j[i] + '\n\n'
+        return d
+
 
     def get_rule_construction_data(self):
         return self.rule_construction_data
+
+    def check_reload(self):
+        try:
+            reload = int(self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='reload!A2:A2').execute().get('values', [])[0][0])
+            if reload == 1:
+                # reset reload flag on the sheet
+                self.service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range='reload!A2:A2', body={'values': [[0]]}, valueInputOption='RAW').execute()
+                return True
+            else:
+                return False
+        except:
+            return False
 
 if __name__=='__main__':
     ss = SheetService('apply@cleanfloorslockingdoors.com')

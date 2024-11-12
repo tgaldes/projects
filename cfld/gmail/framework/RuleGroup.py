@@ -5,13 +5,12 @@ import pdb
 from framework.RuleHolder import RuleHolder
 from framework.Interfaces import IRule
 from framework.Logger import Logger
-from framework.BaseValidator import BaseValidator
 
 
 # When we have more enum type values we can extract them somewhere else
 if_any_rule_types = ['if', 'any']
 
-class RuleGroup(BaseValidator):
+class RuleGroup(Logger):
     def __init__(self, rules_tup, child, query, user):
         super(RuleGroup, self).__init__(child)
         enums = copy.copy(self._enums())
@@ -55,10 +54,7 @@ class IfElseRuleGroup(implements(IRule), RuleGroup):
     def process(self, thread):
         for irule in self.rules:
             rule_match = irule.process(thread)
-            # in validate mode we want to pass the thread to every rule
-            if super().force_match():
-                continue
-            elif rule_match:
+            if rule_match:
                 break
 
     def _enums(self):
@@ -103,12 +99,10 @@ class IfAnyRuleGroup(implements(IRule), RuleGroup):
             if irule.process(thread):
                 match = True
                 # in validate mode we want to pass the thread to every rule
-                if super().force_match():
-                    continue
-                elif match:
+                if match:
                     break
 
-        if match or super().force_match():
+        if match:
             for i, irule in enumerate(self.any_rules):
                 irule.process(thread)
 

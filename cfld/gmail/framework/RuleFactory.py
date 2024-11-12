@@ -5,7 +5,7 @@ from framework.Actions import *
 from framework.Logger import Logger
 from framework.RuleHolder import RuleHolder
 from framework.RuleGroup import IfAnyRuleGroup, IfElseRuleGroup, SingleRuleGroup
-from framework import constants
+from framework.Config import Config
 
 def row_is_empty(row):
     for item in row:
@@ -17,7 +17,9 @@ class RuleFactory(Logger):
     # sheet data is a list of lists
     # first list is the header which we'll use to create a named tuple
     # then for each row we'll create an instance of the desired RuleHolder
-    def __init__(self, sheet_data=[], inboxes={}, llm_data='', action_data=''):
+
+    # support **kwargs, right now we'll have llm_data and action_data
+    def __init__(self, sheet_data=[], inboxes={}, **kwargs):
         super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
@@ -64,7 +66,7 @@ class RuleFactory(Logger):
             # the framework doesn't delete or modify a draft that the user might be 
             # actively working on in the web client.
             if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft']:
-                matchers.append(LabelMatcher(constants.force_skip_label, True))
+                matchers.append(LabelMatcher(Config().get_force_skip_label(), reverse_match=True))
             if not matchers:
                 matchers.append(AllMatcher())
                 log_msg += 'AllMatcher, '
@@ -74,7 +76,7 @@ class RuleFactory(Logger):
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
             elif tup.action == 'llm_draft':
-                action = LLMDraftAction(tup.value, tup.destinations, llm_data)
+                action = LLMDraftAction(tup.value, tup.destinations, kwargs['llm_data'])
                 log_msg += 'LLMDraftAction'
             elif tup.action == 'prepend_draft':
                 action = DraftAction(tup.value, tup.destinations, prepend=True)
@@ -89,7 +91,7 @@ class RuleFactory(Logger):
                 action = RemoveDraftAction()
                 log_msg += 'RemoveDraftAction'
             elif tup.action == 'shell':
-                action = ShellAction(tup.value, action_data)
+                action = ShellAction(tup.value, kwargs['action_data'])
                 log_msg += 'ShellAction'
             elif tup.action == 'redirect_draft' or tup.action == 'redirect':
                 if tup.dest_email not in inboxes:

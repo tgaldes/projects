@@ -6,7 +6,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import base64
 
-from framework.util import list_of_emails_to_string_of_emails
+from framework.MimeEmail import list_of_emails_to_string_of_emails
 from framework.Logger import Logger
 from framework.Thread import Thread
 from services.gmail.GMailMessage import GMailMessage

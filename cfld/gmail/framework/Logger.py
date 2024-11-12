@@ -1,7 +1,12 @@
 import logging
 from framework.NewLogger import getLogger
-from framework.util import class_to_string
-import framework.globals
+
+def class_to_string(c):
+    temp = str(c)
+    temp = temp[temp.rfind('.') + 1:]
+    if temp.find('\'') == -1:
+        return temp
+    return temp[:temp.find('\'')]
 
 class Logger:
     def __init__(self, parent_name, path='./log/', root=False):

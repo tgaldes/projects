@@ -2,22 +2,6 @@
     "type" : "gmail",
     "domains" : ["cleanfloorslockingdoors.com", "cf-ld.com"],
     "emails" : ["tyler@cleanfloorslockingdoors.com", "apply@cleanfloorslockingdoors.com"],
-    "org_init_import": "from orgs.cfld.CfldOrg import org_init",
-    "org" :
-    {
-        "name" : "cfld",
-        "imports" : ["from orgs.cfld.CfldOrg import run_new_submission_handler", 
-                     "from orgs.cfld.util import get_new_application_email", 
-                     "from orgs.cfld.util import get_new_application_name", 
-                     "from orgs.cfld.util import get_approved_application_email", 
-                     "from orgs.cfld.util import get_approved_application_name", 
-                     "from orgs.cfld.util import signature",
-                     "from orgs.cfld.CfldOrg import lookup_info",
-                     "from orgs.cfld.CfldOrg import short_name_from_address",
-                     "from orgs.cfld.util import short_name_from_thread",
-                     "from orgs.cfld.util import get_signed_lease_email",
-                     "from orgs.cfld.util import get_lease_sent_out_email"]
-    },
     "spreadsheet_id" : "1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI",
     "sheet_service_email" : "tyler@cleanfloorslockingdoors.com",
     "secret_path" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json",
@@ -25,6 +9,7 @@
     "sheet_name" : "quick_rules",
     "log_path" : "/cfld/log/quick/",
     "default_query_limit" : 5,
-    "default_query_string" : "label:INBOX"
+    "default_query_string" : "label:INBOX",
+    "open_ai_api_key_path" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_open_api_key.txt"
 }
 
