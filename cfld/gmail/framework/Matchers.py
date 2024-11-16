@@ -5,6 +5,7 @@ from interface import implements
 from framework.Interfaces import IMatcher
 from framework.Logger import Logger
 from framework.ContactGroup import ContactGroup
+from framework.util import evaluate_expression
 
 
 def clean_text(text):

@@ -33,6 +33,28 @@ class LabelAction(implements(IAction), Logger):
             self.ld('adding label: {} on thread {}'.format(label_string, thread))
         thread.set_label(label_string, unset=self.unset)
 
+
+class LLMLabelAction(implements(IAction), Logger):
+    def __init__(self, value, context_dict, unset=False):
+        super(LLMLabelAction, self).__init__(__class__)
+        self.value = value
+        self.unset = unset
+        if not self.value:
+            raise Exception('Cannot create with empty value: {}'.format(self.value))
+        self.llm = OpenAiLLM(system_background=context_dict[value])
+        self.ld('Created: value={}, unset={}'.format(self.value, self.unset))
+
+    def process(self, thread, matches):
+        # use the values we saved in the constructor to run the appropriate code
+        label_string = self.llm.generate_response(thread)
+        if not label_string:
+            return
+        if self.unset:
+            self.ld('removing label: {} on thread {}'.format(label_string, thread))
+        else:
+            self.ld('adding label: {} on thread {}'.format(label_string, thread))
+        thread.set_label(label_string, unset=self.unset)
+
 class DestinationBase(Logger):
     def __init__(self, destinations, name):
         super(DestinationBase, self).__init__(name)

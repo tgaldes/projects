@@ -1,4 +1,5 @@
 from openai import OpenAI
+import pdb
 import os
 from framework.Config import Config
 
@@ -31,7 +32,7 @@ class OpenAiLLM:
 
     def add_subject_to_system_background(self, thread):
         subject = thread.subject()
-        self.system_message_json['content'] = self.system_message + '\n The subject of the current email thread is: ' + subject
+        self.system_message_json['content'] = ' '.join(self.system_message) + '\n The subject of the current email thread is: ' + subject
 
     def generate_response(self, thread):
         roles = self.convert_thread_to_user_and_assitant_roles(thread)
