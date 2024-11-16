@@ -12,8 +12,8 @@ class CfldOrg(Logger, implements(IOrg)):
             self.config = config
             self.ss = CfldSheetService(config['sheet_service_email'], config['sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
             self.rule_data = self.ss.get_rule_construction_data()
-            self.nsh = NewSubmissionHandler(self.ss.get_availability(), \
-                                       self.ss.get_availability_blurbs())
+            #self.nsh = NewSubmissionHandler(self.ss.get_availability(), \
+                                       #self.ss.get_availability_blurbs())
             self.li = LookupInfo(self.ss.get_lookup_info_data())
         except: # catch this and expose another initialize call to be used by the tests
             pass
@@ -31,8 +31,8 @@ class CfldOrg(Logger, implements(IOrg)):
     def lookup_info(self, k1, k2):
         return self.li.lookup_info(k1, k2)
 
-    def run_new_submission_handler(self, t):
-        return self.nsh.handle_thread(t)
+    #def run_new_submission_handler(self, t):
+        #return self.nsh.handle_thread(t)
 
     def short_name(self, key):
         return self.li.lookup_info('short_name', key.strip())
