@@ -151,6 +151,12 @@ class Thread(Logger):
         self.lw('Could not find salutation in thread with id: {} subject: {}'.format(self.identifier, self.subject()))
         return base.format('')
 
+    def signature(self):
+        if len(self.messages) <= 2:
+            return 'Best,<br>Lee Melbourne-Weaver<br>Clean Floors & Locking Doors Inc.<br>'
+        else:
+            return 'Best,<br>Lee<br>'
+
     # For reply all, get everything in the from, to, and cc fields that isn't our email
     def default_reply(self, reply_all=True, force_all=False):
         counter = -1
