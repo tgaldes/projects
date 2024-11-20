@@ -17,7 +17,7 @@ class ServiceCreator():
                     self.services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir'], config['default_query_limit'], config['default_query_string']))
                 else:
                     self.services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))
-                self.sheet_service = SheetService(config['sheet_service_email'], config['sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
+                self.sheet_service = SheetService(config['sheet_service_email'], config['rule_sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
         else:
             logger.lf('Only gmail type supported, exiting')
             exit(1)

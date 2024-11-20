@@ -25,8 +25,7 @@ class LabelAction(implements(IAction), Logger):
         self.ld('Created: value={}, unset={}'.format(self.value, self.unset))
 
     def process(self, thread, matches):
-        # use the values we saved in the constructor to run the appropriate code
-        label_string = evaluate_expression(self.value, **locals())
+        label_string = self.value
         if self.unset:
             self.ld('removing label: {} on thread {}'.format(label_string, thread))
         else:

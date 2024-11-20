@@ -1,8 +1,5 @@
 import json
 
-def wrap_in_quotes(string):
-    return '"' + string + '"'
-
 class Config(object):
 
     def __new__(cls):
@@ -36,19 +33,20 @@ class Config(object):
         if not self.initialized:
             raise Exception("Config not initialized")
         elif 'automation_label' in self.config:
-            return wrap_in_quotes(self.config['automation_label'])
-        return wrap_in_quotes('automation')
-    
+            return self.config['automation_label']
+        return 'automation'
+
     def get_force_skip_label(self):
         if not self.initialized:
             raise Exception("Config not initialized")
         elif 'force_skip_label' in self.config:
-            return wrap_in_quotes(self.config['force_skip_label'])
-        return wrap_in_quotes(self.get_automation_label() + '/force_skip')
+            return self.config['force_skip_label']
+        return self.get_automation_label() + '/force_skip'
+
     def get_thread_error_label(self):
         if not self.initialized:
             raise Exception("Config not initialized")
         elif 'thread_error_label' in self.config:
-            return wrap_in_quotes(self.config['thread_error_label'])
-        return wrap_in_quotes(self.get_automation_label() + '/errors')
+            return self.config['thread_error_label']
+        return self.get_automation_label() + '/errors'
 

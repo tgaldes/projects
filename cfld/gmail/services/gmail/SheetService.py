@@ -13,7 +13,7 @@ from framework.Interfaces import IOrg
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 # This class provides a base to connect to google sheets api and get rule construction information, which every org will need
 class SheetService(Logger):
-    def __init__(self, email, sheet_name, spreadsheet_id, secret_path, token_dir):
+    def __init__(self, email, rule_sheet_name, spreadsheet_id, secret_path, token_dir):
         super(SheetService, self).__init__(__class__)
         self.li('Creating: for {}'.format(email))
 
@@ -38,7 +38,7 @@ class SheetService(Logger):
             with open(pickle_path, 'wb') as token:
                 pickle.dump(creds, token)
         self.service = build('sheets', 'v4', credentials=creds)
-        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='{}!A1:P300'.format(sheet_name)).execute().get('values', [])
+        self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='{}!A1:P300'.format(rule_sheet_name)).execute().get('values', [])
         if not self.rule_construction_data:
             self.lf('No info loaded for rule construction data. Aborting.')
             exit(1)
