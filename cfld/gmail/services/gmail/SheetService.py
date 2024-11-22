@@ -70,12 +70,18 @@ class SheetService(Logger):
         # info is a list of lists. each inner list has a single string element
         # combine them all into a single string then return
         d = {}
+        # for the column headers, create a key in the dictionary
+        # outer iteration is for each column
         for i, key in enumerate(info[0]):
-            d[key] = ''
-            for j in info[1:]:
+            d[key] = ['', '']
+            # inner iteration is for each row 
+            for index, j in enumerate(info[1:]):
                 if len(j) <= i:
                     continue
-                d[key] += j[i] + ' '
+                if index == 0: # we have the number of steps
+                    d[key][0] = int(j[i])
+                else:
+                    d[key][1] += j[i] + ' '
         return d
 
     def organize_llm_data_map(self, data):

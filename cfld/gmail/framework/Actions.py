@@ -12,6 +12,8 @@ from framework.Logger import Logger
 from framework.OpenAiLLM import OpenAiLLM
 from framework.Config import Config
 
+from framework.BrowserUse import run_browser_use
+
 
 
 
@@ -118,7 +120,7 @@ class LLMDraftAction(implements(IAction), DestinationBase):
             self.label_action.process(thread, matches)
 
 # an action that runs a shell script
-class ShellAction(implements(IAction), Logger):
+'''class ShellAction(implements(IAction), Logger):
     def __init__(self, key_and_command, action_data):
         super(ShellAction, self).__init__(__class__)
         s = key_and_command.split(',')
@@ -135,7 +137,23 @@ class ShellAction(implements(IAction), Logger):
         if p.returncode != 0:
             self.lw('Command failed: {}'.format(evaluated_command))
             raise Exception('Command failed: {}'.format(evaluated_command))
-        self.ld('Command succeeded')
+        self.ld('Command succeeded')'''
+
+# an action that runs a shell script
+class BrowserUseAction(implements(IAction), Logger):
+    def __init__(self, action_data_key, action_data):
+        super(BrowserUseAction, self).__init__(__class__)
+
+        self.instructions = action_data[action_data_key][1]
+        self.max_steps = action_data[action_data_key][0]
+        self.ld('Created BrowserUseAction: {}'.format(action_data_key))
+        self.failure_label_action = LabelAction(Config().get_browser_use_failed_label())
+    def process(self, thread, matches):
+        rc = run_browser_use(query=self.instructions, max_steps=self.max_steps)
+        if rc != 0:
+            self.lw('BrowserUseAction failed: {}'.format(self.instructions))
+            self.failure_label_action.process(thread, matches)
+            # TODO: rule sheet to forward to Tyler only once!
 
 
 # The redirect thread needs to know

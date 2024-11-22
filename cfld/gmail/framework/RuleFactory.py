@@ -71,7 +71,7 @@ class RuleFactory(Logger):
                 matchers.append(AllMatcher())
                 log_msg += 'AllMatcher, '
             # create action
-            supported_actions = ['draft', 'prepend_draft', 'label', 'unlabel', 'remove_draft', 'redirect/redirect_draft', 'redirect_label', 'empty/\'\'', 'forward_attachment', 'attachment', 'label_lookup', 'shell', 'send_draft']
+            supported_actions = ['draft', 'prepend_draft', 'label', 'unlabel', 'remove_draft', 'redirect/redirect_draft', 'redirect_label', 'empty/\'\'', 'forward_attachment', 'attachment', 'label_lookup', 'shell', 'send_draft', 'browser_use']
             if tup.action == 'draft':
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
@@ -94,8 +94,12 @@ class RuleFactory(Logger):
                 action = RemoveDraftAction()
                 log_msg += 'RemoveDraftAction'
             elif tup.action == 'shell':
-                action = ShellAction(tup.value, kwargs['action_data'])
-                log_msg += 'ShellAction'
+                raise Exception('Shell action is not supported. It was deprecated to simplify the value column for browser use.')
+                #action = ShellAction(tup.value, kwargs['action_data'])
+                #log_msg += 'ShellAction'
+            elif tup.action == 'browser_use':
+                action = BrowserUseAction(tup.value, kwargs['action_data'])
+                log_msg += 'BrowserUseAction'
             elif tup.action == 'redirect_draft' or tup.action == 'redirect':
                 if tup.dest_email not in inboxes:
                     raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))

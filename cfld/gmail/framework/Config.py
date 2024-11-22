@@ -59,3 +59,10 @@ class Config(object):
             return self.config['thread_error_label']
         return self.get_automation_label() + '/errors'
 
+    def get_browser_use_failed_label(self):
+        if not self.initialized:
+            raise Exception("Config not initialized")
+        elif 'thread_error_label' in self.config:
+            return self.config['thread_error_label']
+        return self.get_automation_label() + '/browser_use_failed'
+
