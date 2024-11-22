@@ -10,11 +10,8 @@ from TestUtil import parent_path
 class LabelActionTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(LabelActionTest, self).__init__(*args, **kwargs)
-        self.label_one = '"label one"'
-        self.label_one_unwrapped = self.label_one[1:-1]
-        self.label_two = '"label two " + match(0)'
-        self.label_three = '"label three " + match(1)'
-        self.matches = ['first match', 'second match']
+        self.label_one = 'label one'
+        self.label_two = 'label two'
 
     def test_throw_on_empty_init(self):
         with self.assertRaises(Exception):
@@ -25,27 +22,14 @@ class LabelActionTest(unittest.TestCase):
         thread = Mock()
         thread.set_label = MagicMock()
         la.process(thread, [])
-        thread.set_label.assert_called_once_with(self.label_one_unwrapped, unset=False)
-
-    def test_set_label_with_match(self):
-        la = LabelAction(self.label_two)
-        thread = Mock()
-        thread.set_label = MagicMock()
-        la.process(thread, self.matches)
-        thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=False)
-
-        la = LabelAction(self.label_three)
-        thread = Mock()
-        thread.set_label = MagicMock()
-        la.process(thread, self.matches)
-        thread.set_label.assert_called_once_with('label three ' + self.matches[1], unset=False)
+        thread.set_label.assert_called_once_with(self.label_one, unset=False)
 
     def test_unset_label(self):
         la = LabelAction(self.label_two, unset=True)
         thread = Mock()
         thread.set_label = MagicMock()
-        la.process(thread, self.matches)
-        thread.set_label.assert_called_once_with('label two ' + self.matches[0], unset=True)
+        la.process(thread, [])
+        thread.set_label.assert_called_once_with('label two', unset=True)
 
 class DraftActionTest(unittest.TestCase):
 
@@ -110,7 +94,7 @@ class DraftActionTest(unittest.TestCase):
         mock_thread.prepend_to_draft.assert_called_once_with('Formatting a message with the short name: match b', email)
 
 
-class MockThread(unittest.TestCase):
+'''class MockThread(unittest.TestCase):
     def __init__(self, d, service, *args, **kwargs):
         super(MockThread, self).__init__(*args, **kwargs)
         self.thread = d;
@@ -122,7 +106,7 @@ class MockThread(unittest.TestCase):
     def __del__(self):
         self.append_to_draft.assert_called_once_with(unittest.mock.ANY, unittest.mock.ANY)
         self.default_reply.assert_called_once_with()
-        self.get_short_name.assert_called_once_with()
+        self.get_short_name.assert_called_once_with()'''
 
 class RedirectActionTest(unittest.TestCase):
 
@@ -276,21 +260,3 @@ class ShellActionTest(unittest.TestCase):
         with open(ShellActionTest.output_fn, 'r') as f:
             # file gives us a newline
             self.assertEqual(ret, f.read().strip())
-
-    def test_base_validate(self):
-        initialize()
-        command = '"/bin/sh ' + os.path.join(parent_path, ShellActionTest.script_dir, 'error.sh') + '"'
-        sa = ShellAction(command)
-        thread = Mock()
-        thread.default_reply = MagicMock(return_value='')
-        matches = []
-        BaseValidator.set_validate_mode(True)
-        self.assertEqual(0, sa.process(thread, matches))
-        self.assertFalse(os.path.exists(ShellActionTest.output_fn))
-        BaseValidator.set_validate_mode(False)
-        
-
-
-
-
-

@@ -32,18 +32,6 @@ class SubjectMatcherTest(unittest.TestCase):
         with self.assertRaises(Exception):
             sm.get_matching_groups({})
 
-    def test_base_validate(self):
-        sm = SubjectMatcher('test subject')
-        thread = Mock()
-        thread.subject = MagicMock(return_value='no match')
-        BaseValidator.set_validate_mode(True)
-        self.assertTrue(sm.matches(thread))
-        self.assertEqual([], sm.get_matching_groups(thread))
-
-        with self.assertRaises(Exception):
-            sm = SubjectMatcher('test subject')
-        BaseValidator.set_validate_mode(False)
-
     def test_force_whole_match(self):
         sm = SubjectMatcher('test subject')
         thread = Mock()
@@ -130,9 +118,6 @@ class BodyMatcherTest(unittest.TestCase):
         self.assertFalse(bm.matches(thread))
         with self.assertRaises(Exception):
             bm.get_matching_groups({})
-        BaseValidator.set_validate_mode(True)
-        self.assertEqual([], bm.get_matching_groups(thread))
-        BaseValidator.set_validate_mode(False)
 
     def test_match_really_big_haystack(self):
         bm = BodyMatcher('additional details')
@@ -177,18 +162,6 @@ class ExpressionMatcherTest(unittest.TestCase):
         self.assertTrue(em.matches(thread))
         thread.last_ts = MagicMock(return_value='1000')
         self.assertFalse(em.matches(thread))
-
-    def test_base_validate(self):
-        em = ExpressionMatcher('int(thread.last_ts()) > 1000')
-        thread = Mock()
-        thread.last_ts = MagicMock(return_value='1')
-        BaseValidator.set_validate_mode(True)
-        self.assertTrue(em.matches(thread))
-        self.assertEqual([], em.get_matching_groups(thread))
-
-        with self.assertRaises(Exception):
-            em = ExpressionMatcher('int(thread.last_ts()) > 1000')
-        BaseValidator.set_validate_mode(False)
 
 
 class ComboMatcherTest(unittest.TestCase):

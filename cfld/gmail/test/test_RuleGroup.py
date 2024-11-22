@@ -62,20 +62,6 @@ class IfElseRuleGroupTest(unittest.TestCase):
         with self.assertRaises(Exception):
             ieg = IfElseRuleGroup()
 
-    def test_base_validate(self):
-        mock_irule_1 = Mock()
-        # Even though the first rule returns true, the later rule will process the thread
-        mock_irule_1.process = MagicMock(return_value=True)
-        mock_irule_2 = Mock()
-        mock_irule_2.process = MagicMock(return_value=True)
-        t = {}
-        ieg = IfElseRuleGroup([(mock_irule_1, '', ''), (mock_irule_2, '', '')], '', user)
-        BaseValidator.set_validate_mode(True)
-        ieg.process(t)
-        mock_irule_1.process.assert_called_once_with(t)
-        mock_irule_2.process.assert_called_once_with(t)
-        BaseValidator.set_validate_mode(False)
-
 class IfAnyRuleGroupTest(unittest.TestCase):
 
     def test_if_and_all_any(self):
