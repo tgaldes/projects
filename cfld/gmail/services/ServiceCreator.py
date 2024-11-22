@@ -12,12 +12,16 @@ class ServiceCreator():
         if config['type'] == 'gmail':
             logging.getLogger('google').setLevel(logging.ERROR)
             logging.getLogger('googleapiclient').setLevel(logging.ERROR)
+            self.sheet_service = SheetService(config['sheet_service_email'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
+
+            config.update(self.sheet_service.config_data)
+            self.sheet_service.set_rule_sheet_name(config['rule_sheet_name'])
+
             for email in config['emails']:
                 if 'default_query_limit' in config and 'default_query_string' in config:
                     self.services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir'], config['default_query_limit'], config['default_query_string']))
                 else:
                     self.services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))
-                self.sheet_service = SheetService(config['sheet_service_email'], config['rule_sheet_name'], config['spreadsheet_id'], config['secret_path'], config['client_token_dir'])
         else:
             logger.lf('Only gmail type supported, exiting')
             exit(1)

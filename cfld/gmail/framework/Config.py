@@ -24,6 +24,15 @@ class Config(object):
             raise Exception("Config not initialized")
         return self.config[key]
 
+    def update(self, d):
+        for k, v in d.items():
+            self.config[k] = v
+
+    def __setitem__(self, key, value):
+        if not self.initialized:
+            raise Exception("Config not initialized")
+        self.config[key] = value
+
     def __contains__(self, key):
         if not self.initialized:
             raise Exception("Config not initialized")

@@ -3,6 +3,7 @@ from time import time
 
 from framework.Logger import Logger
 from framework.MimeEmail import create_multipart
+from framework.Config import Config
 
 class Thread(Logger):
     def __init__(self, identifier, messages, service, historyId=0):
@@ -152,10 +153,11 @@ class Thread(Logger):
         return base.format('')
 
     def signature(self):
+        config = Config()
         if len(self.messages) <= 2:
-            return 'Best,<br>Lee Melbourne-Weaver<br>Clean Floors & Locking Doors Inc.<br>'
+            return config['long_signature']
         else:
-            return 'Best,<br>Lee<br>'
+            return config['short_signature']
 
     # For reply all, get everything in the from, to, and cc fields that isn't our email
     def default_reply(self, reply_all=True, force_all=False):

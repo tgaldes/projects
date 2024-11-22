@@ -10,10 +10,12 @@ from interface import implements
 from framework.Logger import Logger
 from framework.Interfaces import IOrg
 
+from framework.Config import Config
+
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 # This class provides a base to connect to google sheets api and get rule construction information, which every org will need
 class SheetService(Logger):
-    def __init__(self, email, rule_sheet_name, spreadsheet_id, secret_path, token_dir):
+    def __init__(self, email, spreadsheet_id, secret_path, token_dir):
         super(SheetService, self).__init__(__class__)
         self.li('Creating: for {}'.format(email))
 
@@ -38,6 +40,24 @@ class SheetService(Logger):
             with open(pickle_path, 'wb') as token:
                 pickle.dump(creds, token)
         self.service = build('sheets', 'v4', credentials=creds)
+        self.rule_construction_data = None
+
+        # load data from the 'config' sheet in the spreadsheet
+        config_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='{}!A1:Z300'.format('config')).execute().get('values', [])
+        if not config_data:
+            self.lf('No info loaded for config data. Aborting.')
+            exit(1)
+        d = {}
+        for row in config_data:
+            if len(row) == 2:
+                d[row[0]] = row[1]
+            else:
+                d[row[0]] = row[1:]
+
+        self.config_data = d
+
+
+    def set_rule_sheet_name(self, rule_sheet_name):
         self.rule_construction_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='{}!A1:P300'.format(rule_sheet_name)).execute().get('values', [])
         if not self.rule_construction_data:
             self.lf('No info loaded for rule construction data. Aborting.')

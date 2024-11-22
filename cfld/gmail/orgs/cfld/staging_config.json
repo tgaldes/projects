@@ -1,14 +1,8 @@
 {
     "type" : "gmail",
-    "domains" : ["cleanfloorslockingdoors.com", "cf-ld.com"],
-    "emails" : ["tyler@cleanfloorslockingdoors.com", "apply@cleanfloorslockingdoors.com"],
     "spreadsheet_id" : "1cJ4fUFiOak98GAVBwqwcdJmN34cXPtWTzdLzMruisoI",
     "sheet_service_email" : "tyler@cleanfloorslockingdoors.com",
     "secret_path" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json",
-    "client_token_dir" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/",
-    "open_ai_api_key_path" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_open_api_key.txt",
-    "rule_sheet_name" : "staging_rules",
-    "validate" : 0,
-    "log_path" : "/cfld/log/staging/"
+    "client_token_dir" : "/home/tgaldes/Dropbox/Fraternity PM/dev_private/"
 }
 

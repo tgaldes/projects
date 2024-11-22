@@ -103,9 +103,9 @@ if __name__=='__main__':
 
     config = Config()
     config.initialize(sys.argv[1])
-    logger = Logger('root', config['log_path'], root=True)
 
     sc = ServiceCreator()
+    logger = Logger('root', config['log_path'], root=True)
     
 
     m = Main(sc.get_services(), sc.get_sheet_service(), logger, config)
