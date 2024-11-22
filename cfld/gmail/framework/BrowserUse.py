@@ -45,8 +45,6 @@ async def run_browser_use(query: str, max_steps: int):
     history = await agent.run(max_steps=max_steps)
     actions = [h.model_output.action for h in history if h.model_output and h.model_output.action]
     action_names = [list(action.model_dump(exclude_unset=True).keys())[0] for action in actions]
-    import pdb
-    pdb.set_trace()
 
     if 'done_unsuccessfully' in action_names:
         return 1

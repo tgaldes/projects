@@ -13,6 +13,7 @@ from framework.OpenAiLLM import OpenAiLLM
 from framework.Config import Config
 
 from framework.BrowserUse import run_browser_use
+import asyncio
 
 
 
@@ -149,7 +150,7 @@ class BrowserUseAction(implements(IAction), Logger):
         self.ld('Created BrowserUseAction: {}'.format(action_data_key))
         self.failure_label_action = LabelAction(Config().get_browser_use_failed_label())
     def process(self, thread, matches):
-        rc = run_browser_use(query=self.instructions, max_steps=self.max_steps)
+        rc = asyncio.run(run_browser_use(query=self.instructions, max_steps=self.max_steps))
         if rc != 0:
             self.lw('BrowserUseAction failed: {}'.format(self.instructions))
             self.failure_label_action.process(thread, matches)

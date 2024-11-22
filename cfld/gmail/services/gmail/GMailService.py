@@ -15,7 +15,7 @@ from services.gmail.GMailMessage import GMailMessage
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 class GMailService(Logger):
-    def __init__(self, email, domains, secret_path, token_dir, default_query_limit=5, default_query_string='label:INBOX'):
+    def __init__(self, email, domains, secret_path, token_dir, default_query_limit=60, default_query_string='label:INBOX'):
         super(GMailService, self).__init__(__class__)
         self.email = email
         self.user = email.split('@')[0]
