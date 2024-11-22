@@ -11,11 +11,15 @@ class Config(object):
         if not hasattr(self, 'initialized'):
             self.initialized = False
 
-    def initialize(self, config_file):
+    def initialize(self, config_file, d={}):
         # reads the json config file and keeps a dictionariy of the values
         self.config = {}
-        with open(config_file, "r") as f:
-            self.config = json.load(f)
+
+        if d:
+            self.config = d
+        else:
+            with open(config_file, "r") as f:
+                self.config = json.load(f)
         self.initialized = True
 
     # overload the [] operator to access the config values

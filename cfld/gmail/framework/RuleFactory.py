@@ -46,26 +46,27 @@ class RuleFactory(Logger):
                 raise Exception('Cannot create a rule without a user specified. tup: {}'.format(tup))
             matchers = []
             # create one or more matchers
-            if tup.label_regex:
+            if getattr(tup, 'label_regex', None):
                 matchers.append(LabelMatcher(tup.label_regex))
                 log_msg += 'LabelMatcher, '
-            if tup.subject_regex:
+            if getattr(tup, 'subject_regex', None):
                 matchers.append(SubjectMatcher(tup.subject_regex))
                 log_msg += 'SubjectMatcher, '
-            if tup.body_regex:
+            if getattr(tup, 'body_regex', None):
                 matchers.append(BodyMatcher(tup.body_regex))
                 log_msg += 'BodyMatcher, '
-            if tup.expression_match:
+            if getattr(tup, 'expression_match', None):
                 matchers.append(ExpressionMatcher(tup.expression_match))
                 log_msg += 'ExpressionMatcher, '
-            if tup.contact_group_match:
+            # check if contact group match is specified
+            if getattr(tup, 'contact_group_match', None):
                 matchers.append(ContactGroupMatcher(tup.contact_group_match))
                 log_msg += 'ContactGroupMatcher, '
             # framework level behavior to never to never match with a draft action when
             # the 'automation/force_skip' label is present. This is implemented so that
             # the framework doesn't delete or modify a draft that the user might be 
             # actively working on in the web client.
-            if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft']:
+            if getattr(tup, 'action', None) in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft']:
                 matchers.append(LabelMatcher(Config().get_force_skip_label(), reverse_match=True))
             if not matchers:
                 matchers.append(AllMatcher())
