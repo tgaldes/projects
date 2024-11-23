@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-import test.TestConfig
 
 from framework.RuleFactory import RuleFactory
 from framework.RuleGroup import IfElseRuleGroup, IfAnyRuleGroup, SingleRuleGroup

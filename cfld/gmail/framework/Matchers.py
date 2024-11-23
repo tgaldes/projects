@@ -40,14 +40,6 @@ class RegexMatcher(Logger):
     def _name(self):
         raise Exception('_name is not implemented in RegexMatcher.')
 
-    def get_matching_groups(self, text):
-        g = self.re.match(text)
-        if g:
-            self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
-            return g.groups()
-        raise Exception('Asked for matching groups when no match. re: {} thread subject: {}'.format(self.re_string, text))
-    
-
 class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
 
     def __init__(self, regex):
@@ -55,9 +47,6 @@ class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
 
     def matches(self, thread):
         return super().matches(thread.subject(), thread)
-
-    def get_matching_groups(self, thread):
-        return super().get_matching_groups(thread.subject())
 
     def _name(self):
         return str(self.__class__)
@@ -80,14 +69,6 @@ class BodyMatcher(implements(IMatcher), Logger):
             self.ld('\'{}\' no match regex:\'{}\' {}'.format(clean_text(text), self.needle, thread))
             return False
 
-    def get_matching_groups(self, thread):
-        text = thread.last_message_text().lower()
-        if self.needle in text:
-            return []
-        else:
-            raise Exception('Asked for matching groups when no match. needle: {} haystack (trimmed): {}'.format(self.needle, clean_text(text)))
-         
-
 class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
 
     def __init__(self, re_string, reverse_match=False):
@@ -99,15 +80,6 @@ class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
             if super().matches(label, thread):
                 return not self.reverse_match
         return self.reverse_match
-
-    def get_matching_groups(self, thread):
-        for label in thread.labels():
-            try:
-                return super().get_matching_groups(label)
-            except:
-                if self.reverse_match:
-                    return ()
-        raise Exception('Asked for matching groups when no matches found for labels: {}'.format(thread.labels()))
 
     def _name(self):
         return str(self.__class__)
@@ -127,10 +99,6 @@ class ExpressionMatcher(Logger, implements(IMatcher)):
         self.ld('{} returns false {}'.format(self.expression, thread))
         return False
 
-    # Since we aren't doing a regex we don't really have the concept of matching groups
-    def get_matching_groups(self, thread):
-        return []
-
 
 # AND behavior (later we can make it and/or)
 class ComboMatcher(implements(IMatcher), Logger):
@@ -149,15 +117,6 @@ class ComboMatcher(implements(IMatcher), Logger):
         self.ld('matched {} matchers, returning true for {}'.format(len(self.matchers), thread))
         return True
 
-    def get_matching_groups(self, thread):
-        matches = []
-        for matcher in self.matchers:
-            if matcher.matches(thread):
-                matches.extend(list(matcher.get_matching_groups(thread)))
-            else: 
-                raise Exception('Asked for matching groups when not all match. ComboMatcher with {} sub-matchers'.format(len(self.matchers)))
-        return matches
-
 # Always match the thread! Created to use as the matcher for the any rules
 # in the IfAnyRuleGroup, that way we don't have to specify .* for one of our
 # regex matchers for all of these rules
@@ -168,9 +127,6 @@ class AllMatcher(Logger):
     def matches(self, thread):
         self.li('always returing true for {}'.format(thread))
         return True
-
-    def get_matching_groups(self, thread):
-        return []
 
 # return True if any email in the thread is in the group
 class ContactGroupMatcher(Logger):
@@ -188,5 +144,3 @@ class ContactGroupMatcher(Logger):
         self.ld('No emails from thread in group \'{}\' {}'.format(self.group_name, thread))
         return False
 
-    def get_matching_groups(self, thread):
-        return []

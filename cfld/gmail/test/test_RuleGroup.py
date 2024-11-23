@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, Mock
 import unittest
-import test.TestConfig
 
 from framework.RuleGroup import *
 

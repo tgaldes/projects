@@ -21,8 +21,7 @@ class RuleHolder(Logger, implements(IRule)):
         self.ld('#{}: {}: processing {}'.format(self.row_num, self.name, thread))
         if self.matcher.matches(thread):
             self.ld('#{}: {}: matches'.format(self.row_num, self.name))
-            match_groups = self.matcher.get_matching_groups(thread)
-            self.action.process(thread, match_groups)
+            self.action.process(thread)
             return True
         return False
 

@@ -4,7 +4,6 @@ import unittest
 import pdb
 
 from test.TestUtil import get_thread_constructor_args, get_history_id, encode_for_payload
-import test.TestConfig
 
 from framework.Thread import Thread
 from services.gmail.GMailMessage import GMailMessage

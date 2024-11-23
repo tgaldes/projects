@@ -27,7 +27,7 @@ class LabelAction(implements(IAction), Logger):
             raise Exception('Cannot create with empty value: {}'.format(self.value))
         self.ld('Created: value={}, unset={}'.format(self.value, self.unset))
 
-    def process(self, thread, matches):
+    def process(self, thread):
         label_string = self.value
         if self.unset:
             self.ld('removing label: {} on thread {}'.format(label_string, thread))
@@ -46,7 +46,7 @@ class LLMLabelAction(implements(IAction), Logger):
         self.llm = OpenAiLLM(system_background=context_dict[value])
         self.ld('Created: value={}, unset={}'.format(self.value, self.unset))
 
-    def process(self, thread, matches):
+    def process(self, thread):
         # use the values we saved in the constructor to run the appropriate code
         label_string = self.llm.generate_response(thread)
         if not label_string:
@@ -65,7 +65,7 @@ class DestinationBase(Logger):
         if type(emails) == str:
             return emails.split(',')
         return emails
-    def _get_destinations(self, thread, matches):
+    def _get_destinations(self, thread):
         if self.destinations:
             return self.__convert_string_emails_to_list(evaluate_expression(self.destinations, **locals()))
         else:
@@ -75,7 +75,7 @@ class SendDraftAction(implements(IAction), Logger):
     def __init__(self):
         super(SendDraftAction, self).__init__(__class__)
         self.ld('Created')
-    def process(self, thread, matches):
+    def process(self, thread):
         if thread.has_draft():
             self.li('Sending draft on thread: {}'.format(thread))
             thread.send_draft()
@@ -92,9 +92,9 @@ class DraftAction(implements(IAction), DestinationBase):
         self.label_action = LabelAction(Config().get_automation_label())
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.prepend = prepend
-    def process(self, thread, matches):
+    def process(self, thread):
         self.ld('processing a thread')
-        destinations = self._get_destinations(thread, matches)
+        destinations = self._get_destinations(thread)
         if self.value:
             draft_content = evaluate_expression(self.value, **locals())
         else:
@@ -103,7 +103,7 @@ class DraftAction(implements(IAction), DestinationBase):
             thread.prepend_to_draft(draft_content, destinations)
         else:
             thread.append_to_draft(draft_content, destinations)
-        self.label_action.process(thread, matches)
+        self.label_action.process(thread)
 
 class LLMDraftAction(implements(IAction), DestinationBase):
     def __init__(self, value, destinations, context_dict):
@@ -112,13 +112,13 @@ class LLMDraftAction(implements(IAction), DestinationBase):
         self.label_action = LabelAction(Config().get_automation_label())
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
         self.llm = OpenAiLLM(system_background=context_dict[value])
-    def process(self, thread, matches):
+    def process(self, thread):
         self.ld('processing a thread')
-        destinations = self._get_destinations(thread, matches)
+        destinations = self._get_destinations(thread)
         draft_content = self.llm.generate_response(thread)
         if draft_content:
             thread.append_to_draft(draft_content, destinations)
-            self.label_action.process(thread, matches)
+            self.label_action.process(thread)
 
 # an action that runs a shell script
 '''class ShellAction(implements(IAction), Logger):
@@ -128,7 +128,7 @@ class LLMDraftAction(implements(IAction), DestinationBase):
         self.instructions = '"' + action_data[s[0].strip()] + '"'
         self.command = s[1].strip()
         self.ld('Created: command={}, key='.format(self.command, s[0].strip()))
-    def process(self, thread, matches):
+    def process(self, thread):
         evaluated_command = evaluate_expression(self.command, **locals())
         evaluated_command += ' ' + (self.instructions)
         self.ld('Command evaluated to: {}'.format(evaluated_command))
@@ -149,11 +149,11 @@ class BrowserUseAction(implements(IAction), Logger):
         self.max_steps = action_data[action_data_key][0]
         self.ld('Created BrowserUseAction: {}'.format(action_data_key))
         self.failure_label_action = LabelAction(Config().get_browser_use_failed_label())
-    def process(self, thread, matches):
+    def process(self, thread):
         rc = asyncio.run(run_browser_use(query=self.instructions, max_steps=self.max_steps))
         if rc != 0:
             self.lw('BrowserUseAction failed: {}'.format(self.instructions))
-            self.failure_label_action.process(thread, matches)
+            self.failure_label_action.process(thread)
             # TODO: rule sheet to forward to Tyler only once!
 
 
@@ -171,13 +171,13 @@ class RedirectAction(Logger):
             raise Exception('Cannot create with empty thread_finder_expression: {} '.format(self.thread_finder_expression))
         self.ld('Created: finder_expression={} action={}'.format(self.thread_finder_expression, self.action))
         
-    def process(self, thread, matches):
+    def process(self, thread):
         self.ld('processing a thread')
         found_threads = evaluate_expression(self.thread_finder_expression, **{**locals(), **self.__dict__})
         if not found_threads:
             self.li('No found_threads matched the expression: {}'.format(self.thread_finder_expression))
         for found_thread in found_threads:
-            self.action.process(found_thread, matches)
+            self.action.process(found_thread)
 
 # Like a redirect, but instead of creating a draft in the found thread,
 # we'll get the labels from the found thread and set any that match our regex
@@ -191,7 +191,7 @@ class LabelLookupAction(implements(IAction), Logger):
         self.label_re = re.compile(self.label_regex_string)
         self.ld('Created: thread_finder {} label_regex {}'.format(self.thread_finder_expression, self.label_regex_string))
 
-    def process(self, thread, matches):
+    def process(self, thread):
         found_threads = evaluate_expression(self.thread_finder_expression, **{**locals(), **self.__dict__})
         if not found_threads:
             self.lw('No found_threads matched the expression: {}'.format(self.thread_finder_expression))
@@ -209,14 +209,14 @@ class LabelLookupAction(implements(IAction), Logger):
 class RemoveDraftAction(implements(IAction), Logger):
     def __init__(self):
         super(RemoveDraftAction, self).__init__(__class__)
-    def process(self, thread, matches):
+    def process(self, thread):
         self.ld('processing a thread')
         thread.remove_existing_draft()
 
 class EmptyAction(implements(IAction), Logger):
     def __init__(self):
         super(EmptyAction, self).__init__(__class__)
-    def process(self, thread, matches):
+    def process(self, thread):
         pass
 
 # Create a draft to the destinations in the same thread, grabbing all attachments
@@ -225,8 +225,8 @@ class ForwardAttachmentAction(DestinationBase):
     def __init__(self, destinations):
         super(ForwardAttachmentAction, self).__init__(destinations, __class__)
 
-    def process(self, thread, matches):
-        destinations = self._get_destinations(thread, matches)
+    def process(self, thread):
+        destinations = self._get_destinations(thread)
         last_attachment = thread.last_attachment()
         if len(last_attachment) == 2:
             thread.add_attachment_to_draft(*last_attachment, destinations) 
@@ -239,9 +239,9 @@ class AttachmentAction(DestinationBase):
         self.value = value
         self.ld('Created: file glob expression: {}'.format(self.value))
 
-    def process(self, thread, matches):
+    def process(self, thread):
         fn_glob = evaluate_expression(self.value, **locals())
-        destinations = self._get_destinations(thread, matches)
+        destinations = self._get_destinations(thread)
         for fn in sorted(glob(fn_glob)): # sort for ut behavior
             data = open(fn, 'rb').read()
             self.ld('Adding attachement from file: {}'.format(fn))
