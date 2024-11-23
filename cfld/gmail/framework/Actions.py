@@ -120,6 +120,19 @@ class LLMDraftAction(implements(IAction), DestinationBase):
             thread.append_to_draft(draft_content, destinations)
             self.label_action.process(thread)
 
+class LLMFindTextAction(implements(IAction), DestinationBase):
+    def __init__(self, value, destinations, context_dict):
+        super(LLMFindTextAction, self).__init__(destinations, __class__)
+        self.value = value
+        self.label_action = LabelAction(Config().get_automation_label())
+        self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
+        self.llm = OpenAiLLM(system_background=context_dict[value])
+    def process(self, thread):
+        self.ld('processing a thread')
+        found_text = self.llm.generate_response(thread)
+        if found_text:
+            Config().set_found_text(found_text)
+
 # an action that runs a shell script
 '''class ShellAction(implements(IAction), Logger):
     def __init__(self, key_and_command, action_data):

@@ -69,4 +69,16 @@ class Config(object):
         elif 'thread_error_label' in self.config:
             return self.config['thread_error_label']
         return self.get_automation_label() + '/browser_use_failed'
+    
+    def set_found_text(self, text):
+        if not self.initialized:
+            raise Exception("Config not initialized")
+        self.config['found_text'] = text
 
+    def get_found_text(self):
+        if not self.initialized:
+            raise Exception("Config not initialized")
+        elif 'found_text' in self.config:
+            return self.config['found_text']
+        else:
+            raise Exception("found_text not set in config")

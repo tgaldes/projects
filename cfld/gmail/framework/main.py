@@ -29,8 +29,7 @@ class Main:
         self.rule_factory = RuleFactory(
                 self.sheet_service.get_rule_construction_data(), 
                 self.inboxes, 
-                llm_draft_data=self.sheet_service.get_llm_draft_info(), 
-                llm_label_data=self.sheet_service.get_llm_label_info(), 
+                llm_data=self.sheet_service.get_llm_info(), 
                 action_data=self.sheet_service.get_action_info())
         for user, inbox in self.inboxes.items():
             inbox.set_pre_process_rule_groups(self.rule_factory.get_pre_process_rule_groups(user))

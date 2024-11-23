@@ -18,7 +18,7 @@ class RuleFactory(Logger):
     # first list is the header which we'll use to create a named tuple
     # then for each row we'll create an instance of the desired RuleHolder
 
-    # support **kwargs, right now we'll have llm_draft_data and action_data, and llm_label_data
+    # support **kwargs, right now we'll have llm_data and action_data
     def __init__(self, sheet_data=[], inboxes={}, **kwargs):
         super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
@@ -66,7 +66,7 @@ class RuleFactory(Logger):
             # the 'automation/force_skip' label is present. This is implemented so that
             # the framework doesn't delete or modify a draft that the user might be 
             # actively working on in the web client.
-            if getattr(tup, 'action', None) in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft']:
+            if getattr(tup, 'action', None) in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft', 'llm_find_text']:
                 matchers.append(LabelMatcher(Config().get_force_skip_label(), reverse_match=True))
             if not matchers:
                 matchers.append(AllMatcher())
@@ -77,17 +77,20 @@ class RuleFactory(Logger):
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
             elif tup.action == 'llm_draft':
-                action = LLMDraftAction(tup.value, tup.destinations, kwargs['llm_draft_data'])
+                action = LLMDraftAction(tup.value, tup.destinations, kwargs['llm_data'])
                 log_msg += 'LLMDraftAction'
+            elif tup.action == 'llm_find_text':
+                action = LLMFindTextAction(tup.value, tup.destinations, kwargs['llm_data'])
+                log_msg += 'LLMFindTextAction'
+            elif tup.action == 'llm_label':
+                action = LLMLabelAction(tup.value, kwargs['llm_data'])
+                log_msg += 'LLMLabelAction'
             elif tup.action == 'prepend_draft':
                 action = DraftAction(tup.value, tup.destinations, prepend=True)
                 log_msg += 'DraftAction'
             elif tup.action == 'label':
                 action = LabelAction(tup.value)
                 log_msg += 'LabelAction'
-            elif tup.action == 'llm_label':
-                action = LLMLabelAction(tup.value, kwargs['llm_label_data'])
-                log_msg += 'LLMLabelAction'
             elif tup.action == 'unlabel':
                 action = LabelAction(tup.value, unset=True)
                 log_msg += 'UnlabelAction'

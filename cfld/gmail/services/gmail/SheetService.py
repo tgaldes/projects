@@ -96,12 +96,8 @@ class SheetService(Logger):
                 d[key].append(j[i])
         return d
 
-    def get_llm_draft_info(self):
-        info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_draft_context!A4:G200').execute().get('values', [])
-        return self.organize_llm_data_map(info)
-
-    def get_llm_label_info(self):
-        info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_label_context!A4:G200').execute().get('values', [])
+    def get_llm_info(self):
+        info = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range='llm_context!A4:G200').execute().get('values', [])
         return self.organize_llm_data_map(info)
 
     def get_rule_construction_data(self):

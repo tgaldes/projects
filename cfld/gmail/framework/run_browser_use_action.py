@@ -18,7 +18,7 @@ from framework.RuleFactory import RuleFactory
 from framework.util import process_thread_try_catch
 from framework.Config import Config
 
-from framework.Actions import ShellAction
+from framework.Actions import BrowserUseAction
 
 
 if __name__=='__main__':
@@ -31,6 +31,6 @@ if __name__=='__main__':
 
     sc = ServiceCreator()
 
-    action = ShellAction('new_applicant, "/home/tgaldes/git/projects/cfld/gmail/scripts/browser_automation.sh"', sc.get_sheet_service().get_action_info())
+    action = BrowserUseAction('new_applicant', sc.get_sheet_service().get_action_info())
 
-    action.process('unused', 'unused')
+    action.process('unused')
