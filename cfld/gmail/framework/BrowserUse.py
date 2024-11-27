@@ -21,12 +21,12 @@ async def run_browser_use(query: str, max_steps: int):
     class WaitAction(BaseModel):
         seconds: int
 
+    controller = Controller()
     @controller.action('Wait for a given number of seconds.', param_model=WaitAction)
     def wait(params: WaitAction):
         sleep(params.seconds)
 
     model = ChatOpenAI(model='gpt-4o', temperature=0.3)
-    controller = Controller()
     agent = Agent(
         task=query,
         llm=model,
