@@ -3,10 +3,9 @@ import pdb
 from interface import implements
 
 from framework.Interfaces import IMatcher
-from framework.BaseValidator import BaseValidator
-from framework.util import evaluate_expression, class_to_string
 from framework.Logger import Logger
 from framework.ContactGroup import ContactGroup
+from framework.util import evaluate_expression
 
 
 def clean_text(text):
@@ -15,7 +14,7 @@ def clean_text(text):
         return text[:99] + '...'
     return text
 
-class RegexMatcher(BaseValidator):
+class RegexMatcher(Logger):
     def __init__(self, re_string):
         super(RegexMatcher, self).__init__(self._name())
         self.re_string = re_string
@@ -34,25 +33,12 @@ class RegexMatcher(BaseValidator):
         if self.re.match(text):
             self.ld('\'{}\' matches regex:\'{}\' {}'.format(clean_text(text), self.re_string, thread))
             return True
-        elif super().force_match():
-            self.ld('\'{}\' forced to return true for {}'.format(self.re_string, thread))
-            return True
         else:
             self.ld('\'{}\' no match regex:\'{}\' {}'.format(clean_text(text), self.re_string, thread))
             return False
 
     def _name(self):
         raise Exception('_name is not implemented in RegexMatcher.')
-
-    def get_matching_groups(self, text):
-        g = self.re.match(text)
-        if g:
-            self.ld('SubjectMatcher: returning groups: {}'.format(g.groups()))
-            return g.groups()
-        elif super().force_match():
-            return []
-        raise Exception('Asked for matching groups when no match. re: {} thread subject: {}'.format(self.re_string, text))
-    
 
 class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
 
@@ -62,14 +48,11 @@ class SubjectMatcher(implements(IMatcher), RegexMatcher, Logger):
     def matches(self, thread):
         return super().matches(thread.subject(), thread)
 
-    def get_matching_groups(self, thread):
-        return super().get_matching_groups(thread.subject())
-
     def _name(self):
         return str(self.__class__)
 
 
-class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
+class BodyMatcher(implements(IMatcher), Logger):
 
     def __init__(self, needle):
         super(BodyMatcher, self).__init__(__class__)
@@ -82,22 +65,9 @@ class BodyMatcher(implements(IMatcher), BaseValidator, Logger):
         if self.needle in text:
             self.ld('\'{}\' contains:\'{}\' {}'.format(clean_text(text), self.needle, thread))
             return True
-        elif super().force_match():
-            self.ld('\'{}\' forced to return true for {}'.format(self.needle, thread))
-            return True
         else:
             self.ld('\'{}\' no match regex:\'{}\' {}'.format(clean_text(text), self.needle, thread))
             return False
-
-    def get_matching_groups(self, thread):
-        text = thread.last_message_text().lower()
-        if self.needle in text:
-            return []
-        elif super().force_match():
-            return []
-        else:
-            raise Exception('Asked for matching groups when no match. needle: {} haystack (trimmed): {}'.format(self.needle, clean_text(text)))
-         
 
 class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
 
@@ -111,19 +81,10 @@ class LabelMatcher(implements(IMatcher), RegexMatcher, Logger):
                 return not self.reverse_match
         return self.reverse_match
 
-    def get_matching_groups(self, thread):
-        for label in thread.labels():
-            try:
-                return super().get_matching_groups(label)
-            except:
-                if self.reverse_match:
-                    return ()
-        raise Exception('Asked for matching groups when no matches found for labels: {}'.format(thread.labels()))
-
     def _name(self):
         return str(self.__class__)
 
-class ExpressionMatcher(BaseValidator, implements(IMatcher)):
+class ExpressionMatcher(Logger, implements(IMatcher)):
     def __init__(self, expression):
         super(ExpressionMatcher, self).__init__(__class__)
         self.expression = expression
@@ -135,15 +96,8 @@ class ExpressionMatcher(BaseValidator, implements(IMatcher)):
         if evaluate_expression(self.expression, **locals()):
             self.ld('{} returns true {}'.format(self.expression, thread))
             return True
-        elif super().force_match():
-            self.ld('\'{}\' forced to return true for {}'.format(self.expression, thread))
-            return True
         self.ld('{} returns false {}'.format(self.expression, thread))
         return False
-
-    # Since we aren't doing a regex we don't really have the concept of matching groups
-    def get_matching_groups(self, thread):
-        return []
 
 
 # AND behavior (later we can make it and/or)
@@ -163,15 +117,6 @@ class ComboMatcher(implements(IMatcher), Logger):
         self.ld('matched {} matchers, returning true for {}'.format(len(self.matchers), thread))
         return True
 
-    def get_matching_groups(self, thread):
-        matches = []
-        for matcher in self.matchers:
-            if matcher.matches(thread):
-                matches.extend(list(matcher.get_matching_groups(thread)))
-            else: 
-                raise Exception('Asked for matching groups when not all match. ComboMatcher with {} sub-matchers'.format(len(self.matchers)))
-        return matches
-
 # Always match the thread! Created to use as the matcher for the any rules
 # in the IfAnyRuleGroup, that way we don't have to specify .* for one of our
 # regex matchers for all of these rules
@@ -182,9 +127,6 @@ class AllMatcher(Logger):
     def matches(self, thread):
         self.li('always returing true for {}'.format(thread))
         return True
-
-    def get_matching_groups(self, thread):
-        return []
 
 # return True if any email in the thread is in the group
 class ContactGroupMatcher(Logger):
@@ -202,5 +144,3 @@ class ContactGroupMatcher(Logger):
         self.ld('No emails from thread in group \'{}\' {}'.format(self.group_name, thread))
         return False
 
-    def get_matching_groups(self, thread):
-        return []

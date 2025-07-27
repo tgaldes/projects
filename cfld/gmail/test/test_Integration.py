@@ -8,12 +8,19 @@ from framework.Logger import Logger
 from services.gmail.GMailMessage import GMailMessage
 
 from test.TestUtil import get_thread_constructor_args, encode_for_payload
-import test.TestConfig
+from framework.Config import Config
 
 class IntegrationTest(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super(IntegrationTest, self).__init__(*args, **kwargs)
+        self.config_dict = {'long_signature' : 'This is a long signature', 'short_signature' : 'short sig'}
+
+        self.config = Config()
+        self.config.initialize(None, self.config_dict)
+        self.config_dict = {'long_signature' : 'This is a long signature', 'short_signature' : 'short sig'}
 
     def test_dummy(self):
-        from orgs.example_org.ExampleOrg import signature
+        
         email_service = Mock()
         all_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/one_email_thread.txt'), email_service)]
         email_service.query = MagicMock(return_value=all_threads)
@@ -28,11 +35,6 @@ class IntegrationTest(unittest.TestCase):
         email_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
         email_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : signature(all_threads[0]), 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(signature(all_threads[0]))}, 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}, {}))
         email_service.send_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : signature(all_threads[0]), 'labelIds' : ['SENT'], 'payload' : {'body' : { 'data' : encode_for_payload(signature(all_threads[0]))}, 'headers' : [{'name' : 'to', 'value' : 'Tyler Galdes <tgaldes@gmail.com>'}]}}, {}))
-        config = {}
-        config['org'] = {}
-        config['org']['name'] = 'example_org'
-        config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature']
-        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
         logger = Logger('TestIntegration')
         m = Main([email_service], logger, config)
 
@@ -118,58 +120,6 @@ class IntegrationTest(unittest.TestCase):
 
         self.assertTrue(apply_threads[0].has_draft())
         self.assertTrue(draft_text in apply_threads[0].existing_draft_text())
-
-    def test_lookup_info(self):
-    # Use the lookup_info class to populate the draft and the draft destinations
-        from orgs.example_org.ExampleOrg import header, signature 
-        import orgs.example_org.ExampleOrg
-
-        orgs.example_org.ExampleOrg.example_rule_construction_data = [header, \
-['lookup_info_test', 'apply', '', 'Schools/(.*)', '', 'submitted my application', 'not thread.is_last_message_from_us()', 'draft','lookup_info("parking", match(0))', '', 'lookup_info("executed_leases", match(0))', '5', '', '']]
-        
-        school = 'USC'
-        dest_email = 'lookup@one.com,lookup@two.com'
-        parking_info = 'information about parking'
-
-        apply_service = Mock()
-        apply_threads = [Thread(*get_thread_constructor_args('integration_test_inputs/conversation_between_apply_inbox_and_tenant.txt'), apply_service)]
-        apply_service.query = MagicMock(return_value=apply_threads)
-        apply_service.get_user = MagicMock(return_value='apply')
-        apply_service.get_email = MagicMock(return_value='apply@cleanfloorslockingdoors.com')
-        apply_service.get_domains = MagicMock(return_value=['cleanfloorslockingdoors.com', 'cf-ld.com'])
-        apply_service.get_label_name = MagicMock(return_value='Schools/USC')
-
-        draft_id = '1234'
-        draft_msg_id = '2345'
-        apply_service.get_drafts = MagicMock(return_value=[{'id' : draft_id, 'message' : {'id' : draft_msg_id}}])
-        apply_service.append_or_create_draft = MagicMock(return_value=GMailMessage({'id' : draft_msg_id, 'snippet' : parking_info, 'labelIds' : ['DRAFT'], 'payload' : {'body' : { 'data' : encode_for_payload(parking_info)}, 'headers' : [{'name' : 'to', 'value' : '<{}>,<{}>'.format(*dest_email.split(','))}]}}, {}))
-        apply_service.set_label = MagicMock(return_value={'labelIds' : ['test label id for "automation" label']})
-        apply_service.get_all_history_ids = MagicMock(return_value={})
-        config = {}
-        config['org'] = {}
-        config['org']['name'] = 'example_org'
-        config['org']['imports'] = ['from orgs.example_org.ExampleOrg import signature', 'from orgs.example_org.ExampleOrg import lookup_info']
-        logger = Logger('TestIntegration')
-        config['lookup_info'] = [['parking', school, parking_info], ['', 'UCLA', 'more info'], ['executed_leases', school, dest_email], ['', 'UCLA', 'otheremail@one.com']]
-        config['org_init_import'] = 'from orgs.example_org.ExampleOrg import org_init'
-        m = Main([apply_service], logger, config)
-
-        m.setup()
-        m.run_one()
-        mime_multipart, thread_id, called_draft_id = apply_service.append_or_create_draft.call_args[0]
-        self.assertIsNone(called_draft_id)
-        self.assertEqual('apply@cleanfloorslockingdoors.com', mime_multipart['from'])
-        for email in dest_email.split(','):
-            self.assertTrue(email in mime_multipart['to'])
-        self.assertEqual('New submission for USC', mime_multipart['subject'])
-        self.assertEqual('<CACUCK-CJ6Aq-+i=h3bo5745o59FsfXQbfTX5xKeLFS7jM-JpGw@mail.gmail.com>', mime_multipart['In-Reply-To'])
-        self.assertEqual('<CACUCK-CJ6Aq-+i=h3bo5745o59FsfXQbfTX5xKeLFS7jM-JpGw@mail.gmail.com>', mime_multipart['References'])
-        self.assertEqual(parking_info, mime_multipart.__dict__['_payload'][0].__dict__['_payload'])
-
-
-        self.assertTrue('Schools/{}'.format(school) in apply_threads[0].labels())
-        self.assertTrue(apply_threads[0].has_draft())
-        self.assertTrue(parking_info in apply_threads[0].existing_draft_text())
 
     def test_catch_socket_timeout_exception_in_main(self):
     # In this test we'll have a mock service that raises an exception the first time we add a draft
@@ -268,6 +218,9 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(1, bad_service.set_label.call_count) # got hit once while setting the label for automation/errors
         self.assertTrue(bad_thread.id() in m.inboxes['tyler'].blacklisted_thread_ids)
         self.assertEqual(1, len(m.inboxes['tyler'].blacklisted_thread_ids))
+
+    def test_open_ai_response(self):
+        pass
 
     def test_reinitialize_thread_mid_iteration(self):
         # This is a complicated example

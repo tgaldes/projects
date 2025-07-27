@@ -5,7 +5,7 @@ from framework.Actions import *
 from framework.Logger import Logger
 from framework.RuleHolder import RuleHolder
 from framework.RuleGroup import IfAnyRuleGroup, IfElseRuleGroup, SingleRuleGroup
-from framework import constants
+from framework.Config import Config
 
 def row_is_empty(row):
     for item in row:
@@ -17,7 +17,9 @@ class RuleFactory(Logger):
     # sheet data is a list of lists
     # first list is the header which we'll use to create a named tuple
     # then for each row we'll create an instance of the desired RuleHolder
-    def __init__(self, sheet_data=[], inboxes={}, llm_data='', action_data=''):
+
+    # support **kwargs, right now we'll have llm_data and action_data
+    def __init__(self, sheet_data=[], inboxes={}, **kwargs):
         super(RuleFactory, self).__init__(__class__)
         if len(sheet_data) < 2:
             raise Exception('Tried to construct RuleFactory with data that is only {} row.'.format(len(sheet_data)))
@@ -44,38 +46,45 @@ class RuleFactory(Logger):
                 raise Exception('Cannot create a rule without a user specified. tup: {}'.format(tup))
             matchers = []
             # create one or more matchers
-            if tup.label_regex:
+            if getattr(tup, 'label_regex', None):
                 matchers.append(LabelMatcher(tup.label_regex))
                 log_msg += 'LabelMatcher, '
-            if tup.subject_regex:
+            if getattr(tup, 'subject_regex', None):
                 matchers.append(SubjectMatcher(tup.subject_regex))
                 log_msg += 'SubjectMatcher, '
-            if tup.body_regex:
+            if getattr(tup, 'body_regex', None):
                 matchers.append(BodyMatcher(tup.body_regex))
                 log_msg += 'BodyMatcher, '
-            if tup.expression_match:
+            if getattr(tup, 'expression_match', None):
                 matchers.append(ExpressionMatcher(tup.expression_match))
                 log_msg += 'ExpressionMatcher, '
-            if tup.contact_group_match:
+            # check if contact group match is specified
+            if getattr(tup, 'contact_group_match', None):
                 matchers.append(ContactGroupMatcher(tup.contact_group_match))
                 log_msg += 'ContactGroupMatcher, '
             # framework level behavior to never to never match with a draft action when
             # the 'automation/force_skip' label is present. This is implemented so that
             # the framework doesn't delete or modify a draft that the user might be 
             # actively working on in the web client.
-            if tup.action in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft']:
-                matchers.append(LabelMatcher(constants.force_skip_label, True))
+            if getattr(tup, 'action', None) in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft', 'llm_find_text']:
+                matchers.append(LabelMatcher(Config().get_force_skip_label(), reverse_match=True))
             if not matchers:
                 matchers.append(AllMatcher())
                 log_msg += 'AllMatcher, '
             # create action
-            supported_actions = ['draft', 'prepend_draft', 'label', 'unlabel', 'remove_draft', 'redirect/redirect_draft', 'redirect_label', 'empty/\'\'', 'forward_attachment', 'attachment', 'label_lookup', 'shell', 'send_draft']
+            supported_actions = ['draft', 'prepend_draft', 'label', 'unlabel', 'remove_draft', 'redirect/redirect_draft', 'redirect_label', 'empty/\'\'', 'forward_attachment', 'attachment', 'label_lookup', 'shell', 'send_draft', 'browser_use']
             if tup.action == 'draft':
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
             elif tup.action == 'llm_draft':
-                action = LLMDraftAction(tup.value, tup.destinations, llm_data)
+                action = LLMDraftAction(tup.value, tup.destinations, kwargs['llm_data'])
                 log_msg += 'LLMDraftAction'
+            elif tup.action == 'llm_find_text':
+                action = LLMFindTextAction(tup.value, tup.destinations, kwargs['llm_data'])
+                log_msg += 'LLMFindTextAction'
+            elif tup.action == 'llm_label':
+                action = LLMLabelAction(tup.value, kwargs['llm_data'])
+                log_msg += 'LLMLabelAction'
             elif tup.action == 'prepend_draft':
                 action = DraftAction(tup.value, tup.destinations, prepend=True)
                 log_msg += 'DraftAction'
@@ -89,8 +98,12 @@ class RuleFactory(Logger):
                 action = RemoveDraftAction()
                 log_msg += 'RemoveDraftAction'
             elif tup.action == 'shell':
-                action = ShellAction(tup.value, action_data)
-                log_msg += 'ShellAction'
+                raise Exception('Shell action is not supported. It was deprecated to simplify the value column for browser use.')
+                #action = ShellAction(tup.value, kwargs['action_data'])
+                #log_msg += 'ShellAction'
+            elif tup.action == 'browser_use':
+                action = BrowserUseAction(tup.value, kwargs['action_data'])
+                log_msg += 'BrowserUseAction'
             elif tup.action == 'redirect_draft' or tup.action == 'redirect':
                 if tup.dest_email not in inboxes:
                     raise Exception('RuleFactory doesn\'t have an inbox configured for dest_email: {}, no rule will be created'.format(tup.dest_email))

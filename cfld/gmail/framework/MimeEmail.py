@@ -1,10 +1,16 @@
-import pdb
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
-from framework.util import list_of_emails_to_string_of_emails
 
+
+def list_of_emails_to_string_of_emails(l):
+    if type(l) == str:
+        return l
+    ret = ''
+    for item in l:
+        ret = ret + item + ', '
+    return ret[:-2]
 
 def create_multipart(destinations, from_email, subject, in_reply_to, references, body, attachments, body_encoding='html'):
 

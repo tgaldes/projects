@@ -5,43 +5,32 @@ import json
 from time import sleep
 import traceback
 
-import framework.globals
 from framework.Logger import Logger
-from services.gmail.GMailService import GMailService
+from services.ServiceCreator import ServiceCreator
 from framework.RuleHolder import RuleHolder
 from framework.Thread import Thread
 from framework.Inbox import Inbox
 from framework.RuleFactory import RuleFactory
-from framework.BaseValidator import BaseValidator
-from services.gmail.SheetService import SheetService
-from framework import constants
-import logging
-import logging_tree
 from framework.util import process_thread_try_catch
+from framework.Config import Config
 
 
 class Main:
-    def __init__(self, mail_services, logger, config):
+    def __init__(self, mail_services, sheet_service, logger, config):
         self.logger = logger
-        framework.globals.init(config, self.logger)
         self.mail_services = mail_services
+        self.sheet_service = sheet_service
         self.config = config
-
-    def validate_rules(self):
-        BaseValidator.set_validate_mode(True)
-        for rule_group in self.rule_factory.get_rule_groups():
-            user = rule_group.get_user()
-            inbox = self.inboxes[user]
-            for thread in inbox.query('label:automation/dev_test_case/validate'):
-                self.logger.li('Processing user {} thread {} in validate mode'.format(thread, user))
-                rule_group.process(thread)
-        BaseValidator.set_validate_mode(False)
 
     def setup(self):
         self.inboxes = {}
         for service in self.mail_services:
             self.inboxes[service.get_user()] = Inbox(service)
-        self.rule_factory = RuleFactory(framework.globals.g_org.get_rule_construction_data(), self.inboxes, framework.globals.g_org.get_llm_info(), framework.globals.g_org.get_action_info())
+        self.rule_factory = RuleFactory(
+                self.sheet_service.get_rule_construction_data(), 
+                self.inboxes, 
+                llm_data=self.sheet_service.get_llm_info(), 
+                action_data=self.sheet_service.get_action_info())
         for user, inbox in self.inboxes.items():
             inbox.set_pre_process_rule_groups(self.rule_factory.get_pre_process_rule_groups(user))
             inbox.set_post_process_rule_groups(self.rule_factory.get_post_process_rule_groups(user))
@@ -88,8 +77,6 @@ class Main:
         self.refresh() # at this point just let the exception refresh is creating kill the program
 
     def run(self):
-        if 'validate' in self.config and self.config['validate']:
-            self.validate_rules()
         loop_count = 0
         
         while True:
@@ -104,7 +91,7 @@ class Main:
                 self.setup()
 
     def check_reload(self):
-        return framework.globals.g_org.check_reload()
+        return self.sheet_service.check_reload()
 
 
 
@@ -112,29 +99,18 @@ if __name__=='__main__':
     if len(sys.argv) < 2:
         print('No path specified for json config, exiting')
         exit(1)
-    fn = sys.argv[1]
-    with open(fn, 'r') as f:
-        config = json.load(f)
+
+    config = Config()
+    config.initialize(sys.argv[1])
+
+    sc = ServiceCreator()
     logger = Logger('root', config['log_path'], root=True)
-    #logging_tree.printout()
     
 
-    if config['type'] == 'gmail':
-        logging.getLogger('google').setLevel(logging.ERROR)
-        logging.getLogger('googleapiclient').setLevel(logging.ERROR)
-        services = []
-        for email in config['emails']:
-            if 'default_query_limit' and 'default_query_string' in config:
-                services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir'], config['default_query_limit'], config['default_query_string']))
-            else:
-                services.append(GMailService(email, config['domains'], config['secret_path'], config['client_token_dir']))
-    else:
-        logger.lf('Only gmail type supported, exiting')
-        exit(1)
-    m = Main(services, logger, config)
+    m = Main(sc.get_services(), sc.get_sheet_service(), logger, config)
     m.setup()
+    # loops forever
     m.run()
 
-    logger.li('Shutting down after successful run. Goodbye!')
 
 

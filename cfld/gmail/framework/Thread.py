@@ -1,8 +1,50 @@
 import pdb
 from time import time
+import re
 
 from framework.Logger import Logger
 from framework.MimeEmail import create_multipart
+from framework.Config import Config
+
+def is_computer_generated_address(email: str) -> bool:
+    """
+    Returns True if the email looks like a random, machine-generated address.
+    Heuristic approach: long mixed alphanumeric, no obvious words, high entropy.
+    """
+    try:
+        local, domain = email.split('@')
+    except ValueError:
+        # Invalid email format
+        return False
+
+    # Heuristics
+    if len(local) < 8:
+        return False  # Too short to be machine-generated "random"
+
+    # Count letters and digits
+    letters = sum(c.isalpha() for c in local)
+    digits = sum(c.isdigit() for c in local)
+    specials = sum(not c.isalnum() for c in local)
+
+    # Check if it's heavily mixed
+    mixing_ratio = min(letters, digits) / max(letters, digits) if max(letters, digits) > 0 else 0
+
+    # Contains long sequence without separators
+    if re.fullmatch(r'[a-zA-Z0-9]+', local):
+        # no dots/underscores => more likely random
+        separators = 0
+    else:
+        separators = 1
+
+    # Basic heuristics thresholds (tune as needed)
+    if (letters + digits) / len(local) > 0.9 and mixing_ratio > 0.3 and separators == 0:
+        return True
+
+    # Fallback: if it's very long and all alnum
+    if len(local) > 20 and separators == 0:
+        return True
+
+    return False
 
 class Thread(Logger):
     def __init__(self, identifier, messages, service, historyId=0):
@@ -120,6 +162,7 @@ class Thread(Logger):
         self.__add_or_update_message(response)
 
     def __add_or_update_draft(self, body, destinations):
+        
         self.ld('Draft will have body: {}'.format(body))
         draft_id = self.existing_draft_id()
         if draft_id:
@@ -151,6 +194,13 @@ class Thread(Logger):
         self.lw('Could not find salutation in thread with id: {} subject: {}'.format(self.identifier, self.subject()))
         return base.format('')
 
+    def signature(self):
+        config = Config()
+        if len(self.messages) <= 2:
+            return config['long_signature']
+        else:
+            return config['short_signature']
+
     # For reply all, get everything in the from, to, and cc fields that isn't our email
     def default_reply(self, reply_all=True, force_all=False):
         counter = -1
@@ -180,7 +230,6 @@ class Thread(Logger):
                     if not self.__is_my_email(cc_email):
                         emails.append(cc_email)
             return emails
-
                 
         raise Exception('Couldn\'t find email that didn\'t match our own')
 
@@ -192,6 +241,24 @@ class Thread(Logger):
         if prepend:
             return ',' + ret[:-1]
         return ret[:-1]
+
+    # Look through the string body to see what tenant gave us following the string 'email:'
+    def extract_email_from_body(self):
+        # at this point the last message text will be the email we are replying to, not the draft we are creating
+        body = self.last_message_text()
+        body = body.lower()
+        needle = 'email:'
+        if needle not in body:
+            return []
+        start = body.index(needle) + len(needle)
+        # now we have the start of the email, do a regular expression to find the email
+        email_regex = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+        match = re.search(email_regex, body[start:])
+        if match:
+            print(match.group(0))
+            return [match.group(0)]
+        self.ld('Couldn\'t find email in body: {}'.format(body))
+        return []
 
     # return the epoch time of the last message sent or received
     def last_ts(self):
@@ -285,7 +352,11 @@ class Thread(Logger):
 
     def __concatenate_destinations(self, new_destinations):
         if self.messages[-1].is_draft():
-            return list(set(new_destinations) | set(self.messages[-1].recipients()))
+            new_destinations = list(set(new_destinations) | set(self.messages[-1].recipients()))
+        at_least_one_human_email = any(not is_computer_generated_address(email) for email in new_destinations)
+        if at_least_one_human_email:
+            # If we have at least one human email, filter out all the computer generated emails
+            new_destinations = [email for email in new_destinations if not is_computer_generated_address(email)]
         return new_destinations
 
     def __add_or_update_message(self, new_message):
