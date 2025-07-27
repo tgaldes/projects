@@ -12,7 +12,7 @@ from framework.Logger import Logger
 from framework.OpenAiLLM import OpenAiLLM
 from framework.Config import Config
 
-from framework.BrowserUse import run_browser_use
+#from framework.BrowserUse import run_browser_use
 import asyncio
 
 
@@ -154,7 +154,7 @@ class LLMFindTextAction(implements(IAction), DestinationBase):
         self.ld('Command succeeded')'''
 
 # an action that runs a shell script
-class BrowserUseAction(implements(IAction), Logger):
+'''class BrowserUseAction(implements(IAction), Logger):
     def __init__(self, action_data_key, action_data):
         super(BrowserUseAction, self).__init__(__class__)
 
@@ -167,7 +167,7 @@ class BrowserUseAction(implements(IAction), Logger):
         if rc != 0:
             self.lw('BrowserUseAction failed: {}'.format(self.instructions))
             self.failure_label_action.process(thread)
-            # TODO: rule sheet to forward to Tyler only once!
+            # TODO: rule sheet to forward to Tyler only once!'''
 
 
 # The redirect thread needs to know

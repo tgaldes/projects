@@ -272,6 +272,5 @@ def output_raw_thread(fn, thread_map):
         json.dump(thread_map, f, indent=4)
 
 if __name__=='__main__':
-    #gs = GMailService('apply@cleanfloorslockingdoors.com', ["cleanfloorslockingdoors.com", "cf-ld.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")
     gs = GMailService('tgaldes@gmail.com', ["gmail.com"], "/home/tgaldes/Dropbox/Fraternity PM/dev_private/cfldv1_secret.json", "/home/tgaldes/Dropbox/Fraternity PM/dev_private/")
 

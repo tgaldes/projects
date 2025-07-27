@@ -4,20 +4,17 @@ import subprocess
 import os
 
 # Configuration
-WORKING_DIR = "/home/tgaldes/git/projects/cfld/gmail"
-LOGFILE = os.path.join(WORKING_DIR, "staging.log")
-VENV_ACTIVATE = "/home/tgaldes/git/3rdparty/browser-use/env/bin/activate"
-RUN_SCRIPT = "./scripts/run_local_staging.sh"
-PROCESS_IDENTIFIER = "main.py orgs/cfld/staging_config.json"
+WORKING_DIR = "/cfld/projects/cfld/gmail"
+LOGFILE = os.path.join(WORKING_DIR, "prod.log")
+RUN_SCRIPT = "./scripts/run_prod.sh"
+PROCESS_IDENTIFIER = "main.py /cfld/projects/cfld/gmail/orgs/cfld/prod_config.json"
 
 def is_running():
     result = subprocess.run(["pgrep", "-f", PROCESS_IDENTIFIER], stdout=subprocess.PIPE)
     return result.returncode == 0
 
 def start_process():
-    command = (
-        f'bash -c "source {VENV_ACTIVATE} && {RUN_SCRIPT}"'
-    )
+    command = f'bash -c "{RUN_SCRIPT}"'
 
     with open(LOGFILE, "ab") as f:
         subprocess.Popen(
@@ -31,9 +28,9 @@ def start_process():
 
 def main():
     if is_running():
-        print("Staging process is already running.")
+        print("Production process is already running.")
     else:
-        print("Staging process not running. Starting it...")
+        print("Production process not running. Starting it...")
         start_process()
         print(f"Started process using {RUN_SCRIPT} in virtual environment.")
         print(f"Logs are being written to: {LOGFILE}")
