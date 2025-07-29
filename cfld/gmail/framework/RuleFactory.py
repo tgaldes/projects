@@ -77,7 +77,10 @@ class RuleFactory(Logger):
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
             elif tup.action == 'llm_draft':
-                action = LLMDraftAction(tup.value, tup.destinations, kwargs['llm_data'])
+                base_label = Config().get_automation_training_data_label()
+                query = 'label:' + base_label + tup.value # tup.value will be something like '3rd_party'
+                training_threads = inboxes[tup.email].query(query, ignore_history_id=True)
+                action = LLMDraftAction(tup.value, tup.destinations, kwargs['llm_data'], example_threads=training_threads)
                 log_msg += 'LLMDraftAction'
             elif tup.action == 'llm_find_text':
                 action = LLMFindTextAction(tup.value, tup.destinations, kwargs['llm_data'])

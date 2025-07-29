@@ -82,3 +82,10 @@ class Config(object):
             return self.config['found_text']
         else:
             raise Exception("found_text not set in config")
+
+    def get_automation_training_data_label(self):
+        if not self.initialized:
+            raise Exception("Config not initialized")
+        elif 'automation_training_data_label' in self.config:
+            return self.config['automation_training_data_label']
+        return self.get_automation_label() + '/training_data/'

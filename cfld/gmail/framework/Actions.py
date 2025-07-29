@@ -106,12 +106,12 @@ class DraftAction(implements(IAction), DestinationBase):
         self.label_action.process(thread)
 
 class LLMDraftAction(implements(IAction), DestinationBase):
-    def __init__(self, value, destinations, context_dict):
+    def __init__(self, value, destinations, context_dict, example_threads=None):
         super(LLMDraftAction, self).__init__(destinations, __class__)
         self.value = value
         self.label_action = LabelAction(Config().get_automation_label())
         self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
-        self.llm = OpenAiLLM(system_background=context_dict[value])
+        self.llm = OpenAiLLM(system_background=context_dict[value], example_threads=example_threads)
     def process(self, thread):
         self.ld('processing a thread')
         destinations = self._get_destinations(thread)
