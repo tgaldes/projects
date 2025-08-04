@@ -165,8 +165,7 @@ class Thread(Logger):
         
         self.ld('Draft will have body: {}'.format(body))
         draft_id = self.existing_draft_id()
-        if draft_id:
-            destinations = self.__concatenate_destinations(destinations)
+        destinations = self.__concatenate_destinations(destinations)
 
         mime_multipart = create_multipart(destinations, self.service.get_email(), self.subject(), self.last_message().message_id(), self.last_message().message_id(), body, self.existing_draft_attachments())
         if draft_id:

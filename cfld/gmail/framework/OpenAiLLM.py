@@ -100,7 +100,7 @@ class OpenAiLLM:
             example_texts.append(f"Example Conversation {i + 1}:\n" + "\n".join(conversation_lines))
 
         examples_combined = "\n\n".join(example_texts)
-        extended_prompt = base_prompt + ["Here are some example conversations:"] + example_texts
+        extended_prompt =  ["Here are some example conversations:"] + example_texts + base_prompt
         return extended_prompt
 
 
@@ -113,6 +113,10 @@ class OpenAiLLM:
 
         roles = []
         for email, message in zip(emails, messages):
+            # replace all newline newlines with '<br><br>'
+            message = message.replace('\r\n', '<br>')
+            # These were inserted when we moved to a newline with text wrapping, so we don't want them in the training data
+            message = message.replace('\n', '')
             if email == user_auto_email:
                 roles.append({"role": "user", "content": message}) # don't need to filter these messages
             elif email.split('@')[1] in assistant_domains:
@@ -133,6 +137,6 @@ class OpenAiLLM:
             model="gpt-4o",
             messages=messages
         )
-        return completion.choices[0].message.content
+        return completion.choices[0].message.content.replace('\n', '<br>')
 
 
