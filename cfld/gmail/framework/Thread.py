@@ -3,7 +3,7 @@ from time import time
 import re
 
 from framework.Logger import Logger
-from framework.MimeEmail import create_multipart
+from framework.MimeEmail import create_multipart, create_forward_multipart
 from framework.Config import Config
 
 def is_computer_generated_address(email: str) -> bool:
@@ -358,6 +358,29 @@ class Thread(Logger):
             new_destinations = [email for email in new_destinations if not is_computer_generated_address(email)]
         return new_destinations
 
+    def forward_draft(self, content, destinations):
+        """
+        Create a forward draft in this thread, quoting the last non-draft message and including its attachments.
+        """
+        # Remove any existing draft before creating a new one
+        draft_id = self.existing_draft_id()
+        if draft_id:
+            self.remove_existing_draft(False)
+
+        original = self.last_message()
+        subject = self.subject()
+        # Build forward multipart message
+        mime_msg = create_forward_multipart(
+            destinations,
+            self.service.get_email(),
+            subject,
+            original,
+            content
+        )
+        # Create the draft on the service and update local thread
+        response = self.service.append_or_create_draft(mime_msg, self.identifier, None)
+        self.__add_or_update_message(response)
+
     def __add_or_update_message(self, new_message):
         for i, old_message in enumerate(self.messages):
             if old_message.id() == new_message.id():
@@ -378,6 +401,4 @@ class Thread(Logger):
             m.append(message.content())
         return m
                 
-
-
 

@@ -66,13 +66,13 @@ class RuleFactory(Logger):
             # the 'automation/force_skip' label is present. This is implemented so that
             # the framework doesn't delete or modify a draft that the user might be 
             # actively working on in the web client.
-            if getattr(tup, 'action', None) in ['draft', 'prepend_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft', 'llm_find_text']:
+            if getattr(tup, 'action', None) in ['draft', 'prepend_draft', 'forward_draft', 'forward_attachment', 'attachment', 'remove_draft', 'llm_draft', 'llm_find_text']:
                 matchers.append(LabelMatcher(Config().get_force_skip_label(), reverse_match=True))
             if not matchers:
                 matchers.append(AllMatcher())
                 log_msg += 'AllMatcher, '
             # create action
-            supported_actions = ['draft', 'prepend_draft', 'label', 'unlabel', 'remove_draft', 'redirect/redirect_draft', 'redirect_label', 'empty/\'\'', 'forward_attachment', 'attachment', 'label_lookup', 'shell', 'send_draft', 'browser_use']
+            supported_actions = ['draft', 'prepend_draft', 'label', 'unlabel', 'remove_draft', 'redirect/redirect_draft', 'redirect_label', 'empty/\'\'', 'forward_draft', 'forward_attachment', 'attachment', 'label_lookup', 'shell', 'send_draft', 'browser_use']
             if tup.action == 'draft':
                 action = DraftAction(tup.value, tup.destinations)
                 log_msg += 'DraftAction'
@@ -123,6 +123,12 @@ class RuleFactory(Logger):
                 action = EmptyAction()
                 log_msg += 'EmptyAction'
             # grabs attachment from email thread
+            elif tup.action == 'forward_draft':
+                base_label = Config().get_automation_training_data_label()
+                query = 'label:' + base_label + tup.value # tup.value will be something like '3rd_party'
+                training_threads = inboxes[tup.email].query(query, ignore_history_id=True)
+                action = ForwardDraftAction(tup.value, tup.destinations, kwargs['llm_data'], example_threads=training_threads)
+                log_msg += 'ForwardDraftAction'
             elif tup.action == 'forward_attachment':
                 action = ForwardAttachmentAction(tup.destinations)
                 log_msg += 'ForwardAttachmentAction'
@@ -204,7 +210,6 @@ class RuleFactory(Logger):
             if rule.get_user() == user:
                 ret.append(rule)
         return ret
-
 
 
 

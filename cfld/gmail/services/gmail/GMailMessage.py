@@ -138,20 +138,30 @@ class GMailMessage(Logger):
     # of html formatting
     def content(self, ignore_old_messages=True):
         payload = self.__field('payload')
-        data = ''
+        
+        plain_text = None
+        html_text = None
+
+        def extract_parts(part_list):
+            nonlocal plain_text, html_text
+            for part in part_list:
+                if part.get('mimeType') == 'multipart/alternative' and 'parts' in part:
+                    extract_parts(part['parts'])  # recurse
+                elif part.get('mimeType') == 'text/plain' and 'data' in part['body']:
+                    plain_text = base64.urlsafe_b64decode(part['body']['data'].encode('UTF8')).decode('UTF8')
+                elif part.get('mimeType') == 'text/html' and 'data' in part['body']:
+                    html_text = base64.urlsafe_b64decode(part['body']['data'].encode('UTF8')).decode('UTF8')
+
         if 'parts' in payload:
-            for part in payload['parts']:
-                if 'parts' in part:
-                    for inner_part in part['parts']:
-                        if 'data' in inner_part['body']:
-                            data += inner_part['body']['data']
-                elif 'data' in part['body']:
-                    data += part['body']['data']
-        else:
-            data = payload['body']['data']
-        ret = base64.urlsafe_b64decode(data.encode('UTF8')).decode('UTF8')
-        if not ignore_old_messages:
-            return ret
+            extract_parts(payload['parts'])
+        elif 'body' in payload and 'data' in payload['body']:
+            # fallback: not multipart
+            if payload.get('mimeType') == 'text/html':
+                html_text = base64.urlsafe_b64decode(payload['body']['data'].encode('UTF8')).decode('UTF8')
+            elif payload.get('mimeType') == 'text/plain':
+                plain_text = base64.urlsafe_b64decode(payload['body']['data'].encode('UTF8')).decode('UTF8')
+
+        ret = html_text if html_text else plain_text
 
         # Here we'll filter out all the b.s. that we get in gmail when we hit 'reply'
         # Look for the earliest of any of the delimiters in the message

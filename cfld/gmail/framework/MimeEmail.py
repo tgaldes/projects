@@ -39,3 +39,31 @@ def create_multipart(destinations, from_email, subject, in_reply_to, references,
     multipart['References'] = references
     return multipart
 
+def create_forward_multipart(destinations, from_email, subject, original_message, body, body_encoding='html'):
+    """
+    Create a forward draft message for the given original_message,
+    quoting the original content and including its attachments.
+    """
+    import pdb
+    # Build forwarded header block
+    header_lines = [
+        '---------- Forwarded message ---------<br>',
+        f"From: {original_message.sender()}<br>",
+        f"Subject: {original_message.subject()}<br>",
+        f"To: {list_of_emails_to_string_of_emails(original_message.recipients())}<br><br><br>",
+        ''
+    ]
+    forwarded = '\n'.join(header_lines) + '\n' + original_message.content()
+    # Include original attachments
+    attachments = original_message.attachments()
+    # For forwarding, do not set In-Reply-To or References
+    return create_multipart(
+        destinations,
+        from_email,
+        subject,
+        in_reply_to='',
+        references='',
+        body=body + forwarded,
+        attachments=attachments,
+        body_encoding=body_encoding
+    )

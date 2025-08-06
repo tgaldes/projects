@@ -120,6 +120,26 @@ class LLMDraftAction(implements(IAction), DestinationBase):
             thread.append_to_draft(draft_content, destinations)
             self.label_action.process(thread)
 
+class ForwardDraftAction(DestinationBase):
+    """
+    Create a forward draft in the thread, quoting the last non-draft message and including its attachments.
+    """
+    def __init__(self, value, destinations, context_dict, example_threads=None):
+        super(ForwardDraftAction, self).__init__(destinations, __class__)
+        self.value = value
+        self.label_action = LabelAction(Config().get_automation_label())
+        self.ld('Created: destinations={}, value={}'.format(self.destinations, self.value))
+        self.llm = OpenAiLLM(system_background=context_dict[value], example_threads=example_threads)
+
+    def process(self, thread):
+        self.ld('processing a thread')
+        destinations = self._get_destinations(thread)
+        draft_content = self.llm.generate_response(thread)
+        if draft_content:
+            thread.forward_draft(draft_content, destinations)
+            self.label_action.process(thread)
+
+
 class LLMFindTextAction(implements(IAction), DestinationBase):
     def __init__(self, value, destinations, context_dict):
         super(LLMFindTextAction, self).__init__(destinations, __class__)
@@ -243,7 +263,6 @@ class ForwardAttachmentAction(DestinationBase):
         last_attachment = thread.last_attachment()
         if len(last_attachment) == 2:
             thread.add_attachment_to_draft(*last_attachment, destinations) 
-
 # We'll do an exec on self.value to get a filename glob, and attach all the matching files
 # found on the local drive system
 class AttachmentAction(DestinationBase):
